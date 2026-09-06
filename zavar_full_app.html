@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>ЗАВАР</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+  :root {
+    --bg: #2B2018; --panel: #3A2C20; --panel-2: #4A3826;
+    --sage: #8FA179; --caramel: #D6A45E; --cream: #F2E8D5;
+    --muted: #B3A088; --line: #52422F; --wine: #7C4A4A;
+  }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=IBM+Plex+Sans:wght@400;500;600&display=swap');
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--cream); font-family: 'IBM Plex Sans', -apple-system, sans-serif; }
+  #app { min-height: 100vh; padding: 12px 16px 90px; }
+
+  .promo-banner { display: flex; gap: 10px; align-items: center; background: linear-gradient(135deg, var(--wine), #4A2E2E); border-radius: 14px; padding: 12px 14px; margin-bottom: 14px; }
+  .promo-banner .t1 { font-size: 12.5px; font-weight: 600; }
+  .promo-banner .t2 { font-size: 11px; color: #E8D6D6; margin-top: 2px; }
+
+  .tabs { display: flex; gap: 4px; background: var(--panel); border-radius: 100px; padding: 4px; margin-bottom: 14px; }
+  .tab { flex: 1; text-align: center; font-size: 11.5px; padding: 8px 0; border-radius: 100px; color: var(--muted); cursor: pointer; }
+  .tab.active { background: var(--caramel); color: #2A1608; font-weight: 600; }
+
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  .limit-banner { display: flex; justify-content: space-between; align-items: center; background: var(--panel); border-radius: 12px; padding: 10px 14px; margin-bottom: 14px; }
+  .limit-banner .label { font-size: 12.5px; color: var(--muted); }
+  .limit-banner .val { font-size: 13px; color: var(--sage); font-weight: 600; }
+  .section-label { font-size: 13px; color: var(--muted); margin-bottom: 8px; }
+  .empty-note { font-size: 12.5px; color: var(--muted); padding: 30px 10px; text-align: center; line-height: 1.6; }
+
+  .cafe-card { display: flex; gap: 12px; background: var(--panel); border-radius: 14px; margin-bottom: 10px; padding: 12px; align-items: center; position: relative; }
+  .cafe-thumb { width: 50px; height: 50px; border-radius: 12px; background: linear-gradient(135deg, var(--sage), #5C6A4C); flex: 0 0 auto; }
+  .cafe-main { flex: 1; cursor: pointer; }
+  .cafe-name { font-weight: 600; font-size: 14px; }
+  .cafe-meta { font-size: 12px; color: var(--muted); margin: 2px 0 4px; }
+  .cafe-slot { font-size: 12px; color: var(--caramel); font-weight: 500; }
+  .fav-btn { width: 30px; height: 30px; border-radius: 50%; background: var(--panel-2); display: flex; align-items: center; justify-content: center; font-size: 15px; color: var(--muted); cursor: pointer; flex: 0 0 auto; }
+  .fav-btn.active { color: var(--caramel); }
+
+  .cafe-banner { height: 96px; border-radius: 14px; background: linear-gradient(135deg, #4A3826, var(--sage)); margin-bottom: 12px; }
+  .cafe-name-big { font-family: 'Fraunces', serif; font-weight: 800; font-size: 23px; margin: 0 0 2px; }
+  .cafe-meta-big { font-size: 12.5px; color: var(--muted); margin-bottom: 12px; }
+
+  .perk-card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 14px; margin-bottom: 14px; }
+  .perk-label { font-size: 11.5px; color: var(--muted); margin-bottom: 3px; }
+  .perk-item { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+  .perk-desc { font-size: 12px; color: var(--muted); line-height: 1.4; margin-bottom: 10px; }
+  .link-btn { font-size: 12.5px; color: var(--sage); font-weight: 600; text-decoration: underline; cursor: pointer; }
+
+  .slot-row { display: flex; gap: 8px; margin: 10px 0 4px; }
+  .slot { flex: 1; text-align: center; font-size: 12px; padding: 9px 0; border-radius: 9px; background: var(--panel-2); color: var(--muted); cursor: pointer; }
+  .slot.active { background: var(--sage); color: #1A2313; font-weight: 600; }
+  .confirm-note { font-size: 11.5px; color: var(--muted); margin-top: 6px; line-height: 1.5; }
+  .toast { font-size: 12px; color: var(--sage); margin-top: 8px; min-height: 16px; }
+
+  .price-card { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 20px 16px; text-align: center; margin-bottom: 16px; }
+  .price-num { font-family: 'Fraunces', serif; font-size: 32px; font-weight: 800; color: var(--caramel); }
+  .price-period { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .benefit-item { display: flex; gap: 8px; align-items: flex-start; font-size: 12.5px; padding: 6px 0; }
+  .check { width: 16px; height: 16px; border-radius: 5px; background: var(--sage); flex: 0 0 auto; margin-top: 1px; }
+  .proof { text-align: center; font-size: 11px; color: var(--muted); margin-top: 8px; }
+
+  .profile-head { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+  .avatar { width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(135deg, var(--caramel), var(--sage)); flex: 0 0 auto; }
+  .profile-name { font-family: 'Fraunces', serif; font-size: 18px; font-weight: 800; }
+  .profile-sub { font-size: 11.5px; color: var(--muted); }
+
+  .status-card { display: flex; justify-content: space-between; align-items: center; background: var(--panel); border-radius: 12px; padding: 12px 14px; margin-bottom: 14px; }
+  .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--sage); display: inline-block; margin-right: 6px; }
+  .status-date { font-size: 11.5px; color: var(--muted); }
+  .qr-box { width: 120px; height: 120px; margin: 0 auto 12px; background: var(--cream); border-radius: 10px; padding: 9px; }
+  .qr-grid { width: 100%; height: 100%; display: grid; grid-template-columns: repeat(7, 1fr); grid-template-rows: repeat(7, 1fr); gap: 2px; }
+  .qr-caption { text-align: center; font-size: 11.5px; color: var(--muted); margin-bottom: 14px; }
+
+  .progress-wrap { margin-bottom: 16px; }
+  .progress-label { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-bottom: 5px; }
+  .progress-bar { height: 6px; background: var(--panel-2); border-radius: 100px; overflow: hidden; }
+  .progress-fill { height: 100%; background: var(--sage); transition: width 0.4s ease; }
+
+  .ref-card { background: var(--panel); border-radius: 14px; padding: 14px; margin-bottom: 14px; }
+  .ref-label { font-size: 12px; color: var(--muted); margin-bottom: 6px; }
+  .ref-code { font-family: 'Fraunces', serif; font-size: 18px; font-weight: 700; color: var(--caramel); margin-bottom: 10px; }
+  .ref-btn { text-align: center; background: var(--caramel); color: #2A1608; padding: 10px; border-radius: 12px; font-size: 12.5px; font-weight: 600; cursor: pointer; }
+  .ref-note { font-size: 11px; color: var(--muted); margin-top: 8px; text-align: center; }
+
+  .row-card { display: flex; align-items: center; justify-content: space-between; background: var(--panel); border-radius: 12px; padding: 12px 14px; margin-bottom: 10px; cursor: pointer; }
+  .row-card .t1 { font-size: 13px; font-weight: 500; }
+  .row-card .t2 { font-size: 11.5px; color: var(--muted); }
+
+  .hist-item { background: var(--panel); border-radius: 12px; padding: 11px 14px; margin-bottom: 9px; }
+  .hist-top { display: flex; justify-content: space-between; font-size: 13px; font-weight: 500; margin-bottom: 3px; }
+  .hist-meta { font-size: 11.5px; color: var(--muted); }
+  .hist-status { font-size: 11px; padding: 2px 8px; border-radius: 100px; }
+  .hist-status.done { background: rgba(143,161,121,0.2); color: var(--sage); }
+  .hist-status.pending { background: rgba(214,164,94,0.2); color: var(--caramel); }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <div class="promo-banner">
+    <div>
+      <div class="t1">Акция: приведи друга</div>
+      <div class="t2">Оба получаете +1 напиток сверх лимита в этом месяце</div>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <div class="tab active" id="tab-catalog" onclick="switchTab('catalog')">Каталог</div>
+    <div class="tab" id="tab-fav" onclick="switchTab('fav')">Избранное</div>
+    <div class="tab" id="tab-history" onclick="switchTab('history')">История</div>
+    <div class="tab" id="tab-profile" onclick="switchTab('profile')">Профиль</div>
+  </div>
+
+  <!-- CATALOG -->
+  <div class="screen active" id="screen-catalog">
+    <div class="limit-banner"><span class="label">Осталось напитков</span><span class="val" id="limit-val">12 / 12</span></div>
+    <div class="section-label">Открыто сейчас · оффпик-слот</div>
+    <div id="catalog-list"></div>
+  </div>
+
+  <!-- FAVORITES -->
+  <div class="screen" id="screen-fav">
+    <div class="section-label">Избранные кофейни</div>
+    <div id="fav-list"></div>
+  </div>
+
+  <!-- HISTORY -->
+  <div class="screen" id="screen-history">
+    <div class="section-label">Использованные напитки и брони</div>
+    <div id="history-list"></div>
+  </div>
+
+  <!-- CAFE DETAIL -->
+  <div class="screen" id="screen-detail">
+    <div class="cafe-banner"></div>
+    <div class="cafe-name-big" id="detail-name">CULT COFFEE</div>
+    <div class="cafe-meta-big">Есентай · открыто до 22:00</div>
+    <div class="perk-card">
+      <div class="perk-label">Ваш напиток по подписке</div>
+      <div class="perk-item">Американо или капучино</div>
+      <div class="perk-desc">Капучино: молоко 3.2%, 300 мл. Альтернативное молоко (овсяное/миндальное) — доплата 500 тг на месте.</div>
+      <span class="link-btn" onclick="requestDrink()">Получить QR-код</span>
+    </div>
+    <div class="section-label">Забронировать стол</div>
+    <div class="slot-row">
+      <div class="slot" onclick="selectSlot(this)">11:00</div>
+      <div class="slot active" onclick="selectSlot(this)">12:00</div>
+      <div class="slot" onclick="selectSlot(this)">13:00</div>
+    </div>
+    <div class="confirm-note">После брони мы подтвердим место в WhatsApp в течение 10 минут.</div>
+    <div class="toast" id="book-toast"></div>
+  </div>
+
+  <!-- PAYWALL -->
+  <div class="screen" id="screen-paywall">
+    <div class="price-card">
+      <div class="price-num">8 000 ₸</div>
+      <div class="price-period">в месяц · отмена в любой момент</div>
+    </div>
+    <div class="benefit-item"><span class="check"></span>12 напитков в месяц в сети партнёров</div>
+    <div class="benefit-item"><span class="check"></span>Бронь столов без очереди в будни</div>
+    <div class="benefit-item"><span class="check"></span>Уведомления о новых кофейнях</div>
+    <div class="proof">Уже 210 подписчиков в Алматы</div>
+  </div>
+
+  <!-- PROFILE -->
+  <div class="screen" id="screen-profile">
+    <div class="profile-head">
+      <div class="avatar"></div>
+      <div><div class="profile-name" id="profile-name">Гость</div><div class="profile-sub" id="profile-sub">Подписчик ЗАВАР</div></div>
+    </div>
+    <div class="status-card"><span><span class="status-dot"></span>Подписка активна</span><span class="status-date">до 4 окт</span></div>
+    <div class="qr-box"><div class="qr-grid" id="qr-pattern"></div></div>
+    <div class="qr-caption">Покажите бариста для списания напитка</div>
+    <div class="progress-wrap">
+      <div class="progress-label"><span>Использовано</span><span id="progress-text">0 из 12</span></div>
+      <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+    </div>
+    <div class="ref-card">
+      <div class="ref-label">Ваш реферальный код</div>
+      <div class="ref-code" id="ref-code">ZAVAR-0000</div>
+      <div class="ref-btn" onclick="shareReferral()">Пригласить друга</div>
+      <div class="ref-note">Друг получает первый месяц со скидкой, вы — бонусный напиток</div>
+    </div>
+    <div class="row-card" onclick="openSupport()">
+      <div><div class="t1">Поддержка</div><div class="t2">Ответим в Telegram в течение часа</div></div>
+      <div class="t2">›</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function(){
+  var tg = window.Telegram && window.Telegram.WebApp;
+  var SUPPORT_USERNAME = 'zavar_support';       // заменить на реальный юзернейм админа
+  var KASPI_PAY_URL = 'https://pay.kaspi.kz/';   // заменить на реальную ссылку оплаты
+  var WHATSAPP_ADMIN = '77000000000';            // заменить на реальный номер администратора
+  var BOT_USERNAME = 'zavar_bot';                // заменить на юзернейм вашего бота
+  var APP_SHORT_NAME = 'app';                    // заменить на short_name Mini App из BotFather
+
+  var subscribed = false;
+  var used = 0;
+  var limit = 12;
+  var currentScreen = 'catalog';
+  var activeCafeId = null;
+
+  var cafes = [
+    { id: 1, name: 'CULT COFFEE', meta: '4.7 · Эспрессо-бар · 400 м', slot: 'Слот до 13:00', fav: false },
+    { id: 2, name: 'MOTO COFFEE', meta: '4.5 · Спешалти · 750 м', slot: 'Слот до 13:00', fav: false },
+    { id: 3, name: 'SHOKO', meta: '4.8 · Рабочие места · 1.1 км', slot: 'Есть свободные столы', fav: false }
+  ];
+
+  var history = [
+    { type: 'Напиток', cafe: 'MOTO COFFEE', meta: 'Капучино · 3 дня назад', status: 'done' },
+    { type: 'Бронь стола', cafe: 'SHOKO', meta: '2 дня назад, 14:00', status: 'done' }
+  ];
+
+  var userId = (tg && tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.id) || Math.floor(Math.random()*9000+1000);
+  var userName = (tg && tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.first_name) || 'Гость';
+
+  if (tg) { tg.ready(); tg.expand(); tg.setHeaderColor('#2B2018'); tg.setBackgroundColor('#2B2018'); }
+
+  document.getElementById('profile-name').textContent = userName;
+  document.getElementById('ref-code').textContent = 'ZAVAR-' + userId;
+
+  var pattern = [1,0,1,1,1,0,1, 1,0,1,0,1,0,1, 1,0,1,1,1,0,1, 0,0,0,1,0,0,0, 1,0,0,1,0,0,1, 1,0,1,0,1,0,1, 1,1,1,0,1,1,1];
+  var qrHtml = ''; for (var i=0;i<pattern.length;i++){ qrHtml += '<div style="background:' + (pattern[i]?'#15100B':'#F2E8D5') + '"></div>'; }
+  document.getElementById('qr-pattern').innerHTML = qrHtml;
+
+  function haptic(style){ if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred(style || 'light'); }
+
+  function renderCatalog(){
+    var html = '';
+    cafes.forEach(function(c){
+      html += '<div class="cafe-card">' +
+        '<div class="cafe-thumb"></div>' +
+        '<div class="cafe-main" onclick="openCafe(' + c.id + ')"><div class="cafe-name">' + c.name + '</div><div class="cafe-meta">' + c.meta + '</div><div class="cafe-slot">' + c.slot + '</div></div>' +
+        '<div class="fav-btn ' + (c.fav?'active':'') + '" onclick="toggleFav(' + c.id + ')">♥</div>' +
+      '</div>';
+    });
+    document.getElementById('catalog-list').innerHTML = html;
+  }
+
+  function renderFavorites(){
+    var favs = cafes.filter(function(c){ return c.fav; });
+    if (!favs.length) { document.getElementById('fav-list').innerHTML = '<div class="empty-note">Пока нет избранных кофеен — нажмите ♥ на карточке в каталоге.</div>'; return; }
+    var html = '';
+    favs.forEach(function(c){
+      html += '<div class="cafe-card"><div class="cafe-thumb"></div>' +
+        '<div class="cafe-main" onclick="openCafe(' + c.id + ')"><div class="cafe-name">' + c.name + '</div><div class="cafe-meta">' + c.meta + '</div><div class="cafe-slot">' + c.slot + '</div></div>' +
+        '<div class="fav-btn active" onclick="toggleFav(' + c.id + ')">♥</div></div>';
+    });
+    document.getElementById('fav-list').innerHTML = html;
+  }
+
+  function renderHistory(){
+    if (!history.length) { document.getElementById('history-list').innerHTML = '<div class="empty-note">Здесь появится история напитков и броней.</div>'; return; }
+    var html = '';
+    history.slice().reverse().forEach(function(h){
+      html += '<div class="hist-item"><div class="hist-top"><span>' + h.type + ' · ' + h.cafe + '</span><span class="hist-status ' + h.status + '">' + (h.status==='done'?'Готово':'Ожидание') + '</span></div><div class="hist-meta">' + h.meta + '</div></div>';
+    });
+    document.getElementById('history-list').innerHTML = html;
+  }
+
+  function showScreen(name){
+    var screens = document.querySelectorAll('.screen');
+    for (var i=0;i<screens.length;i++){ screens[i].classList.remove('active'); }
+    document.getElementById('screen-' + name).classList.add('active');
+    currentScreen = name;
+    updateMainButton();
+    if (tg && tg.BackButton) {
+      if (name === 'detail' || name === 'paywall') { tg.BackButton.show(); } else { tg.BackButton.hide(); }
+    }
+  }
+
+  window.switchTab = function(name){
+    ['catalog','fav','history','profile'].forEach(function(t){
+      document.getElementById('tab-' + t).classList.toggle('active', t === name);
+    });
+    if (name === 'profile' && !subscribed) { showScreen('paywall'); return; }
+    if (name === 'fav') renderFavorites();
+    if (name === 'history') renderHistory();
+    showScreen(name);
+  };
+
+  window.openCafe = function(id){
+    activeCafeId = id;
+    var c = cafes.find(function(x){ return x.id === id; });
+    document.getElementById('detail-name').textContent = c.name;
+    haptic();
+    showScreen('detail');
+  };
+
+  window.toggleFav = function(id){
+    var c = cafes.find(function(x){ return x.id === id; });
+    c.fav = !c.fav;
+    haptic();
+    renderCatalog();
+    if (currentScreen === 'fav') renderFavorites();
+  };
+
+  window.selectSlot = function(el){
+    var slots = el.parentElement.querySelectorAll('.slot');
+    for (var i=0;i<slots.length;i++){ slots[i].classList.remove('active'); }
+    el.classList.add('active');
+    haptic();
+  };
+
+  window.requestDrink = function(){
+    if (!subscribed) { showScreen('paywall'); return; }
+    if (used < limit) { used++; }
+    document.getElementById('limit-val').textContent = (limit - used) + ' / ' + limit;
+    document.getElementById('progress-text').textContent = used + ' из ' + limit;
+    document.getElementById('progress-fill').style.width = Math.round(used/limit*100) + '%';
+    var c = cafes.find(function(x){ return x.id === activeCafeId; });
+    history.push({ type: 'Напиток', cafe: c ? c.name : '', meta: 'Только что', status: 'done' });
+    switchTab('profile');
+  };
+
+  window.openSupport = function(){
+    var url = 'https://t.me/' + SUPPORT_USERNAME;
+    if (tg) { tg.openTelegramLink(url); } else { window.open(url, '_blank'); }
+  };
+
+  window.shareReferral = function(){
+    var link = 'https://t.me/' + BOT_USERNAME + '/' + APP_SHORT_NAME + '?startapp=ref_' + userId;
+    var text = encodeURIComponent('Подключайся к ЗАВАР — подписка на кофейни в Алматы: ' + link);
+    var shareUrl = 'https://t.me/share/url?url=' + encodeURIComponent(link) + '&text=' + text;
+    if (tg) { tg.openTelegramLink(shareUrl); } else { window.open(shareUrl, '_blank'); }
+  };
+
+  function confirmBooking(){
+    var slotEl = document.querySelector('#screen-detail .slot.active');
+    var time = slotEl ? slotEl.textContent : '';
+    var c = cafes.find(function(x){ return x.id === activeCafeId; });
+    var t = document.getElementById('book-toast');
+    t.textContent = 'Бронь на ' + time + ' отправлена, ждите подтверждения в WhatsApp';
+    haptic('medium');
+    history.push({ type: 'Бронь стола', cafe: c ? c.name : '', meta: 'Сегодня, ' + time, status: 'pending' });
+    var waText = encodeURIComponent('Здравствуйте! Хочу подтвердить бронь стола в ' + (c ? c.name : '') + ' на ' + time + '.');
+    var waUrl = 'https://wa.me/' + WHATSAPP_ADMIN + '?text=' + waText;
+    if (tg) { tg.openLink(waUrl); } else { window.open(waUrl, '_blank'); }
+  }
+
+  function goToPay(){
+    if (tg) {
+      tg.openLink(KASPI_PAY_URL);
+      // В реальном продукте: бэкенд подтверждает оплату по вебхуку от Kaspi,
+      // и бот обновляет статус подписки — этот таймер здесь только для демонстрации.
+      setTimeout(function(){ subscribed = true; switchTab('profile'); }, 1200);
+    } else { subscribed = true; switchTab('profile'); }
+  }
+
+  function updateMainButton(){
+    if (!tg || !tg.MainButton) return;
+    if (currentScreen === 'detail') {
+      tg.MainButton.setText('Подтвердить бронь'); tg.MainButton.show();
+      tg.MainButton.offClick(confirmBooking); tg.MainButton.onClick(confirmBooking);
+    } else if (currentScreen === 'paywall') {
+      tg.MainButton.setText('Оформить через Kaspi Pay'); tg.MainButton.show();
+      tg.MainButton.offClick(goToPay); tg.MainButton.onClick(goToPay);
+    } else { tg.MainButton.hide(); }
+  }
+
+  if (tg && tg.BackButton) { tg.BackButton.onClick(function(){ switchTab('catalog'); }); }
+
+  renderCatalog();
+  updateMainButton();
+})();
+</script>
+</body>
+</html>
