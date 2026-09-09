@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>ЗАВАР — Mini App</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Lora:wght@400;500;600&display=swap');
+:root{
+  --bg:#f3eadb;--paper:#fffaf1;--paper2:#f7efdf;--ink:#2b1c11;--muted:#897662;
+  --coffee:#5a3519;--coffee2:#744820;--gold:#c99555;--line:#dfd0ba;
+  --green:#667452;--danger:#9a5b4e;--shadow:0 10px 28px rgba(61,39,20,.10);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;background:#241a12;color:var(--ink);font-family:Lora,serif}
+body{min-height:100vh}
+button{font:inherit}
+#app{width:100%;max-width:430px;min-height:100vh;margin:auto;background:var(--bg);padding:12px 16px 92px;position:relative;overflow:hidden}
+.topbar{height:46px;display:flex;align-items:center;justify-content:space-between;color:#d9c6a9}
+.brand{text-align:center;line-height:1}.brand b{font:700 17px 'Cormorant Garamond',serif;letter-spacing:.08em}.brand span{display:block;font-size:8px;letter-spacing:.12em;color:#9f8c75;margin-top:3px}
+.top-action{border:1px solid #6d5840;border-radius:50%;width:30px;height:30px;background:transparent;color:#d9c6a9}
+.screen{display:none}.screen.active{display:block}
+.hero{background:linear-gradient(135deg,#70491f,#3e2715);border-radius:22px;padding:18px;color:#fff8ed;box-shadow:var(--shadow);margin-bottom:14px}
+.hero-row{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.greeting{font-size:12px;color:#d9c6a9}.hero-title{font:700 28px 'Cormorant Garamond',serif;margin-top:2px}.hero-sub{font-size:11px;color:#dfcfb9;margin-top:3px}
+.qr-mini{width:70px;height:70px;background:#fff;border-radius:10px;padding:6px;display:grid;grid-template-columns:repeat(7,1fr);gap:2px}.qr-mini i{background:#2b1c11}.qr-mini i.off{background:#fff}
+.subscription{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:14px;margin-bottom:14px;box-shadow:var(--shadow)}
+.sub-head{display:flex;justify-content:space-between;align-items:center}.eyebrow{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}.big-count{font:700 27px 'Cormorant Garamond',serif;color:var(--coffee)}
+.progress{height:7px;background:#e5d8c5;border-radius:99px;margin:10px 0 7px;overflow:hidden}.progress>span{display:block;height:100%;background:var(--gold);border-radius:99px;width:67%}
+.progress-meta{display:flex;justify-content:space-between;font-size:10px;color:var(--muted)}
+.section-head{display:flex;justify-content:space-between;align-items:end;margin:18px 0 9px}.section-head h2{font:700 23px 'Cormorant Garamond',serif}.section-head a{font-size:10px;color:var(--coffee)}
+.chips{display:flex;gap:7px;overflow-x:auto;padding-bottom:4px;margin-bottom:11px}.chips::-webkit-scrollbar{display:none}
+.chip{white-space:nowrap;border:1px solid var(--line);background:var(--paper);padding:8px 12px;border-radius:99px;font-size:10.5px;color:var(--muted)}.chip.on{background:var(--coffee);color:#fff7eb;border-color:var(--coffee)}
+.cafe-card{background:var(--paper);border-radius:18px;overflow:hidden;margin-bottom:11px;box-shadow:var(--shadow);border:1px solid rgba(160,125,88,.18)}
+.cafe-img{height:125px;background-size:cover;background-position:center;position:relative}.fav{position:absolute;right:10px;top:10px;border:0;background:rgba(255,250,241,.9);width:32px;height:32px;border-radius:50%;color:var(--coffee);font-size:16px}
+.cafe-body{padding:12px 13px}.cafe-title{display:flex;justify-content:space-between;gap:8px;font-size:15px;font-weight:600}.rating{font-size:10px;color:var(--gold)}.meta{font-size:10.5px;color:var(--muted);margin-top:4px}.tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}.tag{font-size:9px;background:var(--paper2);padding:5px 7px;border-radius:99px;color:#735f4b}.cafe-bottom{display:flex;justify-content:space-between;align-items:center;margin-top:10px}.status{font-size:10px;color:var(--green);font-weight:600}.btn{border:0;background:var(--coffee);color:#fff8ed;border-radius:12px;padding:10px 13px;font-size:10.5px;font-weight:600}.btn.gold{background:var(--gold);color:#2b1c11}.btn.light{background:var(--paper2);color:var(--coffee);border:1px solid var(--line)}
+.quick-row{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:14px}.quick{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:12px;box-shadow:var(--shadow)}.quick b{font-size:11px}.quick p{margin:4px 0 0;font-size:9.5px;color:var(--muted);line-height:1.4}
+.map-card{height:190px;border-radius:20px;background:linear-gradient(145deg,#dfd0ba,#f8f0e3);position:relative;overflow:hidden;border:1px solid var(--line);margin-bottom:14px}.map-grid{position:absolute;inset:0;background-image:linear-gradient(28deg,transparent 47%,rgba(115,91,62,.14) 48%,transparent 50%),linear-gradient(112deg,transparent 47%,rgba(115,91,62,.12) 48%,transparent 50%);background-size:72px 72px}.road{position:absolute;background:#fffaf1;transform:rotate(-25deg);height:26px;width:125%;left:-10%;top:74px;box-shadow:0 1px 0 rgba(100,70,40,.08)}.road.r2{transform:rotate(20deg);top:124px}.pin{position:absolute;width:27px;height:27px;border-radius:50% 50% 50% 4px;background:var(--coffee);transform:rotate(-45deg);display:flex;align-items:center;justify-content:center;color:white;font-size:11px}.pin span{transform:rotate(45deg)}.p1{left:25%;top:35%}.p2{left:58%;top:22%;background:var(--gold)}.p3{left:72%;top:63%;background:var(--green)}
+.filter-row{display:flex;gap:6px;overflow:auto;margin-bottom:10px}.filter{white-space:nowrap;font-size:9.5px;padding:7px 9px;border-radius:99px;background:var(--paper);border:1px solid var(--line)}.filter.on{background:var(--coffee);color:#fff}
+.detail-image{height:180px;border-radius:20px;background-size:cover;background-position:center;margin-bottom:12px}.detail-title{font:700 31px 'Cormorant Garamond',serif}.detail-meta{font-size:11px;color:var(--muted);margin:3px 0 15px}.toggle{display:flex;background:var(--paper);border-radius:99px;padding:4px;border:1px solid var(--line);margin-bottom:14px}.toggle button{flex:1;border:0;background:transparent;padding:8px;border-radius:99px;font-size:11px;color:var(--muted)}.toggle button.on{background:var(--coffee);color:#fff}
+.option-title{font-size:11px;color:var(--muted);margin:13px 0 7px}.options{display:flex;gap:7px;flex-wrap:wrap}.option{border:1px solid var(--line);background:var(--paper);border-radius:12px;padding:9px 11px;font-size:10px}.option.on{background:var(--coffee);color:white;border-color:var(--coffee)}
+.preorder{background:linear-gradient(135deg,#f9f0e0,#eadbc4);border-radius:18px;padding:13px;margin-top:13px;border:1px solid var(--line)}.pre-head{display:flex;justify-content:space-between;align-items:center}.pre-title{font-weight:600;font-size:12px}.time-badge{font-size:9px;background:#fffaf1;border-radius:99px;padding:6px 8px}.time-options{display:flex;gap:6px;overflow:auto;margin-top:9px}.time{white-space:nowrap;border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:9.5px;background:#fffaf1}.time.on{background:var(--gold);border-color:var(--gold);font-weight:600}
+.group-card{background:var(--coffee);color:#fff8ed;border-radius:19px;padding:16px;margin:14px 0}.group-card h3{font:700 23px 'Cormorant Garamond',serif}.group-card p{font-size:10px;color:#ddccb3;line-height:1.45}.group-code{display:flex;gap:8px;margin-top:11px}.group-code input{min-width:0;flex:1;border:0;border-radius:11px;padding:10px;background:#fff8ed;color:var(--ink);font-size:11px}.group-members{font-size:9px;margin-top:8px;color:#ddccb3}
+.order{background:var(--paper);border:1px solid var(--line);border-radius:17px;padding:13px;margin-bottom:9px}.order-head{display:flex;justify-content:space-between;font-size:11px;font-weight:600}.order-meta{font-size:9.5px;color:var(--muted);margin-top:3px}.order-bottom{display:flex;justify-content:space-between;align-items:center;margin-top:9px}.order-price{font-weight:600;font-size:12px}.pill-status{font-size:9px;padding:5px 8px;border-radius:99px;background:#e7eddf;color:var(--green)}
+.profile{background:var(--paper);border:1px solid var(--line);border-radius:20px;padding:16px;margin-bottom:12px}.profile-head{display:flex;align-items:center;gap:11px}.avatar{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,#d6a45e,#70491f);display:flex;align-items:center;justify-content:center;font:700 20px 'Cormorant Garamond',serif;color:white}.profile-name{font:700 21px 'Cormorant Garamond',serif}.profile-sub{font-size:9.5px;color:var(--muted)}.membership{background:linear-gradient(135deg,#6b421e,#382311);color:#fff8ed;border-radius:18px;padding:16px;margin-top:14px}.membership-top{display:flex;justify-content:space-between}.membership .num{font:700 35px 'Cormorant Garamond',serif}.benefits{margin-top:12px}.benefit{display:flex;gap:8px;align-items:center;font-size:10px;margin:9px 0;color:#eadbc8}.benefit i{width:21px;height:21px;border-radius:50%;background:#8d6335;display:flex;align-items:center;justify-content:center;font-style:normal}.achievements{display:grid;grid-template-columns:1fr 1fr;gap:8px}.achievement{background:var(--paper);border:1px solid var(--line);border-radius:15px;padding:12px}.achievement .icon{font-size:20px}.achievement b{display:block;font-size:10.5px;margin-top:5px}.achievement span{display:block;font-size:8.5px;color:var(--muted);margin-top:3px}.settings-row{display:flex;justify-content:space-between;align-items:center;background:var(--paper);border:1px solid var(--line);padding:13px;border-radius:14px;margin-top:8px;font-size:10.5px}.settings-row small{display:block;color:var(--muted);font-size:8.5px;margin-top:3px}
+.bottomnav{position:fixed;left:50%;transform:translateX(-50%);bottom:0;width:100%;max-width:430px;background:rgba(243,234,219,.96);backdrop-filter:blur(14px);border-top:1px solid var(--line);display:flex;padding:8px 4px calc(8px + env(safe-area-inset-bottom));z-index:50}.navitem{flex:1;text-align:center;color:var(--muted);font-size:9px;cursor:pointer}.navicon{font-size:17px;display:block;margin-bottom:2px}.navitem.active{color:var(--coffee);font-weight:600}
+.overlay{position:fixed;inset:0;background:rgba(34,22,12,.48);display:none;align-items:flex-end;justify-content:center;z-index:100}.overlay.show{display:flex}.sheet{width:100%;max-width:430px;background:var(--bg);border-radius:25px 25px 0 0;padding:18px 16px 28px;max-height:88vh;overflow:auto}.sheet-head{display:flex;justify-content:space-between;align-items:center}.sheet h2{font:700 25px 'Cormorant Garamond',serif}.close-sheet{border:0;background:var(--paper);border:1px solid var(--line);border-radius:50%;width:30px;height:30px}.big-qr{width:180px;height:180px;background:#fff;margin:18px auto;padding:12px;display:grid;grid-template-columns:repeat(9,1fr);gap:3px;border-radius:12px}.big-qr i{background:#241a12}.big-qr i.off{background:white}.center{text-align:center}.muted{font-size:10px;color:var(--muted);line-height:1.5}
+.toast{position:fixed;left:50%;bottom:86px;transform:translateX(-50%) translateY(15px);background:#2b1c11;color:#fff8ed;padding:10px 14px;border-radius:99px;font-size:10px;opacity:0;pointer-events:none;transition:.25s;z-index:120;white-space:nowrap}.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="topbar"><button class="top-action" onclick="app.showToast('Уведомления пока пусты')">•</button><div class="brand"><b>ZAVAR</b><span>COFFEE SUBSCRIPTION</span></div><button class="top-action" onclick="app.showSheet('qr')">⌁</button></div>
+
+  <section class="screen active" id="screen-home">
+    <div class="hero">
+      <div class="hero-row"><div><div class="greeting">ДОБРОЕ УТРО,</div><div class="hero-title" id="hello">Гость</div><div class="hero-sub">Твой кофе уже ждёт</div></div><div class="qr-mini" id="miniQr"></div></div>
+    </div>
+    <div class="subscription">
+      <div class="sub-head"><div><div class="eyebrow">Подписка ZAVAR</div><div class="big-count"><span id="remain">8</span> / 12 напитков</div></div><button class="btn gold" onclick="app.showSheet('qr')">Получить кофе</button></div>
+      <div class="progress"><span id="progress"></span></div><div class="progress-meta"><span id="usedText">4 использовано</span><span>до 4 окт</span></div>
+    </div>
+
+    <div class="section-head"><h2>Кофе на сегодня</h2><a onclick="app.switchTab('catalog')">Все кофейни →</a></div>
+    <div class="quick-row"><div class="quick" onclick="app.openCafe(1)"><b>⚡ Забрать без очереди</b><p>Предзакажи кофе к нужному времени.</p></div><div class="quick" onclick="app.showSheet('group')"><b>☕ Кофе на отдел</b><p>Собери 4–5 напитков одним заказом.</p></div></div>
+    <div id="homeCafes"></div>
+  </section>
+
+  <section class="screen" id="screen-catalog">
+    <div class="section-head"><h2>Кофейни</h2><a onclick="app.showSheet('map')">Карта →</a></div>
+    <div class="filter-row" id="workFilters"></div>
+    <div class="chips" id="categoryChips"></div>
+    <div id="catalog"></div>
+  </section>
+
+  <section class="screen" id="screen-orders">
+    <div class="section-head"><h2>Заказы</h2><a onclick="app.showSheet('group')">Групповой →</a></div>
+    <div class="chips"><div class="chip on">Активные</div><div class="chip">История</div></div>
+    <div id="orders"></div>
+  </section>
+
+  <section class="screen" id="screen-profile">
+    <div class="profile">
+      <div class="profile-head"><div class="avatar" id="avatar">Г</div><div><div class="profile-name" id="profileName">Гость</div><div class="profile-sub">Подписчик ZAVAR · Алматы</div></div></div>
+      <div class="membership"><div class="membership-top"><div><div class="eyebrow" style="color:#cdb99e">MEMBERSHIP CARD</div><div class="num">8 напитков</div><div style="font-size:9px;color:#d7c6ad">осталось в этом месяце</div></div><div style="font-size:25px">♛</div></div><div class="benefits"><div class="benefit"><i>✓</i>12 напитков в месяц по сети</div><div class="benefit"><i>◆</i>Премиум-доступ к акциям</div><div class="benefit"><i>⌂</i>Бронь стола без очереди</div><div class="benefit"><i>+</i>Пригласи друга → +1 напиток</div></div></div>
+    </div>
+    <div class="section-head"><h2>Мой кофе</h2><a onclick="app.showSheet('coffee')">Изменить →</a></div>
+    <div class="settings-row" onclick="app.showSheet('coffee')"><div><b id="myCoffee">Капучино · овсяное · M</b><small>Бариста увидит рецепт автоматически</small></div><span>→</span></div>
+    <div class="section-head"><h2>Ачивки</h2><span style="font-size:9px;color:var(--muted)">3 из 8</span></div>
+    <div class="achievements"><div class="achievement"><div class="icon">🌅</div><b>Ранняя пташка</b><span>3 кофе до 08:30 подряд</span></div><div class="achievement"><div class="icon">🗺️</div><b>Исследователь</b><span>5 разных кофеен</span></div><div class="achievement"><div class="icon">🔥</div><b>Стрик 7 дней</b><span>Ещё 2 дня до награды</span></div><div class="achievement"><div class="icon">👥</div><b>Командный игрок</b><span>Собери групповой заказ</span></div></div>
+    <div class="section-head"><h2>Пригласи друга</h2></div>
+    <div class="settings-row" onclick="app.share()"><div><b>ZAVAR-<span id="ref">0000</span></b><small>Друг получает скидку, ты — бонусный напиток</small></div><span>Поделиться ↗</span></div>
+  </section>
+
+  <section class="screen" id="screen-detail">
+    <div class="detail-image" id="detailImage"></div>
+    <div class="detail-title" id="detailName">CULT COFFEE</div><div class="detail-meta" id="detailMeta"></div>
+    <div class="toggle"><button id="drinkToggle" class="on" onclick="app.setDetailMode('drink')">Напиток</button><button id="tableToggle" onclick="app.setDetailMode('table')">Стол</button></div>
+    <div id="drinkOptions">
+      <div class="option-title">Размер</div><div class="options" id="sizes"></div>
+      <div class="option-title">Молоко</div><div class="options" id="milks"></div>
+      <div class="preorder"><div class="pre-head"><div><div class="pre-title">⚡ Приготовить к</div><div class="muted">Без очереди — бариста начнёт заранее</div></div><div class="time-badge" id="arrival">через 7 мин</div></div><div class="time-options" id="times"></div><button class="btn gold" style="width:100%;margin-top:10px" onclick="app.preorder()">Заказать на время</button></div>
+    </div>
+    <div id="tableOptions" style="display:none"><div class="option-title">Время</div><div class="options" id="slots"></div><div class="option-title">Гости</div><div class="options" id="guests"></div><button class="btn" style="width:100%;margin-top:14px" onclick="app.bookTable()">Забронировать стол</button></div>
+  </section>
+</div>
+
+<nav class="bottomnav">
+  <div class="navitem active" id="nav-home" onclick="app.switchTab('home')"><span class="navicon">⌂</span>Главная</div>
+  <div class="navitem" id="nav-catalog" onclick="app.switchTab('catalog')"><span class="navicon">▦</span>Кофейни</div>
+  <div class="navitem" id="nav-orders" onclick="app.switchTab('orders')"><span class="navicon">▤</span>Заказы</div>
+  <div class="navitem" id="nav-profile" onclick="app.switchTab('profile')"><span class="navicon">♙</span>Профиль</div>
+</nav>
+
+<div class="overlay" id="overlay" onclick="if(event.target===this)app.closeSheet()"><div class="sheet">
+  <div class="sheet-head"><h2 id="sheetTitle">ZAVAR</h2><button class="close-sheet" onclick="app.closeSheet()">×</button></div>
+  <div id="sheetContent"></div>
+</div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const app=(()=>{
+ const tg=window.Telegram&&window.Telegram.WebApp;
+ const user=(tg&&tg.initDataUnsafe&&tg.initDataUnsafe.user)||{};
+ const state={tab:'home',cafe:1,mode:'drink',size:'M',milk:'Овсяное',time:'08:55',slot:'12:00',guests:'2',used:4,category:'Все',filters:[]};
+ const cafes=[
+  {id:1,name:'CULT COFFEE',meta:'Есентай · 400 м · до 22:00',rating:'4.7',img:'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=900&q=80',tags:['Wi-Fi','Розетки','Тихо'],cat:'Эспрессо',status:'Оффпик до 13:00'},
+  {id:2,name:'MOTO COFFEE',meta:'Абая · 750 м · до 23:00',rating:'4.5',img:'https://images.unsplash.com/photo-1445116572660-236099ec97a0?auto=format&fit=crop&w=900&q=80',tags:['Dog-friendly','Выпечка'],cat:'Спешалти',status:'Оффпик до 13:00'},
+  {id:3,name:'SHOKO',meta:'Достык · 1.1 км · до 21:00',rating:'4.8',img:'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=900&q=80',tags:['Wi-Fi','Тихо','Выпечка'],cat:'Латте',status:'Свободные столы'},
+  {id:4,name:'BURO',meta:'Сатпаева · 1.4 км · до 22:00',rating:'4.6',img:'https://images.unsplash.com/photo-1498804103079-a6351b050096?auto=format&fit=crop&w=900&q=80',tags:['Розетки','Wi-Fi'],cat:'Холодный',status:'Оффпик до 12:00'}
+ ];
+ let orders=[{type:'Предзаказ · Капучино',cafe:'CULT COFFEE',meta:'сегодня · 08:55',status:'Бариста готовит',price:'0 ₸'},{type:'Групповой заказ · 4 напитка',cafe:'MOTO COFFEE',meta:'сегодня · 12:40',status:'Ожидает участников',price:'0 ₸'}];
+
+ function haptic(){if(tg&&tg.HapticFeedback)tg.HapticFeedback.impactOccurred('light')}
+ function init(){
+  if(tg){tg.ready();tg.expand();tg.setHeaderColor('#241a12');tg.setBackgroundColor('#241a12')}
+  const name=user.first_name||'Гость'; document.getElementById('hello').textContent=name;document.getElementById('profileName').textContent=name;document.getElementById('avatar').textContent=name[0].toUpperCase();document.getElementById('ref').textContent=String(user.id||4821).slice(-4);
+  renderAll();
+ }
+ function cafeCard(c){
+  return `<article class="cafe-card"><div class="cafe-img" style="background-image:url('${c.img}')"><button class="fav" onclick="app.showToast('Добавлено в избранное')">♡</button></div><div class="cafe-body"><div class="cafe-title"><span>${c.name}</span><span class="rating">★ ${c.rating}</span></div><div class="meta">${c.meta}</div><div class="tags">${c.tags.map(x=>`<span class="tag">${x}</span>`).join('')}</div><div class="cafe-bottom"><span class="status">● ${c.status}</span><button class="btn" onclick="app.openCafe(${c.id})">Выбрать</button></div></div></article>`
+ }
+ function renderAll(){renderHome();renderCatalog();renderOrders();renderOptions();renderNav()}
+ function renderHome(){document.getElementById('remain').textContent=12-state.used;document.getElementById('usedText').textContent=state.used+' использовано';document.getElementById('progress').style.width=((12-state.used)/12*100)+'%';document.getElementById('homeCafes').innerHTML=cafes.slice(0,2).map(cafeCard).join('')}
+ function renderCatalog(){
+  const wf=[['⚡','Для работы'],['🔌','Розетки'],['📶','Wi-Fi'],['🤫','Тихо'],['🐶','Dog-friendly'],['🥐','Выпечка']];
+  document.getElementById('workFilters').innerHTML=wf.map(([i,t])=>`<div class="filter ${state.filters.includes(t)?'on':''}" onclick="app.toggleFilter('${t}')">${i} ${t}</div>`).join('');
+  const cats=['Все','Эспрессо','Спешалти','Латте','Холодный'];document.getElementById('categoryChips').innerHTML=cats.map(c=>`<div class="chip ${state.category===c?'on':''}" onclick="app.category('${c}')">${c}</div>`).join('');
+  let list=state.category==='Все'?cafes:cafes.filter(c=>c.cat===state.category);
+  if(state.filters.length)list=list.filter(c=>state.filters.every(f=>f==='Для работы'?c.tags.includes('Wi-Fi')||c.tags.includes('Розетки'):c.tags.includes(f)));
+  document.getElementById('catalog').innerHTML=list.length?list.map(cafeCard).join(''):'<div class="muted center" style="padding:30px">По этим фильтрам пока ничего не найдено.</div>';
+ }
+ function renderOrders(){document.getElementById('orders').innerHTML=orders.map(o=>`<div class="order"><div class="order-head"><span>${o.type}</span><span class="pill-status">${o.status}</span></div><div class="order-meta">${o.cafe} · ${o.meta}</div><div class="order-bottom"><span class="order-price">${o.price}</span><button class="btn light" onclick="app.showToast('Детали заказа открыты')">Подробнее</button></div></div>`).join('')}
+ function renderOptions(){
+  document.getElementById('sizes').innerHTML=['S','M','L'].map(x=>`<div class="option ${state.size===x?'on':''}" onclick="app.size='${x}'">${x} ${x==='L'?'+500 ₸':''}</div>`).join('');
+  document.getElementById('milks').innerHTML=['Обычное','Овсяное','Миндальное','Без молока'].map(x=>`<div class="option ${state.milk===x?'on':''}" onclick="app.milk='${x}'">${x}</div>`).join('');
+  document.getElementById('times').innerHTML=['08:55','09:10','09:25','12:40','13:00'].map(x=>`<div class="time ${state.time===x?'on':''}" onclick="app.time='${x}'">${x}</div>`).join('');
+  document.getElementById('slots').innerHTML=['11:30','12:00','12:30','13:00','14:00'].map(x=>`<div class="option ${state.slot===x?'on':''}" onclick="app.slot='${x}'">${x}</div>`).join('');
+  document.getElementById('guests').innerHTML=['1','2','3–4'].map(x=>`<div class="option ${state.guests===x?'on':''}" onclick="app.guests='${x}'">${x} гост.</div>`).join('');
+ }
+ function switchTab(tab){state.tab=tab;document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById('screen-'+tab).classList.add('active');renderNav();haptic()}
+ function renderNav(){['home','catalog','orders','profile'].forEach(t=>document.getElementById('nav-'+t).classList.toggle('active',state.tab===t))}
+ function openCafe(id){state.cafe=id;state.mode='drink';const c=cafes.find(x=>x.id===id);document.getElementById('detailImage').style.backgroundImage=`url('${c.img}')`;document.getElementById('detailName').textContent=c.name;document.getElementById('detailMeta').textContent=c.meta+' · '+c.tags.join(' · ');document.getElementById('screen-home').classList.remove('active');document.getElementById('screen-catalog').classList.remove('active');document.getElementById('screen-orders').classList.remove('active');document.getElementById('screen-profile').classList.remove('active');document.getElementById('screen-detail').classList.add('active');document.querySelectorAll('.navitem').forEach(x=>x.classList.remove('active'));renderOptions();haptic()}
+ function setDetailMode(mode){state.mode=mode;document.getElementById('drinkOptions').style.display=mode==='drink'?'block':'none';document.getElementById('tableOptions').style.display=mode==='table'?'block':'none';document.getElementById('drinkToggle').classList.toggle('on',mode==='drink');document.getElementById('tableToggle').classList.toggle('on',mode==='table');haptic()}
+ function preorder(){if(12-state.used<=0){showSheet('subscribe');return}state.used++;const c=cafes.find(x=>x.id===state.cafe);orders.unshift({type:`Предзаказ · ${state.milk==='Без молока'?'Эспрессо':'Капучино'}`,cafe:c.name,meta:`сегодня · ${state.time}`,status:'Бариста готовит',price:'0 ₸'});renderAll();showToast(`Заказ принят · забрать в ${state.time}`);switchTab('orders')}
+ function bookTable(){const c=cafes.find(x=>x.id===state.cafe);orders.unshift({type:`Бронь стола · ${state.guests} гост.`,cafe:c.name,meta:`сегодня · ${state.slot}`,status:'На подтверждении',price:'0 ₸'});renderOrders();showToast('Бронь отправлена на подтверждение');switchTab('orders')}
+ function showSheet(type){
+  const title=document.getElementById('sheetTitle'),box=document.getElementById('sheetContent');
+  if(type==='qr'){title.textContent='Ваш QR-код';box.innerHTML=`<div class="big-qr" id="bigQr"></div><div class="center"><b>Покажите бариста</b><p class="muted">Одно списание напитка. Ваш базовый кофе передастся автоматически.</p><button class="btn gold" onclick="app.closeSheet();app.showToast('QR-код активирован')">Готово</button></div>`;makeQr('bigQr',81)}
+  if(type==='map'){title.textContent='Кофейни рядом';box.innerHTML=`<div class="map-card"><div class="map-grid"></div><div class="road"></div><div class="road r2"></div><div class="pin p1"><span>1</span></div><div class="pin p2"><span>2</span></div><div class="pin p3"><span>3</span></div></div><div class="filter-row"><div class="filter on">⚡ Ближе 1 км</div><div class="filter">📶 Wi-Fi</div><div class="filter">🔌 Розетки</div></div><button class="btn" style="width:100%" onclick="app.closeSheet();app.openCafe(1)">Открыть CULT COFFEE</button>`}
+  if(type==='group'){title.textContent='Кофе на отдел';box.innerHTML=`<div class="group-card"><h3>Собери заказ с друзьями</h3><p>Ты создаёшь общий заказ, друзья добавляют напитки со своих подписок. Бариста получает всё одной выдачей.</p><div class="group-code"><input id="groupLink" value="zavar.app/g/7K4P" readonly><button class="btn gold" onclick="app.copyGroup()">Копировать</button></div><div class="group-members">👤 Ты · 👤 Алия · 👤 Данияр · +1 участник</div></div><button class="btn" style="width:100%" onclick="app.shareGroup()">Пригласить друзей ↗</button>`}
+  if(type==='coffee'){title.textContent='Мой базовый кофе';box.innerHTML=`<p class="muted">Сохраним рецепт и передадим его бариста при каждом списании.</p><div class="option-title">Напиток</div><div class="options">${['Капучино','Латте','Американо','Эспрессо'].map((x,i)=>`<div class="option ${i===0?'on':''}" onclick="app.setMyCoffee('${x}')">${x}</div>`).join('')}</div><div class="option-title">Молоко</div><div class="options">${['Обычное','Овсяное','Миндальное'].map((x,i)=>`<div class="option ${i===1?'on':''}" onclick="app.setMyMilk('${x}')">${x}</div>`).join('')}</div><button class="btn gold" style="width:100%;margin-top:18px" onclick="app.closeSheet();app.showToast('Базовый кофе сохранён')">Сохранить рецепт</button>`}
+  if(type==='subscribe'){title.textContent='Подписка ZAVAR';box.innerHTML=`<div class="membership"><div class="eyebrow" style="color:#cdb99e">MEMBERSHIP</div><div class="num">8 000 ₸ / месяц</div><div class="muted" style="color:#d7c6ad">12 напитков · вся сеть · отмена в любой момент</div></div><button class="btn gold" style="width:100%;margin-top:14px" onclick="app.closeSheet();app.showToast('Переход к Kaspi Pay')">Оформить через Kaspi Pay</button>`}
+  document.getElementById('overlay').classList.add('show')
+ }
+ function closeSheet(){document.getElementById('overlay').classList.remove('show')}
+ function makeQr(id,n){const el=document.getElementById(id);if(!el)return;let s='';for(let i=0;i<n;i++)s+=`<i class="${Math.random()>.48?'':'off'}"></i>`;el.innerHTML=s}
+ function toggleFilter(f){state.filters=state.filters.includes(f)?state.filters.filter(x=>x!==f):[...state.filters,f];renderCatalog();haptic()}
+ function category(c){state.category=c;renderCatalog();haptic()}
+ function showToast(text){const t=document.getElementById('toast');t.textContent=text;t.classList.add('show');clearTimeout(window.__toast);window.__toast=setTimeout(()=>t.classList.remove('show'),2200)}
+ function copyGroup(){navigator.clipboard?.writeText('https://t.me/zavar_bot/app?startapp=group_7K4P');showToast('Ссылка скопирована')}
+ function share(){const url='https://t.me/share/url?url=https://t.me/zavar_bot/app?startapp=ref_'+(user.id||4821)+'&text=Пойдём за кофе в ZAVAR ☕';if(tg)tg.openTelegramLink(url);else window.open(url,'_blank')}
+ function shareGroup(){const url='https://t.me/share/url?url=https://t.me/zavar_bot/app?startapp=group_7K4P&text=Заказываем кофе вместе ☕';if(tg)tg.openTelegramLink(url);else window.open(url,'_blank')}
+ function setMyCoffee(x){document.getElementById('myCoffee').textContent=x+' · овсяное · M'}
+ function setMyMilk(x){document.getElementById('myCoffee').textContent='Капучино · '+x.toLowerCase()+' · M'}
+ return {init,switchTab,openCafe,setDetailMode,preorder,bookTable,showSheet,closeSheet,toggleFilter,category,showToast,copyGroup,share,shareGroup,setMyCoffee,setMyMilk,
+   set size(v){state.size=v;renderOptions()},set milk(v){state.milk=v;renderOptions()},set time(v){state.time=v;document.getElementById('arrival').textContent='к '+v;renderOptions()},set slot(v){state.slot=v;renderOptions()},set guests(v){state.guests=v;renderOptions()}}
+})();
+function makeMini(){const e=document.getElementById('miniQr');for(let i=0;i<49;i++){const x=document.createElement('i');if(Math.random()<=.48)x.className='off';e.appendChild(x)}}
+makeMini();app.init();
+</script>
+</body>
+</html>
