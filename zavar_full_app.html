@@ -417,6 +417,77 @@ document.addEventListener('DOMContentLoaded', async function() {
     // Делаем функцию доступной глобально, чтобы к ней можно было обратиться отовсюду
     window.sendDataToSheets = sendDataToSheets;
   </script>
+
+  <script>
+    // Инициализируем Telegram WebApp
+    const tg = window.Telegram?.WebApp;
+    if (tg) {
+      tg.ready();
+      tg.expand(); // Разворачиваем окно на весь экран
+    }
+
+    // 1. Указываем URL вашего Google Apps Script
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyN3Y-Qj6e2gDvII4FSTvsieXCd2jWUSdcCvur_e4Uu8ZL1siXQXKifljf0MTJsrOF3/exec'; // <-- Вставьте ваш URL из Шага с деплоем
+
+    // 2. Функция отправки запроса в Google Таблицу
+    async function sendDataToSheets(dataToSend) {
+      try {
+        await fetch(SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors', // Обязательно для Google Apps Script
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(dataToSend)
+        });
+        console.log('Данные успешно отправлены!');
+      } catch (error) {
+        console.error('Ошибка отправки:', error);
+      }
+    }
+
+    // 3. Функция сбора данных профиля из Telegram
+    function getTelegramUserData() {
+      if (tg && tg.initDataUnsafe && tg.initDataUnsafe.user) {
+        const user = tg.initDataUnsafe.user;
+        return {
+          telegram_id: user.id || '',
+          name: `${user.first_name || ''} ${user.last_name || ''}`.trim(),
+          username: user.username ? `@${user.username}` : ''
+        };
+      }
+      // Запасной вариант для тестирования через обычный браузер
+      return {
+        telegram_id: 'test_id',
+        name: 'Тестовый Пользователь',
+        username: '@test'
+      };
+    }
+
+    // 4. Привязываем событие к кнопке отправки
+    // Замените 'sendBtn' на ID вашей реальной кнопки в HTML/React
+    document.addEventListener('DOMContentLoaded', () => {
+      const btn = document.getElementById('sendBtn') || document.querySelector('button');
+      
+      if (btn) {
+        btn.addEventListener('click', () => {
+          const user = getTelegramUserData();
+
+          // Формируем итоговый объект для отправки в Таблицу
+          const payload = {
+            name: user.name,
+            telegram_id: user.telegram_id,
+            action: user.username, // Или значение из инпута/формы
+            comment: 'Отправлено из Telegram WebApp'
+          };
+
+          sendDataToSheets(payload);
+          alert(`Спасибо, ${user.name}! Данные отправлены.`);
+        });
+      }
+    });
+  </script>
+</body>
 </body>
 </html>
 </body>
