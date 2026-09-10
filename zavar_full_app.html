@@ -93,9 +93,6 @@
   .cafe-banner { height: 110px; border: 1.5px dashed var(--border); border-radius: 16px; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; color: var(--ink-3); font-size: 11px; }
   .cafe-name-big { font-size: 26px; margin-bottom: 2px; display: flex; justify-content: space-between; align-items: center; }
   .cafe-meta-big { font-size: 12px; color: var(--ink-2); margin-bottom: 14px; }
-  .mode-toggle { display: flex; background: var(--card); border: 1px solid var(--border); border-radius: 100px; padding: 4px; margin-bottom: 14px; }
-  .mode-btn { flex: 1; text-align: center; font-size: 12.5px; padding: 8px 0; border-radius: 100px; cursor: pointer; color: var(--ink-2); }
-  .mode-btn.active { background: var(--dark-1); color: var(--dark-text); font-weight: 600; }
   .pill-row { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
   .pill { font-size: 12px; padding: 8px 12px; border-radius: 10px; border: 1px solid var(--border); background: var(--card); cursor: pointer; text-align: center; color: var(--ink); }
   .pill .note { display: block; font-size: 9.5px; color: var(--ink-2); margin-top: 2px; }
@@ -196,6 +193,7 @@
   <!-- CATALOG -->
   <div class="screen" id="screen-catalog">
     <h3 class="sec-title" id="catalog-title" style="margin-bottom:14px;">Кофеханалар</h3>
+    <div class="chip-row" id="sort-chips"></div>
     <div class="chip-row" id="category-chips"></div>
     <div class="chip-row" id="tag-chips"></div>
     <div id="catalog-list"></div>
@@ -213,10 +211,19 @@
     <div class="profile-head">
       <div class="avatar" id="profile-avatar">Қ</div>
       <div><div class="profile-name" id="profile-name">Қонақ</div><div class="profile-sub" id="profile-sub">ЗАВАР жазылушысы</div></div>
+      <div class="icon-circle bell" id="settings-btn" onclick="app.openSettings()" style="margin-left:auto;">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09a1.65 1.65 0 00-1-1.51 1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09a1.65 1.65 0 001.51-1 1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+      </div>
     </div>
     <div class="status-card"><span><span class="status-dot"></span><span id="sub-active-text">Жазылым белсенді</span></span><span class="status-date">4 қазанға дейін</span></div>
     <div class="qr-box"><div class="qr-grid" id="qr-pattern"></div></div>
     <div class="qr-caption" id="qr-caption">Сусынды есептен шығару үшін баристаға көрсетіңіз</div>
+  </div>
+
+  <!-- SETTINGS -->
+  <div class="screen" id="screen-settings">
+    <div class="back-row" id="settings-back-label" onclick="app.switchTab('profile')">‹ Артқа</div>
+    <h3 class="sec-title" id="settings-title" style="margin-bottom:14px;">Баптаулар</h3>
     <div class="ref-card">
       <div class="ref-label" id="default-coffee-label">Менің негізгі кофем</div>
       <div class="pill-row" id="default-size-pills"></div>
@@ -243,11 +250,6 @@
     <div class="cafe-name-big"><span id="detail-name">CULT COFFEE</span><span class="fav-btn" id="detail-fav" onclick="app.toggleFavActive()">♥</span></div>
     <div class="cafe-meta-big" id="detail-meta">Есентай · 400 м · 22:00 дейін</div>
 
-    <div class="mode-toggle">
-      <div class="mode-btn active" id="mode-drink" onclick="app.setMode('drink')">Сусын</div>
-      <div class="mode-btn" id="mode-table" onclick="app.setMode('table')">Үстел</div>
-    </div>
-
     <div id="drink-mode">
       <div class="section-label" id="field-size-label">Өлшем</div>
       <div class="pill-row" id="size-pills"></div>
@@ -255,9 +257,11 @@
       <div class="pill-row" id="milk-pills"></div>
       <div class="total-row"><span id="extra-label">Жазылымнан тыс төлем</span><span id="extra-total">0 ₸</span></div>
       <div class="confirm-note" id="drink-note">Негізгі сусын жазылымға кіреді, қосымша төлем — тек L өлшемі немесе балама сүт үшін.</div>
+      <div class="sec-link" id="table-link" onclick="app.setMode('table')" style="margin-top:16px;">Үстел брондау →</div>
     </div>
 
     <div id="table-mode" style="display:none;">
+      <div class="back-row" id="table-back-label" onclick="app.setMode('drink')">‹ Сусынға оралу</div>
       <div class="section-label" id="field-time-label">Уақыт</div>
       <div class="pill-row" id="slot-pills"></div>
       <div class="section-label" id="field-guests-label">Қонақтар</div>
@@ -269,6 +273,7 @@
 
   <!-- PAYWALL -->
   <div class="screen" id="screen-paywall">
+    <div class="back-row" id="paywall-back-label" onclick="app.closePaywall()">‹ Артқа</div>
     <div class="price-card">
       <div class="price-num">8 000 ₸</div>
       <div class="price-period" id="paywall-period">айына · кез келген уақытта тоқтатуға болады</div>
@@ -342,7 +347,10 @@ var app = (function(){
       quickCoffee:'Менің кофем',
       milkNormal:'Әдеттегі', milkOat:'Сұлы', milkAlmond:'Бадам', milkNone:'Сүтсіз',
       guest1:'1 қонақ', guest2:'2 қонақ', guest34:'3–4 қонақ',
-      qrCaption:'Сусынды есептен шығару үшін баристаға көрсетіңіз'
+      qrCaption:'Сусынды есептен шығару үшін баристаға көрсетіңіз',
+      tableLinkText:'Үстел брондау →', backToDrinkText:'‹ Сусынға оралу',
+      settingsTitle:'Баптаулар',
+      sortRecommended:'Ұсынылған', sortNearby:'Жақын маған'
     },
     ru: {
       navHome:'Главная', navCatalog:'Кофейни', navOrders:'Заказы', navProfile:'Профиль',
@@ -377,14 +385,17 @@ var app = (function(){
       quickCoffee:'Мой кофе',
       milkNormal:'Обычное', milkOat:'Овсяное', milkAlmond:'Миндальное', milkNone:'Без молока',
       guest1:'1 гость', guest2:'2 гостя', guest34:'3–4 гостя',
-      qrCaption:'Покажите бариста для списания напитка'
+      qrCaption:'Покажите бариста для списания напитка',
+      tableLinkText:'Забронировать стол →', backToDrinkText:'‹ Назад к напитку',
+      settingsTitle:'Настройки',
+      sortRecommended:'Рекомендуемые', sortNearby:'Ближе всего'
     }
   };
 
   var state = {
     lang: 'kk', theme: 'light',
     tab: 'home', screen: 'home', subscribed: false, used: 0,
-    category: 'all', tagFilters: [], size: 'M', milk: 'normal', slot: '12:00', guests: 'g2',
+    category: 'all', tagFilters: [], sortMode: 'default', size: 'M', milk: 'normal', slot: '12:00', guests: 'g2',
     defaultSize: 'M', defaultMilk: 'normal',
     mode: 'drink', orderTab: 'history', activeCafe: 1,
     cafes: [
@@ -422,7 +433,11 @@ var app = (function(){
     document.getElementById('qr-pattern').innerHTML = qrHtml;
     applyLanguage();
     applyTheme();
-    if (tg && tg.BackButton) { tg.BackButton.onClick(function(){ app.switchTab(state.tab); }); }
+    if (tg && tg.BackButton) { tg.BackButton.onClick(function(){
+      if (state.screen === 'paywall') { app.closePaywall(); }
+      else if (state.screen === 'settings') { app.switchTab('profile'); }
+      else { app.switchTab(state.tab); }
+    }); }
     updateMainButton();
   }
 
@@ -456,8 +471,11 @@ var app = (function(){
 
     document.getElementById('back-label').textContent = L.back;
     document.getElementById('banner-text').textContent = L.bannerText;
-    document.getElementById('mode-drink').textContent = L.modeD;
-    document.getElementById('mode-table').textContent = L.modeT;
+    document.getElementById('table-link').textContent = L.tableLinkText;
+    document.getElementById('table-back-label').textContent = L.backToDrinkText;
+    document.getElementById('paywall-back-label').textContent = L.back;
+    document.getElementById('settings-back-label').textContent = L.back;
+    document.getElementById('settings-title').textContent = L.settingsTitle;
     document.getElementById('field-size-label').textContent = L.fieldSize;
     document.getElementById('field-milk-label').textContent = L.fieldMilk;
     document.getElementById('field-time-label').textContent = L.fieldTime;
@@ -486,7 +504,7 @@ var app = (function(){
     document.getElementById('nav-orders-label').textContent = L.navOrders;
     document.getElementById('nav-profile-label').textContent = L.navProfile;
 
-    renderDash(); renderFeatured(); renderCategoryChips(); renderTagChips(); renderCatalog();
+    renderDash(); renderFeatured(); renderSortChips(); renderCategoryChips(); renderTagChips(); renderCatalog();
     renderOrderTabs(); renderOrders(); renderPills(); renderDefaultPills();
     updateMainButton();
   }
@@ -526,6 +544,34 @@ var app = (function(){
     '</div>';
   }
 
+  function parseDistanceMeters(meta){
+    var m = meta.match(/([\d.]+)\s*(км|km|м|m)\b/i);
+    if (!m) return Infinity;
+    var val = parseFloat(m[1]);
+    return /км|km/i.test(m[2]) ? val * 1000 : val;
+  }
+
+  // TODO(human): rank `list` for the "Жақын маған / Ближе всего" catalog sort.
+  // Available per cafe: parseDistanceMeters(c.meta) -> distance in meters,
+  // c.win ('free' = tables open now, otherwise an off-peak-until time like '13:00'),
+  // windowLabel(c.win) for the display string already used elsewhere.
+  // Decide: sort purely by distance, or also weight win === 'free' higher,
+  // and what tie-break to use when two cafes are equally close.
+  // Return a NEW sorted array — don't mutate `list` in place.
+  function sortCafesNearbyOpenNow(list){
+    // TODO(human): implement the ranking
+    return list;
+  }
+
+  function renderSortChips(){
+    var L = t();
+    var modes = [['default', L.sortRecommended], ['nearby', L.sortNearby]];
+    document.getElementById('sort-chips').innerHTML = modes.map(function(mo){
+      var on = state.sortMode === mo[0];
+      return '<div class="chip ' + (on?'on':'') + '" onclick="app.setSortMode(\'' + mo[0] + '\')">' + mo[1] + '</div>';
+    }).join('');
+  }
+
   function renderCategoryChips(){
     var L = t();
     var cats = [['all',L.catAll],['espresso',L.catEspresso],['specialty',L.catSpecialty],['latte',L.catLatte],['cold',L.catCold]];
@@ -545,6 +591,7 @@ var app = (function(){
   function renderCatalog(){
     var list = state.category === 'all' ? state.cafes : state.cafes.filter(function(c){ return c.cat === state.category; });
     if (state.tagFilters.length) { list = list.filter(function(c){ return state.tagFilters.every(function(tg2){ return c.tags.indexOf(tg2) !== -1; }); }); }
+    if (state.sortMode === 'nearby') { list = sortCafesNearbyOpenNow(list); }
     document.getElementById('catalog-list').innerHTML = list.length ? list.map(cafeRowHtml).join('') : '<div class="empty-note">' + t().emptyFilter + '</div>';
   }
 
@@ -613,7 +660,7 @@ var app = (function(){
     document.getElementById('screen-' + name).classList.add('active');
     state.screen = name; state_tab = state.tab;
     updateMainButton();
-    if (tg && tg.BackButton) { (name === 'detail' || name === 'paywall') ? tg.BackButton.show() : tg.BackButton.hide(); }
+    if (tg && tg.BackButton) { (name === 'detail' || name === 'paywall' || name === 'settings') ? tg.BackButton.show() : tg.BackButton.hide(); }
   }
   function updateNavHighlight(){
     ['home','catalog','orders','profile'].forEach(function(tb){
@@ -661,19 +708,20 @@ var app = (function(){
     pingBell: function(){ haptic(); },
     setLang: function(l){ if (state.lang === l) return; state.lang = l; haptic(); applyLanguage(); },
     toggleTheme: function(){ state.theme = state.theme === 'light' ? 'dark' : 'light'; haptic(); applyTheme(); },
+    closePaywall: function(){ haptic(); state.tab = 'home'; showScreen('home'); updateNavHighlight(); },
+    openSettings: function(){ haptic(); showScreen('settings'); },
     switchTab: function(name){
       state.tab = name;
       if (name === 'profile' && !state.subscribed) { showScreen('paywall'); updateNavHighlight(); return; }
       if (name === 'orders') { renderOrderTabs(); renderOrders(); }
-      if (name === 'catalog') { renderCategoryChips(); renderCatalog(); }
+      if (name === 'catalog') { renderSortChips(); renderCategoryChips(); renderCatalog(); }
       showScreen(name); updateNavHighlight();
     },
     setCategory: function(c){ state.category = c; haptic(); renderCategoryChips(); renderCatalog(); },
+    setSortMode: function(m){ state.sortMode = m; haptic(); renderSortChips(); renderCatalog(); },
     setOrderTab: function(tb){ state.orderTab = tb; haptic(); renderOrderTabs(); renderOrders(); },
     setMode: function(m){
       state.mode = m; haptic();
-      document.getElementById('mode-drink').classList.toggle('active', m === 'drink');
-      document.getElementById('mode-table').classList.toggle('active', m === 'table');
       document.getElementById('drink-mode').style.display = m === 'drink' ? 'block' : 'none';
       document.getElementById('table-mode').style.display = m === 'table' ? 'block' : 'none';
       updateMainButton();
@@ -689,8 +737,6 @@ var app = (function(){
       document.getElementById('detail-name').textContent = c.name;
       document.getElementById('detail-meta').textContent = c.meta;
       document.getElementById('detail-fav').style.color = c.fav ? 'var(--accent-dark)' : 'var(--ink-2)';
-      document.getElementById('mode-drink').classList.add('active');
-      document.getElementById('mode-table').classList.remove('active');
       document.getElementById('drink-mode').style.display = 'block';
       document.getElementById('table-mode').style.display = 'none';
       renderPills(); haptic(); showScreen('detail');
