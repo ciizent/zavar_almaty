@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="kk" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>ЗАВАР</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+  :root, [data-theme="light"] {
+    --bg: #FBF1E1; --ink: #241A12; --ink-2: #8B7A63; --ink-3: #B7A88F;
+    --border: #E9DCC5; --card: #FFFCF6;
+    --dark-1: #2E2013; --dark-2: #1C130B; --dark-text: #F3E9D8; --dark-text-2: #C9B79A;
+    --accent: #E8B27A; --accent-dark: #2A1608;
+  }
+  [data-theme="dark"] {
+    --bg: #17110A; --ink: #F3E9D8; --ink-2: #B7A88F; --ink-3: #8B7A63;
+    --border: #3A2C1C; --card: #241A10;
+    --dark-1: #3A2812; --dark-2: #23180C; --dark-text: #F3E9D8; --dark-text-2: #D9C4A0;
+    --accent: #E8B27A; --accent-dark: #2A1608;
+  }
+  :root { --font-heading: 'Cormorant Garamond', serif; --font-body: 'Inter', sans-serif; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Inter:wght@400;500;600;700&display=swap');
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink); font-family: var(--font-body); transition: background 0.25s ease, color 0.25s ease; }
+  h1,h2,h3 { font-family: var(--font-heading); font-weight: 700; margin: 0; }
+  #app { min-height: 100vh; padding: 12px 16px 90px; }
+  .screen { display: none; } .screen.active { display: block; }
+
+  /* top utility bar: language + theme */
+  .util-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .lang-switch { display: flex; background: var(--card); border: 1px solid var(--border); border-radius: 100px; padding: 3px; gap: 2px; }
+  .lang-btn { font-size: 11px; font-weight: 700; padding: 6px 11px; border-radius: 100px; cursor: pointer; color: var(--ink-2); }
+  .lang-btn.on { background: var(--dark-1); color: var(--dark-text); }
+  .theme-btn { width: 32px; height: 32px; border-radius: 50%; background: var(--card); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--ink); }
+
+  /* header */
+  .greet-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+  .greet-label { font-size: 11px; color: var(--ink-2); letter-spacing: 0.08em; font-weight: 600; margin-bottom: 2px; }
+  .greet-name { font-size: 26px; }
+  .greet-icons { display: flex; gap: 10px; }
+  .icon-circle { width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+  .icon-circle.bell { background: var(--card); border: 1px solid var(--border); }
+  .icon-circle.avatar { background: var(--accent); font-family: var(--font-heading); font-weight: 700; font-size: 17px; color: var(--accent-dark); }
+
+  /* subscription widget */
+  .widget { background: linear-gradient(160deg, var(--dark-1), var(--dark-2)); border: 1px solid var(--border); border-radius: 22px; padding: 18px; margin-bottom: 20px; color: var(--dark-text); }
+  .widget-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; }
+  .widget-label { font-size: 11px; letter-spacing: 0.08em; color: var(--dark-text-2); font-weight: 600; }
+  .widget-num-row { display: flex; align-items: baseline; gap: 8px; margin-top: 6px; }
+  .widget-num { font-family: var(--font-heading); font-weight: 700; font-size: 42px; line-height: 1; }
+  .widget-of { font-size: 13px; color: var(--dark-text-2); }
+  .qr-mini-btn { width: 46px; height: 46px; border-radius: 14px; background: var(--accent); display: flex; align-items: center; justify-content: center; cursor: pointer; flex: 0 0 auto; }
+  .dash-row { display: flex; gap: 6px; }
+  .dash { flex: 1; height: 5px; border-radius: 3px; }
+
+  .sec-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px; }
+  .sec-title { font-size: 21px; }
+  .sec-link { font-size: 12.5px; color: var(--ink-2); font-weight: 500; cursor: pointer; }
+  .section-label { font-size: 12px; color: var(--ink-2); margin-bottom: 8px; letter-spacing: 0.03em; }
+
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 18px; }
+  .feat-card { background: var(--card); border: 1px solid var(--border); border-radius: 18px; overflow: hidden; cursor: pointer; }
+  .feat-photo { position: relative; height: 92px; margin: 8px; border: 1.5px dashed var(--border); border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: var(--ink-3); }
+  .feat-tag { position: absolute; top: 6px; left: 6px; background: var(--card); border: 1px solid var(--border); font-size: 9.5px; padding: 4px 8px; border-radius: 100px; color: var(--ink-2); }
+  .feat-body { padding: 0 12px 12px; }
+  .feat-name { font-size: 16px; margin-bottom: 2px; }
+  .feat-meta { font-size: 10.5px; color: var(--ink-2); }
+
+  .promo { background: linear-gradient(160deg, var(--dark-1), var(--dark-2)); border: 1px solid var(--border); border-radius: 20px; padding: 16px; margin-bottom: 18px; color: var(--dark-text); display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+  .promo-label { font-size: 11px; letter-spacing: 0.08em; color: var(--dark-text-2); font-weight: 600; margin-bottom: 4px; }
+  .promo-text { font-size: 13px; max-width: 210px; line-height: 1.4; }
+  .promo-arrow { width: 34px; height: 34px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; flex: 0 0 auto; }
+
+  .chip-row { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 12px; }
+  .chip-row::-webkit-scrollbar { display: none; }
+  .chip { flex: 0 0 auto; font-size: 12px; padding: 7px 13px; border-radius: 100px; border: 1px solid var(--border); cursor: pointer; white-space: nowrap; background: var(--card); color: var(--ink-2); }
+  .chip.on { background: var(--dark-1); color: var(--dark-text); border-color: var(--dark-1); }
+
+  .cafe-row { display: flex; gap: 12px; background: var(--card); border: 1px solid var(--border); border-radius: 16px; margin-bottom: 10px; padding: 10px; align-items: center; }
+  .cafe-thumb { width: 56px; height: 56px; border-radius: 12px; border: 1.5px dashed var(--border); display: flex; align-items: center; justify-content: center; color: var(--ink-3); font-size: 10px; flex: 0 0 auto; }
+  .cafe-main { flex: 1; cursor: pointer; min-width: 0; }
+  .cafe-name { font-size: 15px; }
+  .cafe-meta { font-size: 11px; color: var(--ink-2); margin: 2px 0 4px; }
+  .cafe-window { font-size: 11px; color: var(--accent-dark); font-weight: 600; }
+  .tag-badge-row { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 5px; }
+  .tag-badge { font-size: 9px; padding: 2px 7px; border-radius: 100px; background: var(--border); color: var(--ink-2); white-space: nowrap; }
+  .cafe-actions { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; flex: 0 0 auto; }
+  .fav-btn { width: 26px; height: 26px; border-radius: 50%; background: var(--border); display: flex; align-items: center; justify-content: center; font-size: 13px; cursor: pointer; flex: 0 0 auto; }
+  .quick-btn { font-size: 9.5px; padding: 5px 9px; border-radius: 100px; background: var(--accent); color: var(--accent-dark); font-weight: 700; cursor: pointer; white-space: nowrap; }
+  .empty-note { font-size: 12.5px; color: var(--ink-2); padding: 30px 10px; text-align: center; line-height: 1.6; }
+
+  .back-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; font-size: 12px; color: var(--ink-2); cursor: pointer; }
+  .cafe-banner { height: 110px; border: 1.5px dashed var(--border); border-radius: 16px; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; color: var(--ink-3); font-size: 11px; }
+  .cafe-name-big { font-size: 26px; margin-bottom: 2px; display: flex; justify-content: space-between; align-items: center; }
+  .cafe-meta-big { font-size: 12px; color: var(--ink-2); margin-bottom: 14px; }
+  .mode-toggle { display: flex; background: var(--card); border: 1px solid var(--border); border-radius: 100px; padding: 4px; margin-bottom: 14px; }
+  .mode-btn { flex: 1; text-align: center; font-size: 12.5px; padding: 8px 0; border-radius: 100px; cursor: pointer; color: var(--ink-2); }
+  .mode-btn.active { background: var(--dark-1); color: var(--dark-text); font-weight: 600; }
+  .pill-row { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+  .pill { font-size: 12px; padding: 8px 12px; border-radius: 10px; border: 1px solid var(--border); background: var(--card); cursor: pointer; text-align: center; color: var(--ink); }
+  .pill .note { display: block; font-size: 9.5px; color: var(--ink-2); margin-top: 2px; }
+  .pill.on { background: var(--dark-1); color: var(--dark-text); border-color: var(--dark-1); }
+  .pill.on .note { color: var(--dark-text-2); }
+  .total-row { display: flex; justify-content: space-between; font-size: 12.5px; color: var(--ink-2); margin-bottom: 4px; background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 12px 14px; }
+  .confirm-note { font-size: 11.5px; color: var(--ink-2); margin-top: 8px; line-height: 1.5; }
+  .toast { font-size: 12px; color: var(--accent-dark); margin-top: 8px; min-height: 16px; font-weight: 600; }
+
+  .price-card { background: linear-gradient(160deg, var(--dark-1), var(--dark-2)); border: 1px solid var(--border); color: var(--dark-text); border-radius: 20px; padding: 22px 16px; text-align: center; margin-bottom: 16px; }
+  .price-num { font-size: 36px; font-weight: 700; font-family: var(--font-heading); }
+  .price-period { font-size: 12px; color: var(--dark-text-2); margin-top: 2px; }
+  .benefit-item { display: flex; gap: 10px; align-items: flex-start; font-size: 12.5px; padding: 8px 0; }
+  .benefit-item .title { font-weight: 600; }
+  .benefit-item .note { color: var(--ink-2); font-size: 11.5px; }
+  .check { width: 17px; height: 17px; border-radius: 6px; background: var(--accent); flex: 0 0 auto; margin-top: 1px; }
+  .proof { text-align: center; font-size: 11px; color: var(--ink-2); margin-top: 10px; }
+
+  .tabs2 { display: flex; gap: 4px; background: var(--card); border: 1px solid var(--border); border-radius: 100px; padding: 4px; margin-bottom: 14px; }
+  .tab2 { flex: 1; text-align: center; font-size: 12px; padding: 8px 0; border-radius: 100px; cursor: pointer; color: var(--ink-2); }
+  .tab2.active { background: var(--dark-1); color: var(--dark-text); font-weight: 600; }
+  .order-item { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 12px 14px; margin-bottom: 9px; display: flex; gap: 10px; align-items: center; }
+  .order-mono { width: 40px; height: 40px; border-radius: 10px; border: 1.5px dashed var(--border); display: flex; align-items: center; justify-content: center; font-size: 9px; color: var(--ink-3); flex: 0 0 auto; }
+  .order-body { flex: 1; } .order-top { font-size: 13px; font-weight: 500; }
+  .order-meta { font-size: 11px; color: var(--ink-2); margin-top: 2px; }
+  .order-status { font-size: 10px; padding: 3px 9px; border-radius: 100px; border: 1px solid; }
+
+  .profile-head { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+  .avatar { width: 54px; height: 54px; border-radius: 50%; background: var(--accent); flex: 0 0 auto; display: flex; align-items: center; justify-content: center; font-family: var(--font-heading); font-size: 22px; font-weight: 700; color: var(--accent-dark); }
+  .profile-name { font-size: 21px; } .profile-sub { font-size: 11.5px; color: var(--ink-2); }
+  .status-card { display: flex; justify-content: space-between; align-items: center; background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 12px 14px; margin-bottom: 14px; }
+  .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent-dark); display: inline-block; margin-right: 6px; }
+  .status-date { font-size: 11.5px; color: var(--ink-2); }
+  .qr-box { width: 128px; height: 128px; margin: 0 auto 12px; background: #fff; border: 1px solid var(--border); border-radius: 14px; padding: 10px; }
+  .qr-grid { width: 100%; height: 100%; display: grid; grid-template-columns: repeat(7, 1fr); grid-template-rows: repeat(7, 1fr); gap: 2px; }
+  .qr-caption { text-align: center; font-size: 11.5px; color: var(--ink-2); margin-bottom: 16px; }
+  .ref-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 14px; margin-bottom: 14px; }
+  .ref-label { font-size: 12px; color: var(--ink-2); margin-bottom: 6px; }
+  .ref-code { font-size: 20px; font-weight: 700; font-family: var(--font-heading); margin-bottom: 10px; }
+  .ref-btn { text-align: center; background: var(--dark-1); color: var(--dark-text); padding: 11px; border-radius: 12px; font-size: 12.5px; font-weight: 600; cursor: pointer; }
+  .ref-note { font-size: 11px; color: var(--ink-2); margin-top: 8px; text-align: center; }
+  .row-card { display: flex; align-items: center; justify-content: space-between; background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 12px 14px; cursor: pointer; }
+  .row-card .t1 { font-size: 13px; font-weight: 600; } .row-card .t2 { font-size: 11.5px; color: var(--ink-2); }
+
+  .bottomnav { position: fixed; left: 0; right: 0; bottom: 0; background: var(--bg); border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 10px 0 8px; }
+  .navitem { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 10px; font-weight: 600; color: var(--ink-2); cursor: pointer; }
+  .navitem.active { color: var(--ink); }
+  .navdot { width: 4px; height: 4px; border-radius: 50%; background: transparent; }
+  .navitem.active .navdot { background: var(--accent-dark); }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <div class="util-bar">
+    <div class="lang-switch">
+      <div class="lang-btn on" id="lang-kk-btn" onclick="app.setLang('kk')">ҚАЗ</div>
+      <div class="lang-btn" id="lang-ru-btn" onclick="app.setLang('ru')">РУС</div>
+    </div>
+    <div class="theme-btn" id="theme-btn" onclick="app.toggleTheme()">
+      <svg id="theme-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3a9 9 0 109 9c0-.46-.04-.92-.1-1.36A5.5 5.5 0 0112.36 3.1c-.44-.06-.9-.1-1.36-.1z"/></svg>
+    </div>
+  </div>
+
+  <!-- HOME -->
+  <div class="screen active" id="screen-home">
+    <div class="greet-row">
+      <div><div class="greet-label" id="greet-label">ҚАЙЫРЛЫ ТАҢ</div><div class="greet-name" id="greet-name">Қонақ</div></div>
+      <div class="greet-icons">
+        <div class="icon-circle bell" onclick="app.pingBell()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 01-3.4 0"/></svg>
+        </div>
+        <div class="icon-circle avatar" id="avatar-letter">Қ</div>
+      </div>
+    </div>
+
+    <div class="widget">
+      <div class="widget-top">
+        <div><div class="widget-label" id="widget-month">ҚЫРКҮЙЕКТЕ ҚАЛҒАН</div>
+          <div class="widget-num-row"><span class="widget-num" id="widget-num">12</span><span class="widget-of" id="widget-of">сусыннан 12</span></div>
+        </div>
+        <div class="qr-mini-btn" onclick="app.switchTab('profile')">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2A1608" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 14h3v3h-3zM19 14h2v2h-2zM14 19h2v2h-2zM19 19h2v2h-2z"/></svg>
+        </div>
+      </div>
+      <div class="dash-row" id="dash-row"></div>
+    </div>
+
+    <div class="sec-row"><h3 class="sec-title" id="offpeak-title">Оффпик қазір</h3><span class="sec-link" id="allcafes-link" onclick="app.switchTab('catalog')">Барлық кофеханалар →</span></div>
+    <div class="grid2" id="featured-grid"></div>
+
+    <div class="promo" onclick="app.shareReferral()">
+      <div><div class="promo-label" id="promo-label">ДОСЫҢДЫ ШАҚЫР</div><div class="promo-text" id="promo-text">Екеуің де осы айда лимиттен тыс 1 сусын аласыңдар</div></div>
+      <div class="promo-arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2A1608" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+    </div>
+  </div>
+
+  <!-- CATALOG -->
+  <div class="screen" id="screen-catalog">
+    <h3 class="sec-title" id="catalog-title" style="margin-bottom:14px;">Кофеханалар</h3>
+    <div class="chip-row" id="category-chips"></div>
+    <div class="chip-row" id="tag-chips"></div>
+    <div id="catalog-list"></div>
+  </div>
+
+  <!-- ORDERS -->
+  <div class="screen" id="screen-orders">
+    <h3 class="sec-title" id="orders-title" style="margin-bottom:14px;">Тапсырыстар</h3>
+    <div class="tabs2" id="order-tabs"></div>
+    <div id="orders-list"></div>
+  </div>
+
+  <!-- PROFILE -->
+  <div class="screen" id="screen-profile">
+    <div class="profile-head">
+      <div class="avatar" id="profile-avatar">Қ</div>
+      <div><div class="profile-name" id="profile-name">Қонақ</div><div class="profile-sub" id="profile-sub">ЗАВАР жазылушысы</div></div>
+    </div>
+    <div class="status-card"><span><span class="status-dot"></span><span id="sub-active-text">Жазылым белсенді</span></span><span class="status-date">4 қазанға дейін</span></div>
+    <div class="qr-box"><div class="qr-grid" id="qr-pattern"></div></div>
+    <div class="qr-caption" id="qr-caption">Сусынды есептен шығару үшін баристаға көрсетіңіз</div>
+    <div class="ref-card">
+      <div class="ref-label" id="default-coffee-label">Менің негізгі кофем</div>
+      <div class="pill-row" id="default-size-pills"></div>
+      <div class="pill-row" id="default-milk-pills"></div>
+      <div class="ref-btn" id="save-default-btn" onclick="app.saveDefault()">Негізгі ретінде сақтау</div>
+      <div class="ref-note" id="default-toast">Тапсырыс кезінде баристаға осы рецепт бірден көрінеді</div>
+    </div>
+    <div class="ref-card">
+      <div class="ref-label" id="ref-label-text">Сенің реферал кодың</div>
+      <div class="ref-code" id="ref-code">ZAVAR-0000</div>
+      <div class="ref-btn" id="invite-btn-text" onclick="app.shareReferral()">Досыңды шақыр</div>
+      <div class="ref-note" id="ref-note-text">Дос жеңілдікпен бірінші айды алады, сен — бонус сусын</div>
+    </div>
+    <div class="row-card" onclick="app.openSupport()" style="margin-bottom:0;">
+      <div><div class="t1" id="support-title">Қолдау</div><div class="t2" id="support-sub">Telegram-да бір сағат ішінде жауап береміз</div></div>
+      <div class="t2">›</div>
+    </div>
+  </div>
+
+  <!-- CAFE DETAIL -->
+  <div class="screen" id="screen-detail">
+    <div class="back-row" id="back-label" onclick="app.switchTab(state_tab)">‹ Артқа</div>
+    <div class="cafe-banner" id="banner-text">Мекеменің суреті</div>
+    <div class="cafe-name-big"><span id="detail-name">CULT COFFEE</span><span class="fav-btn" id="detail-fav" onclick="app.toggleFavActive()">♥</span></div>
+    <div class="cafe-meta-big" id="detail-meta">Есентай · 400 м · 22:00 дейін</div>
+
+    <div class="mode-toggle">
+      <div class="mode-btn active" id="mode-drink" onclick="app.setMode('drink')">Сусын</div>
+      <div class="mode-btn" id="mode-table" onclick="app.setMode('table')">Үстел</div>
+    </div>
+
+    <div id="drink-mode">
+      <div class="section-label" id="field-size-label">Өлшем</div>
+      <div class="pill-row" id="size-pills"></div>
+      <div class="section-label" id="field-milk-label">Сүт</div>
+      <div class="pill-row" id="milk-pills"></div>
+      <div class="total-row"><span id="extra-label">Жазылымнан тыс төлем</span><span id="extra-total">0 ₸</span></div>
+      <div class="confirm-note" id="drink-note">Негізгі сусын жазылымға кіреді, қосымша төлем — тек L өлшемі немесе балама сүт үшін.</div>
+    </div>
+
+    <div id="table-mode" style="display:none;">
+      <div class="section-label" id="field-time-label">Уақыт</div>
+      <div class="pill-row" id="slot-pills"></div>
+      <div class="section-label" id="field-guests-label">Қонақтар</div>
+      <div class="pill-row" id="guest-pills"></div>
+      <div class="confirm-note" id="book-note">Броннан кейін WhatsApp-та 10 минут ішінде растаймыз.</div>
+    </div>
+    <div class="toast" id="toast"></div>
+  </div>
+
+  <!-- PAYWALL -->
+  <div class="screen" id="screen-paywall">
+    <div class="price-card">
+      <div class="price-num">8 000 ₸</div>
+      <div class="price-period" id="paywall-period">айына · кез келген уақытта тоқтатуға болады</div>
+    </div>
+    <div class="benefit-item"><span class="check"></span><div><div class="title" id="b1-title">Айына 12 сусын</div><div class="note" id="b1-note">Қаладағы серіктес желісінде</div></div></div>
+    <div class="benefit-item"><span class="check"></span><div><div class="title" id="b2-title">Кезексіз үстел</div><div class="note" id="b2-note">Жұмыс күндері, 10 минутта растау</div></div></div>
+    <div class="benefit-item"><span class="check"></span><div><div class="title" id="b3-title">Жаңа кофеханалар бірінші болып</div><div class="note" id="b3-note">Telegram-да хабарландыру</div></div></div>
+    <div class="proof" id="proof-text">Алматыда 210 жазылушы бар</div>
+  </div>
+
+</div>
+
+<div class="bottomnav">
+  <div class="navitem active" id="nav-home" onclick="app.switchTab('home')">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/></svg>
+    <div class="navdot"></div><span id="nav-home-label">Басты бет</span>
+  </div>
+  <div class="navitem" id="nav-catalog" onclick="app.switchTab('catalog')">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="8" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/><rect x="13" y="13" width="8" height="8" rx="2"/></svg>
+    <div class="navdot"></div><span id="nav-catalog-label">Кофеханалар</span>
+  </div>
+  <div class="navitem" id="nav-orders" onclick="app.switchTab('orders')">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
+    <div class="navdot"></div><span id="nav-orders-label">Тапсырыстар</span>
+  </div>
+  <div class="navitem" id="nav-profile" onclick="app.switchTab('profile')">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>
+    <div class="navdot"></div><span id="nav-profile-label">Профиль</span>
+  </div>
+</div>
+
+<script>
+var state_tab = 'home';
+var app = (function(){
+  var tg = window.Telegram && window.Telegram.WebApp;
+  var cfg = { support: 'zavar_support', kaspi: 'https://pay.kaspi.kz/', whatsapp: '77000000000', bot: 'zavar_bot', app: 'app' };
+  var limit = 12;
+
+  // ---------- переводы: казахский — язык по умолчанию ----------
+  var T = {
+    kk: {
+      navHome:'Басты бет', navCatalog:'Кофеханалар', navOrders:'Тапсырыстар', navProfile:'Профиль',
+      greetMorning:'ҚАЙЫРЛЫ ТАҢ', greetDay:'ҚАЙЫРЛЫ КҮН', greetEvening:'ҚАЙЫРЛЫ КЕШ',
+      guest:'Қонақ', subscriberOf:'ЗАВАР жазылушысы', subActive:'Жазылым белсенді',
+      widgetOf:function(n){ return 'сусыннан ' + n; },
+      months:['қаңтарда','ақпанда','наурызда','сәуірде','мамырда','маусымда','шілдеде','тамызда','қыркүйекте','қазанда','қарашада','желтоқсанда'],
+      remainingIn:function(m){ return (m.charAt(0).toUpperCase()+m.slice(1)) + ' қалған'; },
+      offpeak:'Оффпик қазір', allCafes:'Барлық кофеханалар →', catalogTitle:'Кофеханалар', ordersTitle:'Тапсырыстар',
+      catAll:'Барлығы', catEspresso:'Эспрессо', catSpecialty:'Спешелти', catLatte:'Латте', catCold:'Салқын',
+      tagWifi:'Wi-Fi', tagQuiet:'Тыныш', tagDog:'Итке рұқсат', tagFood:'Нан-тоқаш',
+      promoLabel:'ДОСЫҢДЫ ШАҚЫР', promoText:'Екеуің де осы айда лимиттен тыс 1 сусын аласыңдар',
+      ordersActive:'Белсенді', ordersHistory:'Тарих', orderDone:'Дайын', orderPending:'Күтуде',
+      emptyOrdersActive:'Белсенді тапсырыс жоқ.', emptyOrdersHistory:'Тарих әзірге бос.', emptyFilter:'Бұл сүзгіге сәйкес кофехана жоқ.',
+      back:'‹ Артқа', bannerText:'Мекеменің суреті', modeD:'Сусын', modeT:'Үстел',
+      fieldSize:'Өлшем', fieldMilk:'Сүт', fieldTime:'Уақыт', fieldGuests:'Қонақтар',
+      extraLabel:'Жазылымнан тыс төлем',
+      drinkNote:'Негізгі сусын жазылымға кіреді, қосымша төлем — тек L өлшемі немесе балама сүт үшін.',
+      bookNote:'Броннан кейін WhatsApp-та 10 минут ішінде растаймыз.',
+      mainDrinkBtn:'QR-код алу', mainBookBtn:'Броньды растау',
+      paywallPeriod:'айына · кез келген уақытта тоқтатуға болады',
+      b1t:'Айына 12 сусын', b1n:'Қаладағы серіктес желісінде',
+      b2t:'Кезексіз үстел', b2n:'Жұмыс күндері, 10 минутта растау',
+      b3t:'Жаңа кофеханалар бірінші болып', b3n:'Telegram-да хабарландыру',
+      proof:'Алматыда 210 жазылушы бар',
+      myDefaultCoffee:'Менің негізгі кофем', saveDefaultBtn:'Негізгі ретінде сақтау',
+      defaultNoteBase:'Тапсырыс кезінде баристаға осы рецепт бірден көрінеді',
+      defaultNoteSaved:'Сақталды — «Менің кофем» тапсырысында баристаға осы рецепт көрінеді',
+      refLabel:'Сенің реферал кодың', invite:'Досыңды шақыр',
+      refNote:'Дос жеңілдікпен бірінші айды алады, сен — бонус сусын',
+      support:'Қолдау', supportSub:'Telegram-да бір сағат ішінде жауап береміз',
+      quickCoffee:'Менің кофем',
+      milkNormal:'Әдеттегі', milkOat:'Сұлы', milkAlmond:'Бадам', milkNone:'Сүтсіз',
+      guest1:'1 қонақ', guest2:'2 қонақ', guest34:'3–4 қонақ',
+      qrCaption:'Сусынды есептен шығару үшін баристаға көрсетіңіз'
+    },
+    ru: {
+      navHome:'Главная', navCatalog:'Кофейни', navOrders:'Заказы', navProfile:'Профиль',
+      greetMorning:'ДОБРОЕ УТРО', greetDay:'ДОБРЫЙ ДЕНЬ', greetEvening:'ДОБРЫЙ ВЕЧЕР',
+      guest:'Гость', subscriberOf:'Подписчик ЗАВАР', subActive:'Подписка активна',
+      widgetOf:function(n){ return 'напитков из ' + n; },
+      months:['январе','феврале','марте','апреле','мае','июне','июле','августе','сентябре','октябре','ноябре','декабре'],
+      remainingIn:function(m){ return 'Осталось в ' + m.toUpperCase(); },
+      offpeak:'Оффпик сейчас', allCafes:'Все кофейни →', catalogTitle:'Кофейни', ordersTitle:'Заказы',
+      catAll:'Все', catEspresso:'Эспрессо', catSpecialty:'Спешелти', catLatte:'Латте', catCold:'Холодный',
+      tagWifi:'Wi-Fi', tagQuiet:'Тихо', tagDog:'Dog-friendly', tagFood:'Выпечка',
+      promoLabel:'ПРИВЕДИ ДРУГА', promoText:'Оба получаете +1 напиток сверх лимита в этом месяце',
+      ordersActive:'Активные', ordersHistory:'История', orderDone:'Готово', orderPending:'Ожидание',
+      emptyOrdersActive:'Нет активных заказов.', emptyOrdersHistory:'История пока пуста.', emptyFilter:'Нет кофеен с такими фильтрами.',
+      back:'‹ Назад', bannerText:'Фото заведения', modeD:'Напиток', modeT:'Стол',
+      fieldSize:'Размер', fieldMilk:'Молоко', fieldTime:'Время', fieldGuests:'Гости',
+      extraLabel:'Доплата сверх подписки',
+      drinkNote:'Базовый напиток входит в подписку, доплата — только за размер L или альтернативное молоко.',
+      bookNote:'После брони мы подтвердим место в WhatsApp в течение 10 минут.',
+      mainDrinkBtn:'Получить QR-код', mainBookBtn:'Подтвердить бронь',
+      paywallPeriod:'в месяц · отмена в любой момент',
+      b1t:'12 напитков в месяц', b1n:'в сети партнёров по всему городу',
+      b2t:'Стол без очереди', b2n:'в будни, подтверждение за 10 минут',
+      b3t:'Новые кофейни первыми', b3n:'уведомления прямо в Telegram',
+      proof:'Уже 210 подписчиков в Алматы',
+      myDefaultCoffee:'Мой базовый кофе', saveDefaultBtn:'Сохранить как основной',
+      defaultNoteBase:'При заказе бариста сразу увидит этот рецепт',
+      defaultNoteSaved:'Сохранено — бариста увидит этот рецепт при заказе «Мой кофе»',
+      refLabel:'Ваш реферальный код', invite:'Пригласить друга',
+      refNote:'Друг получает первый месяц со скидкой, вы — бонусный напиток',
+      support:'Поддержка', supportSub:'Ответим в Telegram в течение часа',
+      quickCoffee:'Мой кофе',
+      milkNormal:'Обычное', milkOat:'Овсяное', milkAlmond:'Миндальное', milkNone:'Без молока',
+      guest1:'1 гость', guest2:'2 гостя', guest34:'3–4 гостя',
+      qrCaption:'Покажите бариста для списания напитка'
+    }
+  };
+
+  var state = {
+    lang: 'kk', theme: 'light',
+    tab: 'home', screen: 'home', subscribed: false, used: 0,
+    category: 'all', tagFilters: [], size: 'M', milk: 'normal', slot: '12:00', guests: 'g2',
+    defaultSize: 'M', defaultMilk: 'normal',
+    mode: 'drink', orderTab: 'history', activeCafe: 1,
+    cafes: [
+      { id: 1, name: 'CULT COFFEE', rating: '4.7', cat: 'espresso', meta: 'Есентай · 400 м · 22:00', win: '13:00', fav: false, tags: ['wifi','quiet'] },
+      { id: 2, name: 'MOTO COFFEE', rating: '4.5', cat: 'specialty', meta: 'Абая · 750 м · 23:00', win: '13:00', fav: true, tags: ['wifi','food'] },
+      { id: 3, name: 'SHOKO', rating: '4.8', cat: 'latte', meta: 'Достык · 1.1 км · 21:00', win: 'free', fav: false, tags: ['dog','quiet'] },
+      { id: 4, name: 'BURO', rating: '4.6', cat: 'cold', meta: 'Сатпаева · 1.4 км · 22:00', win: '12:00', fav: false, tags: ['wifi','dog','food'] }
+    ],
+    history: [
+      { id: 20441, size:'M', milk:'normal', cafe: 'MOTO COFFEE', when: '4 сент, 09:20', status: 'done' },
+      { id: 20418, booking:true, cafe: 'SHOKO', when: '2 сент', status: 'done' }
+    ]
+  };
+
+  var userId = (tg && tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.id) || Math.floor(Math.random()*9000+1000);
+  var userName = (tg && tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.first_name) || null;
+  var qrPattern = [1,0,1,1,1,0,1, 1,0,1,0,1,0,1, 1,0,1,1,1,0,1, 0,0,0,1,0,0,0, 1,0,0,1,0,0,1, 1,0,1,0,1,0,1, 1,1,1,0,1,1,1];
+
+  function t(){ return T[state.lang]; }
+  function haptic(style){ if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred(style || 'light'); }
+  function mono(name){ return name.split(' ').slice(0,2).map(function(w){ return w.charAt(0); }).join(''); }
+  function cafeById(id){ return state.cafes.find(function(c){ return c.id === id; }); }
+  function milkLabel(key){ return { normal:t().milkNormal, oat:t().milkOat, almond:t().milkAlmond, none:t().milkNone }[key]; }
+  function guestLabel(key){ return { g1:t().guest1, g2:t().guest2, g34:t().guest34 }[key]; }
+  function windowLabel(win){
+    if (win === 'free') return state.lang === 'kk' ? 'Бос үстелдер бар' : 'Свободные столы';
+    return (state.lang === 'kk' ? 'Оффпик ' : 'Оффпик до ') + win;
+  }
+
+  function init(){
+    if (tg) { tg.ready(); tg.expand(); }
+    document.getElementById('profile-avatar').textContent = (userName || t().guest).charAt(0).toUpperCase();
+    document.getElementById('ref-code').textContent = 'ZAVAR-' + userId;
+    var qrHtml = ''; for (var i=0;i<qrPattern.length;i++){ qrHtml += '<div style="background:' + (qrPattern[i]?'#15100B':'#fff') + '"></div>'; }
+    document.getElementById('qr-pattern').innerHTML = qrHtml;
+    applyLanguage();
+    applyTheme();
+    if (tg && tg.BackButton) { tg.BackButton.onClick(function(){ app.switchTab(state.tab); }); }
+    updateMainButton();
+  }
+
+  function applyLanguage(){
+    var L = t();
+    document.documentElement.lang = state.lang;
+    document.getElementById('lang-kk-btn').classList.toggle('on', state.lang === 'kk');
+    document.getElementById('lang-ru-btn').classList.toggle('on', state.lang === 'ru');
+
+    var hour = new Date().getHours();
+    var greet = hour < 12 ? L.greetMorning : (hour < 18 ? L.greetDay : L.greetEvening);
+    document.getElementById('greet-label').textContent = greet;
+    var name = userName || L.guest;
+    document.getElementById('greet-name').textContent = name;
+    document.getElementById('avatar-letter').textContent = name.charAt(0).toUpperCase();
+    document.getElementById('profile-name').textContent = name;
+    document.getElementById('profile-sub').textContent = L.subscriberOf;
+    document.getElementById('sub-active-text').textContent = L.subActive;
+    document.getElementById('qr-caption').textContent = L.qrCaption;
+
+    var m = L.months[new Date().getMonth()];
+    document.getElementById('widget-month').textContent = L.remainingIn(m);
+    document.getElementById('widget-of').textContent = L.widgetOf(limit);
+
+    document.getElementById('offpeak-title').textContent = L.offpeak;
+    document.getElementById('allcafes-link').textContent = L.allCafes;
+    document.getElementById('catalog-title').textContent = L.catalogTitle;
+    document.getElementById('orders-title').textContent = L.ordersTitle;
+    document.getElementById('promo-label').textContent = L.promoLabel;
+    document.getElementById('promo-text').textContent = L.promoText;
+
+    document.getElementById('back-label').textContent = L.back;
+    document.getElementById('banner-text').textContent = L.bannerText;
+    document.getElementById('mode-drink').textContent = L.modeD;
+    document.getElementById('mode-table').textContent = L.modeT;
+    document.getElementById('field-size-label').textContent = L.fieldSize;
+    document.getElementById('field-milk-label').textContent = L.fieldMilk;
+    document.getElementById('field-time-label').textContent = L.fieldTime;
+    document.getElementById('field-guests-label').textContent = L.fieldGuests;
+    document.getElementById('extra-label').textContent = L.extraLabel;
+    document.getElementById('drink-note').textContent = L.drinkNote;
+    document.getElementById('book-note').textContent = L.bookNote;
+
+    document.getElementById('paywall-period').textContent = L.paywallPeriod;
+    document.getElementById('b1-title').textContent = L.b1t; document.getElementById('b1-note').textContent = L.b1n;
+    document.getElementById('b2-title').textContent = L.b2t; document.getElementById('b2-note').textContent = L.b2n;
+    document.getElementById('b3-title').textContent = L.b3t; document.getElementById('b3-note').textContent = L.b3n;
+    document.getElementById('proof-text').textContent = L.proof;
+
+    document.getElementById('default-coffee-label').textContent = L.myDefaultCoffee;
+    document.getElementById('save-default-btn').textContent = L.saveDefaultBtn;
+    document.getElementById('default-toast').textContent = L.defaultNoteBase;
+    document.getElementById('ref-label-text').textContent = L.refLabel;
+    document.getElementById('invite-btn-text').textContent = L.invite;
+    document.getElementById('ref-note-text').textContent = L.refNote;
+    document.getElementById('support-title').textContent = L.support;
+    document.getElementById('support-sub').textContent = L.supportSub;
+
+    document.getElementById('nav-home-label').textContent = L.navHome;
+    document.getElementById('nav-catalog-label').textContent = L.navCatalog;
+    document.getElementById('nav-orders-label').textContent = L.navOrders;
+    document.getElementById('nav-profile-label').textContent = L.navProfile;
+
+    renderDash(); renderFeatured(); renderCategoryChips(); renderTagChips(); renderCatalog();
+    renderOrderTabs(); renderOrders(); renderPills(); renderDefaultPills();
+    updateMainButton();
+  }
+
+  function applyTheme(){
+    document.documentElement.setAttribute('data-theme', state.theme);
+    document.getElementById('theme-icon').innerHTML = state.theme === 'light'
+      ? '<path d="M12 3a9 9 0 109 9c0-.46-.04-.92-.1-1.36A5.5 5.5 0 0112.36 3.1c-.44-.06-.9-.1-1.36-.1z"/>'
+      : '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>';
+    if (tg) { tg.setHeaderColor(state.theme === 'light' ? '#FBF1E1' : '#17110A'); tg.setBackgroundColor(state.theme === 'light' ? '#FBF1E1' : '#17110A'); }
+  }
+
+  function renderDash(){
+    var html = '';
+    for (var i=0;i<limit;i++){ html += '<div class="dash" style="background:' + (i < limit - state.used ? 'var(--accent)' : 'rgba(255,255,255,0.16)') + '"></div>'; }
+    document.getElementById('dash-row').innerHTML = html;
+    document.getElementById('widget-num').textContent = (limit - state.used);
+  }
+
+  function featCardHtml(c){
+    return '<div class="feat-card" onclick="app.openCafe(' + c.id + ')">' +
+      '<div class="feat-photo"><span class="feat-tag">' + windowLabel(c.win) + '</span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8" cy="10" r="1.5"/><path d="M21 16l-5-5-4 4-3-3-6 6"/></svg></div>' +
+      '<div class="feat-body"><div class="feat-name">' + c.name + '</div><div class="feat-meta">' + c.meta + '</div></div>' +
+    '</div>';
+  }
+  function renderFeatured(){ document.getElementById('featured-grid').innerHTML = state.cafes.slice(0,2).map(featCardHtml).join(''); }
+
+  function cafeRowHtml(c){
+    var L = t();
+    var tagLabels = { wifi:L.tagWifi, quiet:L.tagQuiet, dog:L.tagDog, food:L.tagFood };
+    var badges = c.tags.map(function(tg2){ return '<div class="tag-badge">' + tagLabels[tg2] + '</div>'; }).join('');
+    var quickBtn = state.subscribed ? '<div class="quick-btn" onclick="app.quickOrder(' + c.id + ')">' + L.quickCoffee + '</div>' : '';
+    return '<div class="cafe-row">' +
+      '<div class="cafe-thumb"></div>' +
+      '<div class="cafe-main" onclick="app.openCafe(' + c.id + ')"><div class="cafe-name">' + c.name + ' · ' + c.rating + '</div><div class="cafe-meta">' + c.meta + '</div><div class="cafe-window">' + windowLabel(c.win) + '</div><div class="tag-badge-row">' + badges + '</div></div>' +
+      '<div class="cafe-actions"><div class="fav-btn" style="color:' + (c.fav ? 'var(--accent-dark)' : 'var(--ink-2)') + '" onclick="app.toggleFav(' + c.id + ')">♥</div>' + quickBtn + '</div>' +
+    '</div>';
+  }
+
+  function renderCategoryChips(){
+    var L = t();
+    var cats = [['all',L.catAll],['espresso',L.catEspresso],['specialty',L.catSpecialty],['latte',L.catLatte],['cold',L.catCold]];
+    document.getElementById('category-chips').innerHTML = cats.map(function(c){
+      var on = state.category === c[0];
+      return '<div class="chip ' + (on?'on':'') + '" onclick="app.setCategory(\'' + c[0] + '\')">' + c[1] + '</div>';
+    }).join('');
+  }
+  function renderTagChips(){
+    var L = t();
+    var tags = [['wifi',L.tagWifi],['quiet',L.tagQuiet],['dog',L.tagDog],['food',L.tagFood]];
+    document.getElementById('tag-chips').innerHTML = tags.map(function(tg2){
+      var on = state.tagFilters.indexOf(tg2[0]) !== -1;
+      return '<div class="chip ' + (on?'on':'') + '" onclick="app.toggleTagFilter(\'' + tg2[0] + '\')">' + tg2[1] + '</div>';
+    }).join('');
+  }
+  function renderCatalog(){
+    var list = state.category === 'all' ? state.cafes : state.cafes.filter(function(c){ return c.cat === state.category; });
+    if (state.tagFilters.length) { list = list.filter(function(c){ return state.tagFilters.every(function(tg2){ return c.tags.indexOf(tg2) !== -1; }); }); }
+    document.getElementById('catalog-list').innerHTML = list.length ? list.map(cafeRowHtml).join('') : '<div class="empty-note">' + t().emptyFilter + '</div>';
+  }
+
+  function renderOrderTabs(){
+    var L = t();
+    var tabs = [['active',L.ordersActive],['history',L.ordersHistory]];
+    document.getElementById('order-tabs').innerHTML = tabs.map(function(tb){
+      var on = state.orderTab === tb[0];
+      return '<div class="tab2 ' + (on?'active':'') + '" onclick="app.setOrderTab(\'' + tb[0] + '\')">' + tb[1] + '</div>';
+    }).join('');
+  }
+  function renderOrders(){
+    var L = t();
+    var wantPending = state.orderTab === 'active';
+    var orders = state.history.slice().reverse().filter(function(h){ return (h.status === 'pending') === wantPending; });
+    if (!orders.length) { document.getElementById('orders-list').innerHTML = '<div class="empty-note">' + (wantPending ? L.emptyOrdersActive : L.emptyOrdersHistory) + '</div>'; return; }
+    document.getElementById('orders-list').innerHTML = orders.map(function(h){
+      var done = h.status === 'done';
+      var desc = h.booking ? (L.fieldTime + ' · ' + (h.time||'')) : (h.size + ' · ' + milkLabel(h.milk));
+      return '<div class="order-item"><div class="order-mono">' + mono(h.cafe||'З') + '</div>' +
+        '<div class="order-body"><div class="order-top">' + desc + '</div><div class="order-meta">' + h.cafe + ' · ' + h.when + '</div></div>' +
+        '<div class="order-status" style="border-color:' + (done?'var(--border)':'var(--accent-dark)') + ';color:' + (done?'var(--ink-2)':'var(--accent-dark)') + '">' + (done?L.orderDone:L.orderPending) + '</div></div>';
+    }).join('');
+  }
+
+  function renderPills(){
+    var L = t();
+    var sizes = [['S','250 мл',0],['M','300 мл',0],['L','+500 ₸',500]];
+    document.getElementById('size-pills').innerHTML = sizes.map(function(s){
+      var on = state.size === s[0];
+      return '<div class="pill ' + (on?'on':'') + '" onclick="app.setSize(\'' + s[0] + '\')">' + s[0] + '<span class="note">' + s[1] + '</span></div>';
+    }).join('');
+    var milks = [['normal',L.milkNormal,0],['oat',L.milkOat,500],['almond',L.milkAlmond,500],['none',L.milkNone,0]];
+    document.getElementById('milk-pills').innerHTML = milks.map(function(m){
+      var on = state.milk === m[0];
+      return '<div class="pill ' + (on?'on':'') + '" onclick="app.setMilk(\'' + m[0] + '\')">' + m[1] + '</div>';
+    }).join('');
+    var slots = ['11:00','12:00','13:00'];
+    document.getElementById('slot-pills').innerHTML = slots.map(function(s){
+      var on = state.slot === s;
+      return '<div class="pill ' + (on?'on':'') + '" onclick="app.setSlot(\'' + s + '\')">' + s + '</div>';
+    }).join('');
+    var guests = [['g1',L.guest1],['g2',L.guest2],['g34',L.guest34]];
+    document.getElementById('guest-pills').innerHTML = guests.map(function(g){
+      var on = state.guests === g[0];
+      return '<div class="pill ' + (on?'on':'') + '" onclick="app.setGuests(\'' + g[0] + '\')">' + g[1] + '</div>';
+    }).join('');
+    var extra = (state.milk === 'oat' || state.milk === 'almond' ? 500 : 0) + (state.size === 'L' ? 500 : 0);
+    document.getElementById('extra-total').textContent = extra ? extra + ' ₸' : '0 ₸';
+  }
+
+  function renderDefaultPills(){
+    document.getElementById('default-size-pills').innerHTML = [['S','250 мл'],['M','300 мл'],['L','+500 ₸']].map(function(s){
+      var on = state.defaultSize === s[0];
+      return '<div class="pill ' + (on?'on':'') + '" onclick="app.setDefaultSize(\'' + s[0] + '\')">' + s[0] + '<span class="note">' + s[1] + '</span></div>';
+    }).join('');
+    var L = t();
+    document.getElementById('default-milk-pills').innerHTML = [['normal',L.milkNormal],['oat',L.milkOat],['almond',L.milkAlmond],['none',L.milkNone]].map(function(m){
+      var on = state.defaultMilk === m[0];
+      return '<div class="pill ' + (on?'on':'') + '" onclick="app.setDefaultMilk(\'' + m[0] + '\')">' + m[1] + '</div>';
+    }).join('');
+  }
+
+  function showScreen(name){
+    document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
+    document.getElementById('screen-' + name).classList.add('active');
+    state.screen = name; state_tab = state.tab;
+    updateMainButton();
+    if (tg && tg.BackButton) { (name === 'detail' || name === 'paywall') ? tg.BackButton.show() : tg.BackButton.hide(); }
+  }
+  function updateNavHighlight(){
+    ['home','catalog','orders','profile'].forEach(function(tb){
+      document.getElementById('nav-' + tb).classList.toggle('active', tb === state.tab && state.screen === tb);
+    });
+  }
+  function updateMainButton(){
+    if (!tg || !tg.MainButton) return;
+    var L = t();
+    if (state.screen === 'detail') {
+      if (state.mode === 'drink') { tg.MainButton.setText(L.mainDrinkBtn); tg.MainButton.offClick(requestDrink); tg.MainButton.onClick(requestDrink); }
+      else { tg.MainButton.setText(L.mainBookBtn); tg.MainButton.offClick(confirmBooking); tg.MainButton.onClick(confirmBooking); }
+      tg.MainButton.show();
+    } else if (state.screen === 'paywall') {
+      tg.MainButton.setText('Kaspi Pay'); tg.MainButton.show();
+      tg.MainButton.offClick(pay); tg.MainButton.onClick(pay);
+    } else { tg.MainButton.hide(); }
+  }
+
+  function requestDrink(){
+    if (!state.subscribed) { showScreen('paywall'); return; }
+    state.used = Math.min(state.used + 1, limit);
+    var c = cafeById(state.activeCafe);
+    state.history.push({ id: 20470 + state.history.length, size: state.size, milk: state.milk, cafe: c?c.name:'', when: (state.lang==='kk'?'жаңа ғана':'только что'), status: 'done' });
+    renderDash(); renderOrders(); haptic('medium'); app.switchTab('profile');
+  }
+  function confirmBooking(){
+    var c = cafeById(state.activeCafe); var time = state.slot; haptic('medium');
+    state.history.push({ id: 20480 + state.history.length, booking:true, time: time, cafe: c?c.name:'', when: (state.lang==='kk'?'бүгін':'сегодня'), status: 'pending' });
+    document.getElementById('toast').textContent = state.lang==='kk'
+      ? (time + ' броны WhatsApp-та расталады')
+      : ('Бронь на ' + time + ' отправлена — подтвердим в WhatsApp.');
+    renderOrders();
+    var text = encodeURIComponent((state.lang==='kk' ? 'Сәлеметсіз бе! ' : 'Здравствуйте! ') + (c?c.name:'') + ' — ' + time + ' (' + guestLabel(state.guests) + ')');
+    var url = 'https://wa.me/' + cfg.whatsapp + '?text=' + text;
+    if (tg) { tg.openLink(url); } else { window.open(url, '_blank'); }
+  }
+  function pay(){
+    if (tg) { tg.openLink(cfg.kaspi); }
+    setTimeout(function(){ state.subscribed = true; app.switchTab('profile'); }, 1200);
+  }
+
+  return {
+    init: init,
+    pingBell: function(){ haptic(); },
+    setLang: function(l){ if (state.lang === l) return; state.lang = l; haptic(); applyLanguage(); },
+    toggleTheme: function(){ state.theme = state.theme === 'light' ? 'dark' : 'light'; haptic(); applyTheme(); },
+    switchTab: function(name){
+      state.tab = name;
+      if (name === 'profile' && !state.subscribed) { showScreen('paywall'); updateNavHighlight(); return; }
+      if (name === 'orders') { renderOrderTabs(); renderOrders(); }
+      if (name === 'catalog') { renderCategoryChips(); renderCatalog(); }
+      showScreen(name); updateNavHighlight();
+    },
+    setCategory: function(c){ state.category = c; haptic(); renderCategoryChips(); renderCatalog(); },
+    setOrderTab: function(tb){ state.orderTab = tb; haptic(); renderOrderTabs(); renderOrders(); },
+    setMode: function(m){
+      state.mode = m; haptic();
+      document.getElementById('mode-drink').classList.toggle('active', m === 'drink');
+      document.getElementById('mode-table').classList.toggle('active', m === 'table');
+      document.getElementById('drink-mode').style.display = m === 'drink' ? 'block' : 'none';
+      document.getElementById('table-mode').style.display = m === 'table' ? 'block' : 'none';
+      updateMainButton();
+    },
+    setSize: function(s){ state.size = s; haptic(); renderPills(); },
+    setMilk: function(m){ state.milk = m; haptic(); renderPills(); },
+    setSlot: function(s){ state.slot = s; haptic(); renderPills(); },
+    setGuests: function(g){ state.guests = g; haptic(); renderPills(); },
+    openCafe: function(id){
+      state.activeCafe = id; state.mode = 'drink'; document.getElementById('toast').textContent = '';
+      state.size = state.defaultSize; state.milk = state.defaultMilk;
+      var c = cafeById(id);
+      document.getElementById('detail-name').textContent = c.name;
+      document.getElementById('detail-meta').textContent = c.meta;
+      document.getElementById('detail-fav').style.color = c.fav ? 'var(--accent-dark)' : 'var(--ink-2)';
+      document.getElementById('mode-drink').classList.add('active');
+      document.getElementById('mode-table').classList.remove('active');
+      document.getElementById('drink-mode').style.display = 'block';
+      document.getElementById('table-mode').style.display = 'none';
+      renderPills(); haptic(); showScreen('detail');
+    },
+    quickOrder: function(id){
+      if (!state.subscribed) { app.switchTab('profile'); return; }
+      state.activeCafe = id; state.used = Math.min(state.used + 1, limit);
+      var c = cafeById(id);
+      state.history.push({ id: 20470 + state.history.length, size: state.defaultSize, milk: state.defaultMilk, cafe: c?c.name:'', when: (state.lang==='kk'?'жаңа ғана':'только что'), status: 'done' });
+      renderDash(); renderOrders(); haptic('medium'); app.switchTab('profile');
+    },
+    toggleTagFilter: function(tg2){
+      var idx = state.tagFilters.indexOf(tg2);
+      if (idx === -1) { state.tagFilters.push(tg2); } else { state.tagFilters.splice(idx, 1); }
+      haptic(); renderTagChips(); renderCatalog();
+    },
+    setDefaultSize: function(s){ state.defaultSize = s; haptic(); renderDefaultPills(); },
+    setDefaultMilk: function(m){ state.defaultMilk = m; haptic(); renderDefaultPills(); },
+    saveDefault: function(){
+      haptic('medium');
+      var el = document.getElementById('default-toast');
+      el.textContent = t().defaultNoteSaved;
+      setTimeout(function(){ el.textContent = t().defaultNoteBase; }, 2500);
+    },
+    toggleFav: function(id){ var c = cafeById(id); c.fav = !c.fav; haptic(); renderFeatured(); renderCatalog(); },
+    toggleFavActive: function(){
+      var c = cafeById(state.activeCafe); c.fav = !c.fav; haptic();
+      document.getElementById('detail-fav').style.color = c.fav ? 'var(--accent-dark)' : 'var(--ink-2)';
+      renderFeatured(); renderCatalog();
+    },
+    openSupport: function(){
+      var url = 'https://t.me/' + cfg.support;
+      if (tg) { tg.openTelegramLink(url); } else { window.open(url, '_blank'); }
+    },
+    shareReferral: function(){
+      var link = 'https://t.me/' + cfg.bot + '/' + cfg.app + '?startapp=ref_' + userId;
+      var text = encodeURIComponent((state.lang==='kk' ? 'ЗАВАР-ға қосыл — Алматыдағы кофеханаларға жазылым: ' : 'Подключайся к ЗАВАР — подписка на кофейни в Алматы: ') + link);
+      var shareUrl = 'https://t.me/share/url?url=' + encodeURIComponent(link) + '&text=' + text;
+      if (tg) { tg.openTelegramLink(shareUrl); } else { window.open(shareUrl, '_blank'); }
+    }
+  };
+})();
+app.init();
+</script>
+</body>
+</html>
