@@ -438,6 +438,8 @@ kk:{
   b2:'Кезексіз үстел', b2s:'Жұмыс күндері, 10 минутта растау',
   b3:'Жаңа кофеханалар бірінші', b3s:'Ботта хабарландыру келеді',
   proof:'Алматыда 210 жазылушы', subscribe:'Kaspi арқылы жазылу',
+  notSubscribed:'Жазылым әлі жоқ', guestCta:'ЗАВАР-ға қосылыңыз',
+  guestCtaSub:'Айына 8 000 ₸ — 12 сусын және кезексіз үстел.',
   step1:'Кофеханаға кіріңіз', step1s:'Картадан қалаған серіктес кофеханаңызды таңдаңыз — жақын әрі ашық болғанын.',
   step2:'Картаны ашыңыз', step2s:'Төмендегі дөңгелек батырма кез келген экраннан ЗАВАР картаңызды ашады.',
   step3:'Баристаға көрсетіңіз', step3s:'Бариста QR-кодты сканерлейді — сусын жазылымнан есептеледі. Бітті.',
@@ -454,8 +456,8 @@ ru:{
   navHome:'Главная', navCafes:'Кофейни', navOrders:'Заказы', navProfile:'Профиль',
   greetM:'Доброе утро', greetD:'Добрый день', greetE:'Добрый вечер',
   guest:'Гость', member:'Участник ЗАВАР',
-  months:['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'],
-  remainLabel:function(m){ return 'Осталось в ' + m.toLowerCase(); },
+  months:['январе','феврале','марте','апреле','мае','июне','июле','августе','сентябре','октябре','ноябре','декабре'],
+  remainLabel:function(m){ return 'Осталось в ' + m; },
   ofLimit:function(n){ return 'из ' + n + ' напитков'; },
   openPass:'Открыть карту',
   openNowSec:'Открыто сейчас', allCafes:'Все', cafesTitle:'Кофейни', ordersTitle:'Заказы',
@@ -496,6 +498,8 @@ ru:{
   b2:'Стол без очереди', b2s:'В будни, подтверждение за 10 минут',
   b3:'Новые кофейни первыми', b3s:'Уведомление приходит в бот',
   proof:'210 подписчиков в Алматы', subscribe:'Подписаться через Kaspi',
+  notSubscribed:'Подписки пока нет', guestCta:'Присоединяйтесь к ЗАВАР',
+  guestCtaSub:'8 000 ₸ в месяц — 12 напитков и стол без очереди.',
   step1:'Зайдите в кофейню', step1s:'Выберите партнёрскую кофейню на карте — ту, что ближе и открыта сейчас.',
   step2:'Откройте карту', step2s:'Круглая кнопка внизу открывает вашу карту ЗАВАР с любого экрана.',
   step3:'Покажите бариста', step3s:'Бариста сканирует QR-код — напиток списывается с подписки. Готово.',
@@ -531,6 +535,77 @@ var S = {
 
 var userId = (tg && tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.id) || (1000 + Math.floor(Math.random()*9000));
 var userName = (tg && tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.first_name) || null;
+
+/* language: a saved choice always wins; otherwise follow the user's Telegram
+   (or browser) language. Only kk-set devices get Kazakh — Russian is the safer
+   default in Almaty for everyone else, and one tap changes it. */
+function store(k,v){ try{ v===undefined ? localStorage.removeItem(k) : localStorage.setItem(k,v); }catch(e){} }
+function stored(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
+function detectLang(){
+  var saved = stored('zavar-lang');
+  if(saved==='kk'||saved==='ru') return saved;
+  var code = (tg && tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.language_code)
+           || navigator.language || navigator.userLanguage || '';
+  return String(code).toLowerCase().indexOf('kk')===0 ? 'kk' : 'ru';
+}
+function detectTheme(){
+  var saved = stored('zavar-theme');
+  if(saved==='light'||saved==='dark') return saved;
+  return (tg && tg.colorScheme==='dark') ? 'dark' : 'light';
+}
+
+/* ---------- persistence ----------
+   Prototype-level only: this keeps the app usable between sessions on one
+   device. Subscription and redemption state must move server-side before
+   launch — anything stored here is editable by the user. */
+var SAVE_KEY = 'zavar-state-v1';
+var saveTimer = null;
+function snapshot(){
+  return { ts:Date.now(), subscribed:S.subscribed, used:S.used, cancelScheduled:S.cancelScheduled,
+    defaults:S.defaults, history:S.history,
+    favs:S.cafes.filter(function(c){return c.fav;}).map(function(c){return c.id;}) };
+}
+function applySnapshot(d){
+  if(!d || typeof d!=='object') return false;
+  if(typeof d.subscribed==='boolean') S.subscribed=d.subscribed;
+  if(typeof d.used==='number') S.used=Math.max(0,Math.min(LIMIT,d.used));
+  if(typeof d.cancelScheduled==='boolean') S.cancelScheduled=d.cancelScheduled;
+  if(d.defaults && typeof d.defaults==='object') S.defaults=d.defaults;
+  if(Object.prototype.toString.call(d.history)==='[object Array]') S.history=d.history;
+  if(Object.prototype.toString.call(d.favs)==='[object Array]'){
+    S.cafes.forEach(function(c){ c.fav = d.favs.indexOf(c.id)>=0; });
+  }
+  return true;
+}
+function save(){
+  if(saveTimer) clearTimeout(saveTimer);
+  saveTimer = setTimeout(function(){
+    var json = JSON.stringify(snapshot());
+    store(SAVE_KEY, json);
+    if(tg && tg.CloudStorage && canUse('6.9')){
+      try{ tg.CloudStorage.setItem(SAVE_KEY, json, function(){}); }catch(e){}
+    }
+  }, 250);
+}
+function restoreLocal(){
+  var raw = stored(SAVE_KEY);
+  if(!raw) return;
+  try{ applySnapshot(JSON.parse(raw)); }catch(e){}
+}
+function restoreCloud(){
+  if(!(tg && tg.CloudStorage && canUse('6.9'))) return;
+  try{
+    tg.CloudStorage.getItem(SAVE_KEY, function(err, val){
+      if(err || !val) return;
+      try{
+        var d = JSON.parse(val), localRaw = stored(SAVE_KEY);
+        var localTs = 0;
+        if(localRaw){ try{ localTs = JSON.parse(localRaw).ts || 0; }catch(e){} }
+        if((d.ts||0) > localTs){ applySnapshot(d); store(SAVE_KEY, val); render(); }
+      }catch(e){}
+    });
+  }catch(e){}
+}
 
 /* ---------- utils ---------- */
 function t(){ return T[S.lang]; }
@@ -828,6 +903,7 @@ function vOrders(){
 
 function vProfile(){
   var L=t();
+  if(!S.subscribed) return vProfileGuest();
   var favN = S.cafes.filter(function(c){return c.fav;}).length;
   var saved = savedSoFar();
   var status = S.cancelScheduled ? L.subEnding : L.subActive;
@@ -864,6 +940,26 @@ function vProfile(){
     rowHtml(I.gift, L.refRow, L.refRowSub, 'share','')+
     rowHtml(I.bell, L.supportRow, L.supportRowSub, 'support','')+
     rowHtml(I.sun, L.settingsRow, L.settingsRowSub, 'go','settings')+
+  '</div>';
+}
+function vProfileGuest(){
+  var L=t();
+  return topbar()+
+  bannerHtml()+
+  '<div class="phead"><div class="avatar-lg" style="background:linear-gradient(145deg,var(--line-2),var(--ink-3))">'+esc(userInitial())+'</div>'+
+    '<div><h1>'+esc(userName||L.guest)+'</h1>'+
+    '<div class="eyebrow" style="margin-top:5px">'+esc(L.notSubscribed)+'</div></div></div>'+
+
+  '<div class="promo">'+I.spark+
+    '<h3>'+esc(L.guestCta)+'</h3>'+
+    '<p>'+esc(L.guestCtaSub)+'</p>'+
+    '<button class="btn btn-primary" data-act="go" data-val="paywall">'+esc(L.subscribe)+'</button>'+
+  '</div>'+
+
+  '<div style="margin-top:14px">'+
+    rowHtml(I.qr.replace(/#1B1E16/g,'currentColor'), L.howRow, L.howRowSub, 'go','how')+
+    rowHtml(I.sun, L.settingsRow, L.settingsRowSub, 'go','settings')+
+    rowHtml(I.bell, L.supportRow, L.supportRowSub, 'support','')+
   '</div>';
 }
 function rowHtml(ic,title,sub,act,val){
@@ -979,6 +1075,7 @@ function render(){
   renderDock(); renderSheet(); syncNative();
   S.popIndex=-1;
   window.scrollTo(0,0);
+  save(); // debounced; every mutation ends in a render, so nothing is missed
 }
 
 function canUse(v){ return !!(tg && tg.isVersionAtLeast && tg.isVersionAtLeast(v)); }
@@ -1006,7 +1103,6 @@ function mainAction(){
 
 /* ---------- actions ---------- */
 function go(v){
-  if(v==='profile' && !S.subscribed){ S.screen='paywall'; S.tab='profile'; render(); return; }
   if(['home','cafes','orders','profile'].indexOf(v)>=0) S.tab=v;
   S.screen=v; S.banner=null; render();
 }
@@ -1070,8 +1166,8 @@ document.addEventListener('click',function(e){
     case 'go': hap(); go(v); break;
     case 'pass:open': openPass(); break;
     case 'pass:close': closePass(); break;
-    case 'lang': if(S.lang!==v){ S.lang=v; hap(); document.documentElement.lang=v; render(); } break;
-    case 'theme': if(S.theme!==v){ S.theme=v; hap(); document.documentElement.setAttribute('data-theme',v); render(); } break;
+    case 'lang': if(S.lang!==v){ S.lang=v; store('zavar-lang',v); hap(); document.documentElement.lang=v; render(); } break;
+    case 'theme': if(S.theme!==v){ S.theme=v; store('zavar-theme',v); hap(); document.documentElement.setAttribute('data-theme',v); render(); } break;
     case 'cafe': hap(); S.cafe=+v; S.booking=false; S.toast='';
       var d=defFor(+v); S.size=d.size; S.milk=d.milk; S.screen='detail'; render(); break;
     case 'fav': var c=cafeById(+v); if(c){ c.fav=!c.fav; hap(); render(); } break;
@@ -1116,9 +1212,13 @@ document.addEventListener('click',function(e){
 
 /* ---------- init ---------- */
 function init(){
+  if(tg){ try{ tg.ready(); tg.expand(); }catch(e){} }
+  S.lang = detectLang();
+  S.theme = detectTheme();
+  document.documentElement.lang = S.lang;
+  document.documentElement.setAttribute('data-theme', S.theme);
+  restoreLocal();
   if(tg){
-    try{ tg.ready(); tg.expand(); }catch(e){}
-    if(tg.colorScheme==='dark'){ S.theme='dark'; document.documentElement.setAttribute('data-theme','dark'); }
     if(tg.BackButton && canUse('6.1')) tg.BackButton.onClick(function(){
       if(S.screen==='detail') go(S.tab==='cafes'?'cafes':'home');
       else if(S.screen==='paywall') go('home');
@@ -1126,6 +1226,7 @@ function init(){
     });
   }
   render();
+  restoreCloud();
 }
 return { init:init };
 })();
