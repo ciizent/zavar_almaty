@@ -137,6 +137,15 @@
   .row-card { display: flex; align-items: center; justify-content: space-between; background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 12px 14px; cursor: pointer; }
   .row-card .t1 { font-size: 13px; font-weight: 600; } .row-card .t2 { font-size: 11.5px; color: var(--ink-2); }
 
+  .cancel-link { font-size: 12px; color: var(--ink-2); text-align: center; margin-top: 4px; cursor: pointer; text-decoration: underline; }
+  .confirm-box { margin-top: 10px; padding: 12px; border: 1px dashed var(--border); border-radius: 12px; text-align: center; }
+  .confirm-box .q { font-size: 12.5px; margin-bottom: 8px; }
+  .confirm-actions { display: flex; gap: 8px; }
+  .confirm-actions div { flex: 1; padding: 9px; border-radius: 10px; font-size: 12px; font-weight: 600; cursor: pointer; text-align: center; }
+  .confirm-yes { background: var(--dark-1); color: var(--dark-text); }
+  .confirm-no { background: var(--border); color: var(--ink); }
+  .low-balance-note { font-size: 11.5px; color: var(--accent); margin-top: 8px; font-weight: 600; }
+
   .bottomnav { position: fixed; left: 0; right: 0; bottom: 0; background: var(--bg); border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 10px 0 8px; }
   .navitem { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 10px; font-weight: 600; color: var(--ink-2); cursor: pointer; }
   .navitem.active { color: var(--ink); }
@@ -179,6 +188,7 @@
         </div>
       </div>
       <div class="dash-row" id="dash-row"></div>
+      <div class="low-balance-note" id="low-balance-note" style="display:none;"></div>
     </div>
 
     <div class="sec-row"><h3 class="sec-title" id="offpeak-title">Оффпик қазір</h3><span class="sec-link" id="allcafes-link" onclick="app.switchTab('catalog')">Барлық кофеханалар →</span></div>
@@ -215,7 +225,7 @@
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09a1.65 1.65 0 00-1-1.51 1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09a1.65 1.65 0 001.51-1 1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
       </div>
     </div>
-    <div class="status-card"><span><span class="status-dot"></span><span id="sub-active-text">Жазылым белсенді</span></span><span class="status-date">4 қазанға дейін</span></div>
+    <div class="status-card"><span><span class="status-dot"></span><span id="sub-active-text">Жазылым белсенді</span></span><span class="status-date" id="profile-status-date">4 қазанға дейін</span></div>
     <div class="qr-box"><div class="qr-grid" id="qr-pattern"></div></div>
     <div class="qr-caption" id="qr-caption">Сусынды есептен шығару үшін баристаға көрсетіңіз</div>
   </div>
@@ -225,11 +235,19 @@
     <div class="back-row" id="settings-back-label" onclick="app.switchTab('profile')">‹ Артқа</div>
     <h3 class="sec-title" id="settings-title" style="margin-bottom:14px;">Баптаулар</h3>
     <div class="ref-card">
-      <div class="ref-label" id="default-coffee-label">Менің негізгі кофем</div>
-      <div class="pill-row" id="default-size-pills"></div>
-      <div class="pill-row" id="default-milk-pills"></div>
-      <div class="ref-btn" id="save-default-btn" onclick="app.saveDefault()">Негізгі ретінде сақтау</div>
-      <div class="ref-note" id="default-toast">Тапсырыс кезінде баристаға осы рецепт бірден көрінеді</div>
+      <div class="ref-label" id="sub-card-label">Жазылым</div>
+      <div class="status-card" style="margin-bottom:10px;">
+        <span><span class="status-dot"></span><span id="sub-status-text">Жазылым белсенді</span></span>
+        <span class="status-date" id="sub-status-date">4 қазанға дейін</span>
+      </div>
+      <div class="cancel-link" id="cancel-link" onclick="app.toggleCancelConfirm()">Жазылымды тоқтату</div>
+      <div class="confirm-box" id="cancel-confirm-box" style="display:none;">
+        <div class="q" id="cancel-confirm-q">Шынымен тоқтатасыз ба?</div>
+        <div class="confirm-actions">
+          <div class="confirm-no" id="cancel-no-btn" onclick="app.dismissCancelConfirm()">Жоқ</div>
+          <div class="confirm-yes" id="cancel-yes-btn" onclick="app.confirmCancel()">Иә, тоқтату</div>
+        </div>
+      </div>
     </div>
     <div class="ref-card">
       <div class="ref-label" id="ref-label-text">Сенің реферал кодың</div>
@@ -257,7 +275,8 @@
       <div class="pill-row" id="milk-pills"></div>
       <div class="total-row"><span id="extra-label">Жазылымнан тыс төлем</span><span id="extra-total">0 ₸</span></div>
       <div class="confirm-note" id="drink-note">Негізгі сусын жазылымға кіреді, қосымша төлем — тек L өлшемі немесе балама сүт үшін.</div>
-      <div class="sec-link" id="table-link" onclick="app.setMode('table')" style="margin-top:16px;">Үстел брондау →</div>
+      <div class="sec-link" id="save-usual-link" onclick="app.saveCafeDefault()" style="margin-top:16px;">Осы жерде негізгі ретінде сақтау →</div>
+      <div class="sec-link" id="table-link" onclick="app.setMode('table')" style="margin-top:8px;">Үстел брондау →</div>
     </div>
 
     <div id="table-mode" style="display:none;">
@@ -338,9 +357,6 @@ var app = (function(){
       b2t:'Кезексіз үстел', b2n:'Жұмыс күндері, 10 минутта растау',
       b3t:'Жаңа кофеханалар бірінші болып', b3n:'Telegram-да хабарландыру',
       proof:'Алматыда 210 жазылушы бар',
-      myDefaultCoffee:'Менің негізгі кофем', saveDefaultBtn:'Негізгі ретінде сақтау',
-      defaultNoteBase:'Тапсырыс кезінде баристаға осы рецепт бірден көрінеді',
-      defaultNoteSaved:'Сақталды — «Менің кофем» тапсырысында баристаға осы рецепт көрінеді',
       refLabel:'Сенің реферал кодың', invite:'Досыңды шақыр',
       refNote:'Дос жеңілдікпен бірінші айды алады, сен — бонус сусын',
       support:'Қолдау', supportSub:'Telegram-да бір сағат ішінде жауап береміз',
@@ -350,7 +366,15 @@ var app = (function(){
       qrCaption:'Сусынды есептен шығару үшін баристаға көрсетіңіз',
       tableLinkText:'Үстел брондау →', backToDrinkText:'‹ Сусынға оралу',
       settingsTitle:'Баптаулар',
-      sortRecommended:'Ұсынылған', sortNearby:'Жақын маған'
+      sortRecommended:'Ұсынылған', sortNearby:'Жақын маған',
+      subCardLabel:'Жазылым', renewDate:'4 қазанға дейін',
+      cancelLinkText:'Жазылымды тоқтату', resumeLinkText:'Жазылымды қалпына келтіру',
+      cancelConfirmQ:'Шынымен тоқтатасыз ба?', cancelYes:'Иә, тоқтату', cancelNo:'Жоқ',
+      subCancelledPending:'Тоқтатылады',
+      subCancelScheduled:function(d){ return d + ' — содан кейін жазылым тоқтайды'; },
+      saveUsualLink:'Осы жерде негізгі ретінде сақтау →',
+      saveUsualToastSaved:'Сақталды — келесі жолы осы жерде бірден осылай тапсырыс аласыз',
+      lowBalance:function(n){ return 'Соңғы ' + n + ' сусын қалды'; }
     },
     ru: {
       navHome:'Главная', navCatalog:'Кофейни', navOrders:'Заказы', navProfile:'Профиль',
@@ -376,9 +400,6 @@ var app = (function(){
       b2t:'Стол без очереди', b2n:'в будни, подтверждение за 10 минут',
       b3t:'Новые кофейни первыми', b3n:'уведомления прямо в Telegram',
       proof:'Уже 210 подписчиков в Алматы',
-      myDefaultCoffee:'Мой базовый кофе', saveDefaultBtn:'Сохранить как основной',
-      defaultNoteBase:'При заказе бариста сразу увидит этот рецепт',
-      defaultNoteSaved:'Сохранено — бариста увидит этот рецепт при заказе «Мой кофе»',
       refLabel:'Ваш реферальный код', invite:'Пригласить друга',
       refNote:'Друг получает первый месяц со скидкой, вы — бонусный напиток',
       support:'Поддержка', supportSub:'Ответим в Telegram в течение часа',
@@ -388,15 +409,23 @@ var app = (function(){
       qrCaption:'Покажите бариста для списания напитка',
       tableLinkText:'Забронировать стол →', backToDrinkText:'‹ Назад к напитку',
       settingsTitle:'Настройки',
-      sortRecommended:'Рекомендуемые', sortNearby:'Ближе всего'
+      sortRecommended:'Рекомендуемые', sortNearby:'Ближе всего',
+      subCardLabel:'Подписка', renewDate:'4 октября',
+      cancelLinkText:'Отменить подписку', resumeLinkText:'Возобновить подписку',
+      cancelConfirmQ:'Точно хотите отменить?', cancelYes:'Да, отменить', cancelNo:'Нет',
+      subCancelledPending:'Будет отменена',
+      subCancelScheduled:function(d){ return 'до ' + d + ' — затем подписка отменится'; },
+      saveUsualLink:'Сохранить как основной здесь →',
+      saveUsualToastSaved:'Сохранено — в следующий раз здесь сразу будет этот заказ',
+      lowBalance:function(n){ return n===1 ? 'Остался последний напиток' : 'Осталось всего ' + n + ' напитка'; }
     }
   };
 
   var state = {
     lang: 'kk', theme: 'light',
-    tab: 'home', screen: 'home', subscribed: false, used: 0,
+    tab: 'home', screen: 'home', subscribed: false, used: 0, cancelScheduled: false,
     category: 'all', tagFilters: [], sortMode: 'default', size: 'M', milk: 'normal', slot: '12:00', guests: 'g2',
-    defaultSize: 'M', defaultMilk: 'normal',
+    cafeDefaults: {},
     mode: 'drink', orderTab: 'history', activeCafe: 1,
     cafes: [
       { id: 1, name: 'CULT COFFEE', rating: '4.7', cat: 'espresso', meta: 'Есентай · 400 м · 22:00', win: '13:00', fav: false, tags: ['wifi','quiet'] },
@@ -418,6 +447,7 @@ var app = (function(){
   function haptic(style){ if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred(style || 'light'); }
   function mono(name){ return name.split(' ').slice(0,2).map(function(w){ return w.charAt(0); }).join(''); }
   function cafeById(id){ return state.cafes.find(function(c){ return c.id === id; }); }
+  function cafeDefaultFor(id){ return state.cafeDefaults[id] || { size: 'M', milk: 'normal' }; }
   function milkLabel(key){ return { normal:t().milkNormal, oat:t().milkOat, almond:t().milkAlmond, none:t().milkNone }[key]; }
   function guestLabel(key){ return { g1:t().guest1, g2:t().guest2, g34:t().guest34 }[key]; }
   function windowLabel(win){
@@ -490,9 +520,11 @@ var app = (function(){
     document.getElementById('b3-title').textContent = L.b3t; document.getElementById('b3-note').textContent = L.b3n;
     document.getElementById('proof-text').textContent = L.proof;
 
-    document.getElementById('default-coffee-label').textContent = L.myDefaultCoffee;
-    document.getElementById('save-default-btn').textContent = L.saveDefaultBtn;
-    document.getElementById('default-toast').textContent = L.defaultNoteBase;
+    document.getElementById('sub-card-label').textContent = L.subCardLabel;
+    document.getElementById('cancel-confirm-q').textContent = L.cancelConfirmQ;
+    document.getElementById('cancel-no-btn').textContent = L.cancelNo;
+    document.getElementById('cancel-yes-btn').textContent = L.cancelYes;
+    document.getElementById('save-usual-link').textContent = L.saveUsualLink;
     document.getElementById('ref-label-text').textContent = L.refLabel;
     document.getElementById('invite-btn-text').textContent = L.invite;
     document.getElementById('ref-note-text').textContent = L.refNote;
@@ -505,7 +537,7 @@ var app = (function(){
     document.getElementById('nav-profile-label').textContent = L.navProfile;
 
     renderDash(); renderFeatured(); renderSortChips(); renderCategoryChips(); renderTagChips(); renderCatalog();
-    renderOrderTabs(); renderOrders(); renderPills(); renderDefaultPills();
+    renderOrderTabs(); renderOrders(); renderPills(); renderSubscription();
     updateMainButton();
   }
 
@@ -643,16 +675,27 @@ var app = (function(){
     document.getElementById('extra-total').textContent = extra ? extra + ' ₸' : '0 ₸';
   }
 
-  function renderDefaultPills(){
-    document.getElementById('default-size-pills').innerHTML = [['S','250 мл'],['M','300 мл'],['L','+500 ₸']].map(function(s){
-      var on = state.defaultSize === s[0];
-      return '<div class="pill ' + (on?'on':'') + '" onclick="app.setDefaultSize(\'' + s[0] + '\')">' + s[0] + '<span class="note">' + s[1] + '</span></div>';
-    }).join('');
+  function renderSubscription(){
     var L = t();
-    document.getElementById('default-milk-pills').innerHTML = [['normal',L.milkNormal],['oat',L.milkOat],['almond',L.milkAlmond],['none',L.milkNone]].map(function(m){
-      var on = state.defaultMilk === m[0];
-      return '<div class="pill ' + (on?'on':'') + '" onclick="app.setDefaultMilk(\'' + m[0] + '\')">' + m[1] + '</div>';
-    }).join('');
+    var statusText = state.cancelScheduled ? L.subCancelledPending : L.subActive;
+    var dateText = state.cancelScheduled ? L.subCancelScheduled(L.renewDate) : L.renewDate;
+    var profText = document.getElementById('sub-active-text'); if (profText) profText.textContent = statusText;
+    var profDate = document.getElementById('profile-status-date'); if (profDate) profDate.textContent = dateText;
+    var setText = document.getElementById('sub-status-text'); if (setText) setText.textContent = statusText;
+    var setDate = document.getElementById('sub-status-date'); if (setDate) setDate.textContent = dateText;
+    var cancelLink = document.getElementById('cancel-link');
+    if (cancelLink) cancelLink.textContent = state.cancelScheduled ? L.resumeLinkText : L.cancelLinkText;
+
+    var remaining = limit - state.used;
+    var lowEl = document.getElementById('low-balance-note');
+    if (lowEl) {
+      if (state.subscribed && remaining <= 2 && remaining >= 0) {
+        lowEl.style.display = 'block';
+        lowEl.textContent = L.lowBalance(remaining);
+      } else {
+        lowEl.style.display = 'none';
+      }
+    }
   }
 
   function showScreen(name){
@@ -685,7 +728,7 @@ var app = (function(){
     state.used = Math.min(state.used + 1, limit);
     var c = cafeById(state.activeCafe);
     state.history.push({ id: 20470 + state.history.length, size: state.size, milk: state.milk, cafe: c?c.name:'', when: (state.lang==='kk'?'жаңа ғана':'только что'), status: 'done' });
-    renderDash(); renderOrders(); haptic('medium'); app.switchTab('profile');
+    renderDash(); renderSubscription(); renderOrders(); haptic('medium'); app.switchTab('profile');
   }
   function confirmBooking(){
     var c = cafeById(state.activeCafe); var time = state.slot; haptic('medium');
@@ -700,7 +743,7 @@ var app = (function(){
   }
   function pay(){
     if (tg) { tg.openLink(cfg.kaspi); }
-    setTimeout(function(){ state.subscribed = true; app.switchTab('profile'); }, 1200);
+    setTimeout(function(){ state.subscribed = true; state.cancelScheduled = false; renderSubscription(); app.switchTab('profile'); }, 1200);
   }
 
   return {
@@ -732,7 +775,8 @@ var app = (function(){
     setGuests: function(g){ state.guests = g; haptic(); renderPills(); },
     openCafe: function(id){
       state.activeCafe = id; state.mode = 'drink'; document.getElementById('toast').textContent = '';
-      state.size = state.defaultSize; state.milk = state.defaultMilk;
+      var def = cafeDefaultFor(id);
+      state.size = def.size; state.milk = def.milk;
       var c = cafeById(id);
       document.getElementById('detail-name').textContent = c.name;
       document.getElementById('detail-meta').textContent = c.meta;
@@ -744,22 +788,38 @@ var app = (function(){
     quickOrder: function(id){
       if (!state.subscribed) { app.switchTab('profile'); return; }
       state.activeCafe = id; state.used = Math.min(state.used + 1, limit);
+      var def = cafeDefaultFor(id);
       var c = cafeById(id);
-      state.history.push({ id: 20470 + state.history.length, size: state.defaultSize, milk: state.defaultMilk, cafe: c?c.name:'', when: (state.lang==='kk'?'жаңа ғана':'только что'), status: 'done' });
-      renderDash(); renderOrders(); haptic('medium'); app.switchTab('profile');
+      state.history.push({ id: 20470 + state.history.length, size: def.size, milk: def.milk, cafe: c?c.name:'', when: (state.lang==='kk'?'жаңа ғана':'только что'), status: 'done' });
+      renderDash(); renderSubscription(); renderOrders(); haptic('medium'); app.switchTab('profile');
     },
     toggleTagFilter: function(tg2){
       var idx = state.tagFilters.indexOf(tg2);
       if (idx === -1) { state.tagFilters.push(tg2); } else { state.tagFilters.splice(idx, 1); }
       haptic(); renderTagChips(); renderCatalog();
     },
-    setDefaultSize: function(s){ state.defaultSize = s; haptic(); renderDefaultPills(); },
-    setDefaultMilk: function(m){ state.defaultMilk = m; haptic(); renderDefaultPills(); },
-    saveDefault: function(){
+    saveCafeDefault: function(){
+      state.cafeDefaults[state.activeCafe] = { size: state.size, milk: state.milk };
       haptic('medium');
-      var el = document.getElementById('default-toast');
-      el.textContent = t().defaultNoteSaved;
-      setTimeout(function(){ el.textContent = t().defaultNoteBase; }, 2500);
+      var el = document.getElementById('toast');
+      el.textContent = t().saveUsualToastSaved;
+      setTimeout(function(){ if (el.textContent === t().saveUsualToastSaved) el.textContent = ''; }, 2500);
+    },
+    toggleCancelConfirm: function(){
+      haptic();
+      if (state.cancelScheduled) { state.cancelScheduled = false; renderSubscription(); return; }
+      var box = document.getElementById('cancel-confirm-box');
+      box.style.display = box.style.display === 'none' ? 'block' : 'none';
+    },
+    dismissCancelConfirm: function(){
+      haptic();
+      document.getElementById('cancel-confirm-box').style.display = 'none';
+    },
+    confirmCancel: function(){
+      haptic('medium');
+      state.cancelScheduled = true;
+      document.getElementById('cancel-confirm-box').style.display = 'none';
+      renderSubscription();
     },
     toggleFav: function(id){ var c = cafeById(id); c.fav = !c.fav; haptic(); renderFeatured(); renderCatalog(); },
     toggleFavActive: function(){
