@@ -7,16 +7,16 @@
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
   :root, [data-theme="light"] {
-    --bg: #FBF1E1; --ink: #241A12; --ink-2: #8B7A63; --ink-3: #B7A88F;
-    --border: #E9DCC5; --card: #FFFCF6;
-    --dark-1: #2E2013; --dark-2: #1C130B; --dark-text: #F3E9D8; --dark-text-2: #C9B79A;
-    --accent: #E8B27A; --accent-dark: #2A1608;
+    --bg: #F6F1E7; --ink: #2B2620; --ink-2: #736A5C; --ink-3: #A79E8C;
+    --border: #E3DCCB; --card: #FFFFFF;
+    --dark-1: #3F4A3B; --dark-2: #2E362B; --dark-text: #F2EFE6; --dark-text-2: #B9C2AE;
+    --accent: #8FA876; --accent-dark: #28331F;
   }
   [data-theme="dark"] {
-    --bg: #17110A; --ink: #F3E9D8; --ink-2: #B7A88F; --ink-3: #8B7A63;
-    --border: #3A2C1C; --card: #241A10;
-    --dark-1: #3A2812; --dark-2: #23180C; --dark-text: #F3E9D8; --dark-text-2: #D9C4A0;
-    --accent: #E8B27A; --accent-dark: #2A1608;
+    --bg: #14170F; --ink: #EDEAE0; --ink-2: #A6AB98; --ink-3: #6E7364;
+    --border: #333A2C; --card: #1D2216;
+    --dark-1: #4A5643; --dark-2: #333B2A; --dark-text: #F2EFE6; --dark-text-2: #B9C2AE;
+    --accent: #8FA876; --accent-dark: #E1EAD8;
   }
   :root { --font-heading: 'Cormorant Garamond', serif; --font-body: 'Inter', sans-serif; }
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -56,6 +56,32 @@
   .sec-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px; }
   .sec-title { font-size: 21px; }
   .sec-link { font-size: 12.5px; color: var(--ink-2); font-weight: 500; cursor: pointer; }
+  .sec-btn {
+    display: flex; align-items: center; justify-content: center; gap: 7px;
+    font-size: 13px; font-weight: 600; color: var(--ink);
+    background: var(--card); border: 1.5px solid var(--border); border-radius: 12px;
+    padding: 12px 14px; cursor: pointer; width: 100%; margin-top: 10px;
+  }
+  .sec-btn:active { background: var(--border); }
+  .sec-btn svg { flex: 0 0 auto; }
+  .chip-btn {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 12px; font-weight: 600; color: var(--ink-2);
+    background: var(--card); border: 1.5px solid var(--border); border-radius: 100px;
+    padding: 8px 13px; cursor: pointer; margin-bottom: 14px;
+  }
+  .chip-btn:active { background: var(--border); }
+  .success-banner {
+    display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600;
+    color: var(--accent-dark); background: var(--accent); border-radius: 12px;
+    padding: 12px 14px; margin-bottom: 14px;
+  }
+  .report-btn {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 10.5px; font-weight: 600; color: var(--accent-dark);
+    background: var(--bg); border: 1px solid var(--border); border-radius: 100px;
+    padding: 4px 10px; cursor: pointer; margin-top: 6px;
+  }
   .section-label { font-size: 12px; color: var(--ink-2); margin-bottom: 8px; letter-spacing: 0.03em; }
 
   .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 18px; }
@@ -85,7 +111,7 @@
   .tag-badge-row { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 5px; }
   .tag-badge { font-size: 9px; padding: 2px 7px; border-radius: 100px; background: var(--border); color: var(--ink-2); white-space: nowrap; }
   .cafe-actions { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; flex: 0 0 auto; }
-  .fav-btn { width: 26px; height: 26px; border-radius: 50%; background: var(--border); display: flex; align-items: center; justify-content: center; font-size: 13px; cursor: pointer; flex: 0 0 auto; }
+  .fav-btn { width: 38px; height: 38px; border-radius: 50%; background: var(--border); display: flex; align-items: center; justify-content: center; font-size: 16px; cursor: pointer; flex: 0 0 auto; }
   .quick-btn { font-size: 9.5px; padding: 5px 9px; border-radius: 100px; background: var(--accent); color: var(--accent-dark); font-weight: 700; cursor: pointer; white-space: nowrap; }
   .empty-note { font-size: 12.5px; color: var(--ink-2); padding: 30px 10px; text-align: center; line-height: 1.6; }
 
@@ -114,7 +140,9 @@
   .tabs2 { display: flex; gap: 4px; background: var(--card); border: 1px solid var(--border); border-radius: 100px; padding: 4px; margin-bottom: 14px; }
   .tab2 { flex: 1; text-align: center; font-size: 12px; padding: 8px 0; border-radius: 100px; cursor: pointer; color: var(--ink-2); }
   .tab2.active { background: var(--dark-1); color: var(--dark-text); font-weight: 600; }
-  .order-item { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 12px 14px; margin-bottom: 9px; display: flex; gap: 10px; align-items: center; }
+  .order-item { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 12px 14px; margin-bottom: 9px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; cursor: pointer; }
+  .order-expand { flex-basis: 100%; width: 100%; margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--border); }
+  .order-expand-id { font-size: 10.5px; color: var(--ink-2); margin-bottom: 8px; }
   .order-mono { width: 40px; height: 40px; border-radius: 10px; border: 1.5px dashed var(--border); display: flex; align-items: center; justify-content: center; font-size: 9px; color: var(--ink-3); flex: 0 0 auto; }
   .order-body { flex: 1; } .order-top { font-size: 13px; font-weight: 500; }
   .order-meta { font-size: 11px; color: var(--ink-2); margin-top: 2px; }
@@ -137,7 +165,6 @@
   .row-card { display: flex; align-items: center; justify-content: space-between; background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 12px 14px; cursor: pointer; }
   .row-card .t1 { font-size: 13px; font-weight: 600; } .row-card .t2 { font-size: 11.5px; color: var(--ink-2); }
 
-  .cancel-link { font-size: 12px; color: var(--ink-2); text-align: center; margin-top: 4px; cursor: pointer; text-decoration: underline; }
   .confirm-box { margin-top: 10px; padding: 12px; border: 1px dashed var(--border); border-radius: 12px; text-align: center; }
   .confirm-box .q { font-size: 12.5px; margin-bottom: 8px; }
   .confirm-actions { display: flex; gap: 8px; }
@@ -145,6 +172,7 @@
   .confirm-yes { background: var(--dark-1); color: var(--dark-text); }
   .confirm-no { background: var(--border); color: var(--ink); }
   .low-balance-note { font-size: 11.5px; color: var(--accent); margin-top: 8px; font-weight: 600; }
+  .info-banner { font-size: 12px; font-weight: 600; color: var(--accent-dark); background: var(--border); border-radius: 10px; padding: 10px 12px; margin-bottom: 14px; }
 
   .bottomnav { position: fixed; left: 0; right: 0; bottom: 0; background: var(--bg); border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 10px 0 8px; }
   .navitem { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 10px; font-weight: 600; color: var(--ink-2); cursor: pointer; }
@@ -155,16 +183,6 @@
 </head>
 <body>
 <div id="app">
-
-  <div class="util-bar">
-    <div class="lang-switch">
-      <div class="lang-btn on" id="lang-kk-btn" onclick="app.setLang('kk')">ҚАЗ</div>
-      <div class="lang-btn" id="lang-ru-btn" onclick="app.setLang('ru')">РУС</div>
-    </div>
-    <div class="theme-btn" id="theme-btn" onclick="app.toggleTheme()">
-      <svg id="theme-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3a9 9 0 109 9c0-.46-.04-.92-.1-1.36A5.5 5.5 0 0112.36 3.1c-.44-.06-.9-.1-1.36-.1z"/></svg>
-    </div>
-  </div>
 
   <!-- HOME -->
   <div class="screen active" id="screen-home">
@@ -184,11 +202,16 @@
           <div class="widget-num-row"><span class="widget-num" id="widget-num">12</span><span class="widget-of" id="widget-of">сусыннан 12</span></div>
         </div>
         <div class="qr-mini-btn" onclick="app.switchTab('profile')">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2A1608" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 14h3v3h-3zM19 14h2v2h-2zM14 19h2v2h-2zM19 19h2v2h-2z"/></svg>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#28331F" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 14h3v3h-3zM19 14h2v2h-2zM14 19h2v2h-2zM19 19h2v2h-2z"/></svg>
         </div>
       </div>
       <div class="dash-row" id="dash-row"></div>
       <div class="low-balance-note" id="low-balance-note" style="display:none;"></div>
+    </div>
+
+    <div class="sec-btn" id="quick-reorder-btn" style="display:none;">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 5h2l1.5 9.5A2 2 0 008.5 16h7a2 2 0 002-1.5L19 8H6"/><circle cx="9" cy="20" r="1.2"/><circle cx="16" cy="20" r="1.2"/></svg>
+      <span id="quick-reorder-label"></span>
     </div>
 
     <div class="sec-row"><h3 class="sec-title" id="offpeak-title">Оффпик қазір</h3><span class="sec-link" id="allcafes-link" onclick="app.switchTab('catalog')">Барлық кофеханалар →</span></div>
@@ -196,7 +219,7 @@
 
     <div class="promo" onclick="app.shareReferral()">
       <div><div class="promo-label" id="promo-label">ДОСЫҢДЫ ШАҚЫР</div><div class="promo-text" id="promo-text">Екеуің де осы айда лимиттен тыс 1 сусын аласыңдар</div></div>
-      <div class="promo-arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2A1608" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
+      <div class="promo-arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#28331F" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
     </div>
   </div>
 
@@ -204,7 +227,6 @@
   <div class="screen" id="screen-catalog">
     <h3 class="sec-title" id="catalog-title" style="margin-bottom:14px;">Кофеханалар</h3>
     <div class="chip-row" id="sort-chips"></div>
-    <div class="chip-row" id="category-chips"></div>
     <div class="chip-row" id="tag-chips"></div>
     <div id="catalog-list"></div>
   </div>
@@ -225,6 +247,10 @@
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09a1.65 1.65 0 00-1-1.51 1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09a1.65 1.65 0 001.51-1 1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
       </div>
     </div>
+    <div class="success-banner" id="sub-success-banner" style="display:none;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+      <span id="sub-success-text">Сіз жазылдыңыз! Алғашқы сусыныңызды алыңыз.</span>
+    </div>
     <div class="status-card"><span><span class="status-dot"></span><span id="sub-active-text">Жазылым белсенді</span></span><span class="status-date" id="profile-status-date">4 қазанға дейін</span></div>
     <div class="qr-box"><div class="qr-grid" id="qr-pattern"></div></div>
     <div class="qr-caption" id="qr-caption">Сусынды есептен шығару үшін баристаға көрсетіңіз</div>
@@ -234,13 +260,22 @@
   <div class="screen" id="screen-settings">
     <div class="back-row" id="settings-back-label" onclick="app.switchTab('profile')">‹ Артқа</div>
     <h3 class="sec-title" id="settings-title" style="margin-bottom:14px;">Баптаулар</h3>
+    <div class="row-card" style="margin-bottom:14px; cursor:default;">
+      <div class="lang-switch">
+        <div class="lang-btn on" id="lang-kk-btn" onclick="app.setLang('kk')">ҚАЗ</div>
+        <div class="lang-btn" id="lang-ru-btn" onclick="app.setLang('ru')">РУС</div>
+      </div>
+      <div class="theme-btn" id="theme-btn" onclick="app.toggleTheme()">
+        <svg id="theme-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3a9 9 0 109 9c0-.46-.04-.92-.1-1.36A5.5 5.5 0 0112.36 3.1c-.44-.06-.9-.1-1.36-.1z"/></svg>
+      </div>
+    </div>
     <div class="ref-card">
       <div class="ref-label" id="sub-card-label">Жазылым</div>
       <div class="status-card" style="margin-bottom:10px;">
         <span><span class="status-dot"></span><span id="sub-status-text">Жазылым белсенді</span></span>
         <span class="status-date" id="sub-status-date">4 қазанға дейін</span>
       </div>
-      <div class="cancel-link" id="cancel-link" onclick="app.toggleCancelConfirm()">Жазылымды тоқтату</div>
+      <div class="sec-btn" id="cancel-link" onclick="app.toggleCancelConfirm()">Жазылымды тоқтату</div>
       <div class="confirm-box" id="cancel-confirm-box" style="display:none;">
         <div class="q" id="cancel-confirm-q">Шынымен тоқтатасыз ба?</div>
         <div class="confirm-actions">
@@ -248,6 +283,10 @@
           <div class="confirm-yes" id="cancel-yes-btn" onclick="app.confirmCancel()">Иә, тоқтату</div>
         </div>
       </div>
+    </div>
+    <div class="row-card" onclick="app.openPlanDetails()" style="margin-bottom:14px;">
+      <div><div class="t1" id="plan-link-title">Жоспар туралы</div><div class="t2" id="plan-link-sub">Не кіреді, баға, шарттар</div></div>
+      <div class="t2">›</div>
     </div>
     <div class="ref-card">
       <div class="ref-label" id="ref-label-text">Сенің реферал кодың</div>
@@ -267,6 +306,11 @@
     <div class="cafe-banner" id="banner-text">Мекеменің суреті</div>
     <div class="cafe-name-big"><span id="detail-name">CULT COFFEE</span><span class="fav-btn" id="detail-fav" onclick="app.toggleFavActive()">♥</span></div>
     <div class="cafe-meta-big" id="detail-meta">Есентай · 400 м · 22:00 дейін</div>
+    <div class="chip-btn" id="directions-link" onclick="app.openDirections()">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-7.5-7-12a7 7 0 0114 0c0 4.5-7 12-7 12z"/><circle cx="12" cy="9" r="2.5"/></svg>
+      <span id="directions-label">Бағыт алу →</span>
+    </div>
+    <div class="info-banner" id="closed-banner" style="display:none;"></div>
 
     <div id="drink-mode">
       <div class="section-label" id="field-size-label">Өлшем</div>
@@ -275,8 +319,14 @@
       <div class="pill-row" id="milk-pills"></div>
       <div class="total-row"><span id="extra-label">Жазылымнан тыс төлем</span><span id="extra-total">0 ₸</span></div>
       <div class="confirm-note" id="drink-note">Негізгі сусын жазылымға кіреді, қосымша төлем — тек L өлшемі немесе балама сүт үшін.</div>
-      <div class="sec-link" id="save-usual-link" onclick="app.saveCafeDefault()" style="margin-top:16px;">Осы жерде негізгі ретінде сақтау →</div>
-      <div class="sec-link" id="table-link" onclick="app.setMode('table')" style="margin-top:8px;">Үстел брондау →</div>
+      <div class="sec-btn" id="save-usual-link" onclick="app.saveCafeDefault()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+        <span id="save-usual-label">Осы жерде негізгі ретінде сақтау →</span>
+      </div>
+      <div class="sec-btn" id="table-link" onclick="app.setMode('table')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>
+        <span id="table-link-label">Үстел брондау →</span>
+      </div>
     </div>
 
     <div id="table-mode" style="display:none;">
@@ -288,6 +338,23 @@
       <div class="confirm-note" id="book-note">Броннан кейін WhatsApp-та 10 минут ішінде растаймыз.</div>
     </div>
     <div class="toast" id="toast"></div>
+  </div>
+
+  <!-- PLAN DETAILS -->
+  <div class="screen" id="screen-plan">
+    <div class="back-row" id="plan-back-label" onclick="app.openSettings()">‹ Артқа</div>
+    <h3 class="sec-title" id="plan-title" style="margin-bottom:14px;">Жоспар туралы</h3>
+    <div class="price-card" style="margin-bottom:16px;">
+      <div class="price-num">8 000 ₸</div>
+      <div class="price-period" id="plan-price-period">айына · кез келген уақытта тоқтатуға болады</div>
+    </div>
+    <div class="info-banner" id="savings-stat" style="display:none;"></div>
+    <div class="benefit-item"><span class="check"></span><div><div class="title" id="plan-b1-title">Айына 12 сусын</div><div class="note" id="plan-b1-note">Қаладағы серіктес желісінде</div></div></div>
+    <div class="benefit-item"><span class="check"></span><div><div class="title" id="plan-b2-title">Кезексіз үстел</div><div class="note" id="plan-b2-note">Жұмыс күндері, 10 минутта растау</div></div></div>
+    <div class="benefit-item"><span class="check"></span><div><div class="title" id="plan-b3-title">Жаңа кофеханалар бірінші болып</div><div class="note" id="plan-b3-note">Telegram-да хабарландыру</div></div></div>
+    <div class="row-card" style="margin-top:16px; cursor:default;">
+      <div><div class="t1" id="plan-terms-title">Пайдалану шарттары</div><div class="t2" id="plan-terms-note">Заңгермен келісілгеннен кейін осында қосылады</div></div>
+    </div>
   </div>
 
   <!-- PAYWALL -->
@@ -330,6 +397,7 @@ var app = (function(){
   var tg = window.Telegram && window.Telegram.WebApp;
   var cfg = { support: 'zavar_support', kaspi: 'https://pay.kaspi.kz/', whatsapp: '77000000000', bot: 'zavar_bot', app: 'app' };
   var limit = 12;
+  var avgCupPrice = 1200; // PLACEHOLDER — replace with a real average walk-in price once partner numbers exist
 
   // ---------- переводы: казахский — язык по умолчанию ----------
   var T = {
@@ -341,7 +409,6 @@ var app = (function(){
       months:['қаңтарда','ақпанда','наурызда','сәуірде','мамырда','маусымда','шілдеде','тамызда','қыркүйекте','қазанда','қарашада','желтоқсанда'],
       remainingIn:function(m){ return (m.charAt(0).toUpperCase()+m.slice(1)) + ' қалған'; },
       offpeak:'Оффпик қазір', allCafes:'Барлық кофеханалар →', catalogTitle:'Кофеханалар', ordersTitle:'Тапсырыстар',
-      catAll:'Барлығы', catEspresso:'Эспрессо', catSpecialty:'Спешелти', catLatte:'Латте', catCold:'Салқын',
       tagWifi:'Wi-Fi', tagQuiet:'Тыныш', tagDog:'Итке рұқсат', tagFood:'Нан-тоқаш',
       promoLabel:'ДОСЫҢДЫ ШАҚЫР', promoText:'Екеуің де осы айда лимиттен тыс 1 сусын аласыңдар',
       ordersActive:'Белсенді', ordersHistory:'Тарих', orderDone:'Дайын', orderPending:'Күтуде',
@@ -374,7 +441,20 @@ var app = (function(){
       subCancelScheduled:function(d){ return d + ' — содан кейін жазылым тоқтайды'; },
       saveUsualLink:'Осы жерде негізгі ретінде сақтау →',
       saveUsualToastSaved:'Сақталды — келесі жолы осы жерде бірден осылай тапсырыс аласыз',
-      lowBalance:function(n){ return 'Соңғы ' + n + ' сусын қалды'; }
+      lowBalance:function(n){ return 'Соңғы ' + n + ' сусын қалды'; },
+      directionsLink:'Бағыт алу →',
+      closedNow:'Қазір жабық',
+      closedBannerNote:'Бұл кофехана қазір жұмыс істемейді, тапсырыс беру уақытша қолжетімсіз.',
+      closedToast:'Кофехана қазір жабық',
+      reportIssue:'Мәселе туралы хабарлау',
+      planLinkTitle:'Жоспар туралы', planLinkSub:'Не кіреді, баға, шарттар',
+      planTermsTitle:'Пайдалану шарттары', planTermsNote:'Заңгермен келісілгеннен кейін осында қосылады',
+      favOnlyChip:'Таңдаулылар',
+      subSuccessText:'Сіз жазылдыңыз! Сусын алу үшін осы бетті ашып, QR-кодты баристаға көрсетіңіз.',
+      redeemedNudge:function(n){ return 'Сусын алынды! Ертең тағы келіңіз — тағы ' + n + ' сусын қалды.'; },
+      reorderAction:'Тапсырысты қайталау →', modifyBookingAction:'WhatsApp арқылы өзгерту →',
+      quickReorderLabel:function(name){ return 'Тез тапсырыс: ' + name + ' →'; },
+      savingsStat:function(spent){ return 'Осы айда шамамен ' + spent.toLocaleString('ru-RU') + ' ₸ үнемдедіңіз (бөлек төлегенмен салыстырғанда, шамамен).'; }
     },
     ru: {
       navHome:'Главная', navCatalog:'Кофейни', navOrders:'Заказы', navProfile:'Профиль',
@@ -384,7 +464,6 @@ var app = (function(){
       months:['январе','феврале','марте','апреле','мае','июне','июле','августе','сентябре','октябре','ноябре','декабре'],
       remainingIn:function(m){ return 'Осталось в ' + m.toUpperCase(); },
       offpeak:'Оффпик сейчас', allCafes:'Все кофейни →', catalogTitle:'Кофейни', ordersTitle:'Заказы',
-      catAll:'Все', catEspresso:'Эспрессо', catSpecialty:'Спешелти', catLatte:'Латте', catCold:'Холодный',
       tagWifi:'Wi-Fi', tagQuiet:'Тихо', tagDog:'Dog-friendly', tagFood:'Выпечка',
       promoLabel:'ПРИВЕДИ ДРУГА', promoText:'Оба получаете +1 напиток сверх лимита в этом месяце',
       ordersActive:'Активные', ordersHistory:'История', orderDone:'Готово', orderPending:'Ожидание',
@@ -417,14 +496,27 @@ var app = (function(){
       subCancelScheduled:function(d){ return 'до ' + d + ' — затем подписка отменится'; },
       saveUsualLink:'Сохранить как основной здесь →',
       saveUsualToastSaved:'Сохранено — в следующий раз здесь сразу будет этот заказ',
-      lowBalance:function(n){ return n===1 ? 'Остался последний напиток' : 'Осталось всего ' + n + ' напитка'; }
+      lowBalance:function(n){ return n===1 ? 'Остался последний напиток' : 'Осталось всего ' + n + ' напитка'; },
+      directionsLink:'Маршрут →',
+      closedNow:'Сейчас закрыто',
+      closedBannerNote:'Эта кофейня сейчас не работает, заказ временно недоступен.',
+      closedToast:'Кофейня сейчас закрыта',
+      reportIssue:'Сообщить о проблеме',
+      planLinkTitle:'О подписке', planLinkSub:'Что входит, цена, условия',
+      planTermsTitle:'Условия использования', planTermsNote:'Появится здесь после согласования с юристом',
+      favOnlyChip:'Избранное',
+      subSuccessText:'Вы подписались! Чтобы получить напиток, откройте этот экран и покажите QR-код бариста.',
+      redeemedNudge:function(n){ return n===1 ? 'Напиток списан! Приходите завтра — остался последний.' : 'Напиток списан! Приходите завтра — осталось ещё ' + n + '.'; },
+      reorderAction:'Повторить заказ →', modifyBookingAction:'Изменить через WhatsApp →',
+      quickReorderLabel:function(name){ return 'Быстрый заказ: ' + name + ' →'; },
+      savingsStat:function(spent){ return 'В этом месяце вы сэкономили примерно ' + spent.toLocaleString('ru-RU') + ' ₸ (по сравнению с оплатой отдельно, приблизительно).'; }
     }
   };
 
   var state = {
     lang: 'kk', theme: 'light',
-    tab: 'home', screen: 'home', subscribed: false, used: 0, cancelScheduled: false,
-    category: 'all', tagFilters: [], sortMode: 'default', size: 'M', milk: 'normal', slot: '12:00', guests: 'g2',
+    tab: 'home', screen: 'home', subscribed: false, used: 0, cancelScheduled: false, expandedOrderId: null,
+    tagFilters: [], favOnly: false, sortMode: 'default', size: 'M', milk: 'normal', slot: '12:00', guests: 'g2',
     cafeDefaults: {},
     mode: 'drink', orderTab: 'history', activeCafe: 1,
     cafes: [
@@ -454,6 +546,17 @@ var app = (function(){
     if (win === 'free') return state.lang === 'kk' ? 'Бос үстелдер бар' : 'Свободные столы';
     return (state.lang === 'kk' ? 'Оффпик ' : 'Оффпик до ') + win;
   }
+  function closingMinutes(meta){
+    var m = meta.match(/(\d{1,2}):(\d{2})\s*$/);
+    if (!m) return null;
+    return parseInt(m[1],10) * 60 + parseInt(m[2],10);
+  }
+  function isOpenNow(c){
+    var mins = closingMinutes(c.meta);
+    if (mins === null) return true;
+    var now = new Date();
+    return (now.getHours() * 60 + now.getMinutes()) < mins;
+  }
 
   function init(){
     if (tg) { tg.ready(); tg.expand(); }
@@ -466,6 +569,7 @@ var app = (function(){
     if (tg && tg.BackButton) { tg.BackButton.onClick(function(){
       if (state.screen === 'paywall') { app.closePaywall(); }
       else if (state.screen === 'settings') { app.switchTab('profile'); }
+      else if (state.screen === 'plan') { app.openSettings(); }
       else { app.switchTab(state.tab); }
     }); }
     updateMainButton();
@@ -486,6 +590,7 @@ var app = (function(){
     document.getElementById('profile-name').textContent = name;
     document.getElementById('profile-sub').textContent = L.subscriberOf;
     document.getElementById('sub-active-text').textContent = L.subActive;
+    document.getElementById('sub-success-text').textContent = L.subSuccessText;
     document.getElementById('qr-caption').textContent = L.qrCaption;
 
     var m = L.months[new Date().getMonth()];
@@ -501,7 +606,8 @@ var app = (function(){
 
     document.getElementById('back-label').textContent = L.back;
     document.getElementById('banner-text').textContent = L.bannerText;
-    document.getElementById('table-link').textContent = L.tableLinkText;
+    document.getElementById('table-link-label').textContent = L.tableLinkText;
+    document.getElementById('directions-label').textContent = L.directionsLink;
     document.getElementById('table-back-label').textContent = L.backToDrinkText;
     document.getElementById('paywall-back-label').textContent = L.back;
     document.getElementById('settings-back-label').textContent = L.back;
@@ -520,11 +626,21 @@ var app = (function(){
     document.getElementById('b3-title').textContent = L.b3t; document.getElementById('b3-note').textContent = L.b3n;
     document.getElementById('proof-text').textContent = L.proof;
 
+    document.getElementById('plan-link-title').textContent = L.planLinkTitle;
+    document.getElementById('plan-link-sub').textContent = L.planLinkSub;
+    document.getElementById('plan-back-label').textContent = L.back;
+    document.getElementById('plan-title').textContent = L.planLinkTitle;
+    document.getElementById('plan-price-period').textContent = L.paywallPeriod;
+    document.getElementById('plan-b1-title').textContent = L.b1t; document.getElementById('plan-b1-note').textContent = L.b1n;
+    document.getElementById('plan-b2-title').textContent = L.b2t; document.getElementById('plan-b2-note').textContent = L.b2n;
+    document.getElementById('plan-b3-title').textContent = L.b3t; document.getElementById('plan-b3-note').textContent = L.b3n;
+    document.getElementById('plan-terms-title').textContent = L.planTermsTitle;
+    document.getElementById('plan-terms-note').textContent = L.planTermsNote;
     document.getElementById('sub-card-label').textContent = L.subCardLabel;
     document.getElementById('cancel-confirm-q').textContent = L.cancelConfirmQ;
     document.getElementById('cancel-no-btn').textContent = L.cancelNo;
     document.getElementById('cancel-yes-btn').textContent = L.cancelYes;
-    document.getElementById('save-usual-link').textContent = L.saveUsualLink;
+    document.getElementById('save-usual-label').textContent = L.saveUsualLink;
     document.getElementById('ref-label-text').textContent = L.refLabel;
     document.getElementById('invite-btn-text').textContent = L.invite;
     document.getElementById('ref-note-text').textContent = L.refNote;
@@ -536,8 +652,8 @@ var app = (function(){
     document.getElementById('nav-orders-label').textContent = L.navOrders;
     document.getElementById('nav-profile-label').textContent = L.navProfile;
 
-    renderDash(); renderFeatured(); renderSortChips(); renderCategoryChips(); renderTagChips(); renderCatalog();
-    renderOrderTabs(); renderOrders(); renderPills(); renderSubscription();
+    renderDash(); renderFeatured(); renderSortChips(); renderTagChips(); renderCatalog();
+    renderOrderTabs(); renderOrders(); renderPills(); renderSubscription(); renderQuickReorder(); renderSavingsStat();
     updateMainButton();
   }
 
@@ -562,16 +678,22 @@ var app = (function(){
       '<div class="feat-body"><div class="feat-name">' + c.name + '</div><div class="feat-meta">' + c.meta + '</div></div>' +
     '</div>';
   }
-  function renderFeatured(){ document.getElementById('featured-grid').innerHTML = state.cafes.slice(0,2).map(featCardHtml).join(''); }
+  function renderFeatured(){
+    var open = state.cafes.filter(isOpenNow);
+    var list = (open.length ? open : state.cafes).slice(0,2);
+    document.getElementById('featured-grid').innerHTML = list.map(featCardHtml).join('');
+  }
 
   function cafeRowHtml(c){
     var L = t();
+    var open = isOpenNow(c);
     var tagLabels = { wifi:L.tagWifi, quiet:L.tagQuiet, dog:L.tagDog, food:L.tagFood };
     var badges = c.tags.map(function(tg2){ return '<div class="tag-badge">' + tagLabels[tg2] + '</div>'; }).join('');
-    var quickBtn = state.subscribed ? '<div class="quick-btn" onclick="app.quickOrder(' + c.id + ')">' + L.quickCoffee + '</div>' : '';
+    var quickBtn = (state.subscribed && open) ? '<div class="quick-btn" onclick="app.quickOrder(' + c.id + ')">' + L.quickCoffee + '</div>' : '';
+    var windowText = open ? windowLabel(c.win) : L.closedNow;
     return '<div class="cafe-row">' +
       '<div class="cafe-thumb"></div>' +
-      '<div class="cafe-main" onclick="app.openCafe(' + c.id + ')"><div class="cafe-name">' + c.name + ' · ' + c.rating + '</div><div class="cafe-meta">' + c.meta + '</div><div class="cafe-window">' + windowLabel(c.win) + '</div><div class="tag-badge-row">' + badges + '</div></div>' +
+      '<div class="cafe-main" onclick="app.openCafe(' + c.id + ')"><div class="cafe-name">' + c.name + ' · ' + c.rating + '</div><div class="cafe-meta">' + c.meta + '</div><div class="cafe-window">' + windowText + '</div><div class="tag-badge-row">' + badges + '</div></div>' +
       '<div class="cafe-actions"><div class="fav-btn" style="color:' + (c.fav ? 'var(--accent-dark)' : 'var(--ink-2)') + '" onclick="app.toggleFav(' + c.id + ')">♥</div>' + quickBtn + '</div>' +
     '</div>';
   }
@@ -604,24 +726,19 @@ var app = (function(){
     }).join('');
   }
 
-  function renderCategoryChips(){
-    var L = t();
-    var cats = [['all',L.catAll],['espresso',L.catEspresso],['specialty',L.catSpecialty],['latte',L.catLatte],['cold',L.catCold]];
-    document.getElementById('category-chips').innerHTML = cats.map(function(c){
-      var on = state.category === c[0];
-      return '<div class="chip ' + (on?'on':'') + '" onclick="app.setCategory(\'' + c[0] + '\')">' + c[1] + '</div>';
-    }).join('');
-  }
   function renderTagChips(){
     var L = t();
     var tags = [['wifi',L.tagWifi],['quiet',L.tagQuiet],['dog',L.tagDog],['food',L.tagFood]];
-    document.getElementById('tag-chips').innerHTML = tags.map(function(tg2){
+    var favChip = '<div class="chip ' + (state.favOnly?'on':'') + '" onclick="app.toggleFavOnly()">♥ ' + L.favOnlyChip + '</div>';
+    var rest = tags.map(function(tg2){
       var on = state.tagFilters.indexOf(tg2[0]) !== -1;
       return '<div class="chip ' + (on?'on':'') + '" onclick="app.toggleTagFilter(\'' + tg2[0] + '\')">' + tg2[1] + '</div>';
     }).join('');
+    document.getElementById('tag-chips').innerHTML = favChip + rest;
   }
   function renderCatalog(){
-    var list = state.category === 'all' ? state.cafes : state.cafes.filter(function(c){ return c.cat === state.category; });
+    var list = state.cafes;
+    if (state.favOnly) { list = list.filter(function(c){ return c.fav; }); }
     if (state.tagFilters.length) { list = list.filter(function(c){ return state.tagFilters.every(function(tg2){ return c.tags.indexOf(tg2) !== -1; }); }); }
     if (state.sortMode === 'nearby') { list = sortCafesNearbyOpenNow(list); }
     document.getElementById('catalog-list').innerHTML = list.length ? list.map(cafeRowHtml).join('') : '<div class="empty-note">' + t().emptyFilter + '</div>';
@@ -642,10 +759,23 @@ var app = (function(){
     if (!orders.length) { document.getElementById('orders-list').innerHTML = '<div class="empty-note">' + (wantPending ? L.emptyOrdersActive : L.emptyOrdersHistory) + '</div>'; return; }
     document.getElementById('orders-list').innerHTML = orders.map(function(h){
       var done = h.status === 'done';
-      var desc = h.booking ? (L.fieldTime + ' · ' + (h.time||'')) : (h.size + ' · ' + milkLabel(h.milk));
-      return '<div class="order-item"><div class="order-mono">' + mono(h.cafe||'З') + '</div>' +
-        '<div class="order-body"><div class="order-top">' + desc + '</div><div class="order-meta">' + h.cafe + ' · ' + h.when + '</div></div>' +
-        '<div class="order-status" style="border-color:' + (done?'var(--border)':'var(--accent-dark)') + ';color:' + (done?'var(--ink-2)':'var(--accent-dark)') + '">' + (done?L.orderDone:L.orderPending) + '</div></div>';
+      var desc = h.booking ? (h.time ? (L.fieldTime + ' · ' + h.time) : L.fieldTime) : (h.size + ' · ' + milkLabel(h.milk));
+      var reportLink = (!h.booking && done) ? '<div class="report-btn" onclick="event.stopPropagation(); app.reportOrderIssue(' + h.id + ')">' + L.reportIssue + '</div>' : '';
+      var expandHtml = '';
+      if (state.expandedOrderId === h.id) {
+        var idLine = '<div class="order-expand-id">#' + h.id + '</div>';
+        var actionHtml;
+        if (h.booking) {
+          var guestsLine = h.guests ? ('<div class="order-expand-id">' + guestLabel(h.guests) + '</div>') : '';
+          actionHtml = guestsLine + '<div class="sec-btn" onclick="event.stopPropagation(); app.modifyBookingViaWhatsApp(' + h.id + ')">' + L.modifyBookingAction + '</div>';
+        } else {
+          actionHtml = '<div class="sec-btn" onclick="event.stopPropagation(); app.reorderFromHistory(' + h.id + ')">' + L.reorderAction + '</div>';
+        }
+        expandHtml = '<div class="order-expand">' + idLine + actionHtml + '</div>';
+      }
+      return '<div class="order-item" onclick="app.toggleOrderExpand(' + h.id + ')"><div class="order-mono">' + mono(h.cafe||'З') + '</div>' +
+        '<div class="order-body"><div class="order-top">' + desc + '</div><div class="order-meta">' + h.cafe + ' · ' + h.when + '</div>' + reportLink + '</div>' +
+        '<div class="order-status" style="border-color:' + (done?'var(--border)':'var(--accent-dark)') + ';color:' + (done?'var(--ink-2)':'var(--accent-dark)') + '">' + (done?L.orderDone:L.orderPending) + '</div>' + expandHtml + '</div>';
     }).join('');
   }
 
@@ -698,12 +828,35 @@ var app = (function(){
     }
   }
 
+  function renderSavingsStat(){
+    var L = t();
+    var el = document.getElementById('savings-stat');
+    if (!el) return;
+    if (!state.subscribed || state.used <= 0) { el.style.display = 'none'; return; }
+    var spent = state.used * avgCupPrice - 8000;
+    if (spent <= 0) { el.style.display = 'none'; return; }
+    el.style.display = 'block';
+    el.textContent = L.savingsStat(spent);
+  }
+
+  function renderQuickReorder(){
+    var L = t();
+    var btn = document.getElementById('quick-reorder-btn');
+    if (!btn) return;
+    var lastDrink = state.subscribed ? state.history.slice().reverse().find(function(h){ return !h.booking; }) : null;
+    var c = lastDrink ? state.cafes.find(function(x){ return x.name === lastDrink.cafe; }) : null;
+    if (!c || !isOpenNow(c)) { btn.style.display = 'none'; return; }
+    btn.style.display = 'flex';
+    btn.setAttribute('onclick', 'app.quickOrder(' + c.id + ')');
+    document.getElementById('quick-reorder-label').textContent = L.quickReorderLabel(c.name);
+  }
+
   function showScreen(name){
     document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
     document.getElementById('screen-' + name).classList.add('active');
     state.screen = name; state_tab = state.tab;
     updateMainButton();
-    if (tg && tg.BackButton) { (name === 'detail' || name === 'paywall' || name === 'settings') ? tg.BackButton.show() : tg.BackButton.hide(); }
+    if (tg && tg.BackButton) { (name === 'detail' || name === 'paywall' || name === 'settings' || name === 'plan') ? tg.BackButton.show() : tg.BackButton.hide(); }
   }
   function updateNavHighlight(){
     ['home','catalog','orders','profile'].forEach(function(tb){
@@ -723,16 +876,25 @@ var app = (function(){
     } else { tg.MainButton.hide(); }
   }
 
+  function showProfileBanner(text){
+    var banner = document.getElementById('sub-success-banner');
+    if (!banner) return;
+    document.getElementById('sub-success-text').textContent = text;
+    banner.style.display = 'flex';
+    setTimeout(function(){ banner.style.display = 'none'; }, 4000);
+  }
   function requestDrink(){
     if (!state.subscribed) { showScreen('paywall'); return; }
-    state.used = Math.min(state.used + 1, limit);
     var c = cafeById(state.activeCafe);
+    if (c && !isOpenNow(c)) { document.getElementById('toast').textContent = t().closedToast; return; }
+    state.used = Math.min(state.used + 1, limit);
     state.history.push({ id: 20470 + state.history.length, size: state.size, milk: state.milk, cafe: c?c.name:'', when: (state.lang==='kk'?'жаңа ғана':'только что'), status: 'done' });
-    renderDash(); renderSubscription(); renderOrders(); haptic('medium'); app.switchTab('profile');
+    renderDash(); renderSubscription(); renderQuickReorder(); renderOrders(); haptic('medium'); app.switchTab('profile');
+    showProfileBanner(t().redeemedNudge(limit - state.used));
   }
   function confirmBooking(){
     var c = cafeById(state.activeCafe); var time = state.slot; haptic('medium');
-    state.history.push({ id: 20480 + state.history.length, booking:true, time: time, cafe: c?c.name:'', when: (state.lang==='kk'?'бүгін':'сегодня'), status: 'pending' });
+    state.history.push({ id: 20480 + state.history.length, booking:true, time: time, guests: state.guests, cafe: c?c.name:'', when: (state.lang==='kk'?'бүгін':'сегодня'), status: 'pending' });
     document.getElementById('toast').textContent = state.lang==='kk'
       ? (time + ' броны WhatsApp-та расталады')
       : ('Бронь на ' + time + ' отправлена — подтвердим в WhatsApp.');
@@ -743,24 +905,31 @@ var app = (function(){
   }
   function pay(){
     if (tg) { tg.openLink(cfg.kaspi); }
-    setTimeout(function(){ state.subscribed = true; state.cancelScheduled = false; renderSubscription(); app.switchTab('profile'); }, 1200);
+    setTimeout(function(){
+      state.subscribed = true; state.cancelScheduled = false; renderSubscription(); renderQuickReorder(); app.switchTab('profile');
+      showProfileBanner(t().subSuccessText);
+    }, 1200);
   }
 
   return {
     init: init,
-    pingBell: function(){ haptic(); },
+    pingBell: function(){
+      haptic();
+      var url = 'https://t.me/' + cfg.bot;
+      if (tg) { tg.openTelegramLink(url); } else { window.open(url, '_blank'); }
+    },
     setLang: function(l){ if (state.lang === l) return; state.lang = l; haptic(); applyLanguage(); },
     toggleTheme: function(){ state.theme = state.theme === 'light' ? 'dark' : 'light'; haptic(); applyTheme(); },
     closePaywall: function(){ haptic(); state.tab = 'home'; showScreen('home'); updateNavHighlight(); },
     openSettings: function(){ haptic(); showScreen('settings'); },
+    openPlanDetails: function(){ haptic(); renderSavingsStat(); showScreen('plan'); },
     switchTab: function(name){
       state.tab = name;
       if (name === 'profile' && !state.subscribed) { showScreen('paywall'); updateNavHighlight(); return; }
       if (name === 'orders') { renderOrderTabs(); renderOrders(); }
-      if (name === 'catalog') { renderSortChips(); renderCategoryChips(); renderCatalog(); }
+      if (name === 'catalog') { renderSortChips(); renderCatalog(); }
       showScreen(name); updateNavHighlight();
     },
-    setCategory: function(c){ state.category = c; haptic(); renderCategoryChips(); renderCatalog(); },
     setSortMode: function(m){ state.sortMode = m; haptic(); renderSortChips(); renderCatalog(); },
     setOrderTab: function(tb){ state.orderTab = tb; haptic(); renderOrderTabs(); renderOrders(); },
     setMode: function(m){
@@ -781,18 +950,60 @@ var app = (function(){
       document.getElementById('detail-name').textContent = c.name;
       document.getElementById('detail-meta').textContent = c.meta;
       document.getElementById('detail-fav').style.color = c.fav ? 'var(--accent-dark)' : 'var(--ink-2)';
+      var closed = !isOpenNow(c);
+      var banner = document.getElementById('closed-banner');
+      banner.style.display = closed ? 'block' : 'none';
+      banner.textContent = closed ? t().closedBannerNote : '';
       document.getElementById('drink-mode').style.display = 'block';
       document.getElementById('table-mode').style.display = 'none';
       renderPills(); haptic(); showScreen('detail');
     },
+    openDirections: function(){
+      haptic();
+      var c = cafeById(state.activeCafe);
+      if (!c) return;
+      var url = 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(c.name + ' Алматы');
+      if (tg) { tg.openLink(url); } else { window.open(url, '_blank'); }
+    },
+    reportOrderIssue: function(id){
+      haptic();
+      var msg = (state.lang==='kk' ? 'Сәлеметсіз бе! Тапсырыс #' : 'Здравствуйте! Заказ #') + id + (state.lang==='kk' ? ' бойынша мәселе бар.' : ' — возникла проблема.');
+      var url = 'https://wa.me/' + cfg.whatsapp + '?text=' + encodeURIComponent(msg);
+      if (tg) { tg.openLink(url); } else { window.open(url, '_blank'); }
+    },
+    toggleOrderExpand: function(id){
+      haptic();
+      state.expandedOrderId = (state.expandedOrderId === id) ? null : id;
+      renderOrders();
+    },
+    reorderFromHistory: function(historyId){
+      var h = state.history.find(function(x){ return x.id === historyId; });
+      if (!h || h.booking) return;
+      var c = state.cafes.find(function(x){ return x.name === h.cafe; });
+      if (!c) return;
+      app.openCafe(c.id);
+      state.size = h.size; state.milk = h.milk;
+      renderPills();
+    },
+    modifyBookingViaWhatsApp: function(historyId){
+      haptic();
+      var h = state.history.find(function(x){ return x.id === historyId; });
+      if (!h) return;
+      var msg = (state.lang==='kk' ? 'Сәлеметсіз бе! Брон #' : 'Здравствуйте! Бронь #') + h.id + (state.lang==='kk' ? ' бойынша өзгеріс керек.' : ' — нужно изменить.');
+      var url = 'https://wa.me/' + cfg.whatsapp + '?text=' + encodeURIComponent(msg);
+      if (tg) { tg.openLink(url); } else { window.open(url, '_blank'); }
+    },
     quickOrder: function(id){
       if (!state.subscribed) { app.switchTab('profile'); return; }
+      var c = cafeById(id);
+      if (c && !isOpenNow(c)) { return; }
       state.activeCafe = id; state.used = Math.min(state.used + 1, limit);
       var def = cafeDefaultFor(id);
-      var c = cafeById(id);
       state.history.push({ id: 20470 + state.history.length, size: def.size, milk: def.milk, cafe: c?c.name:'', when: (state.lang==='kk'?'жаңа ғана':'только что'), status: 'done' });
-      renderDash(); renderSubscription(); renderOrders(); haptic('medium'); app.switchTab('profile');
+      renderDash(); renderSubscription(); renderQuickReorder(); renderOrders(); haptic('medium'); app.switchTab('profile');
+      showProfileBanner(t().redeemedNudge(limit - state.used));
     },
+    toggleFavOnly: function(){ state.favOnly = !state.favOnly; haptic(); renderTagChips(); renderCatalog(); },
     toggleTagFilter: function(tg2){
       var idx = state.tagFilters.indexOf(tg2);
       if (idx === -1) { state.tagFilters.push(tg2); } else { state.tagFilters.splice(idx, 1); }
