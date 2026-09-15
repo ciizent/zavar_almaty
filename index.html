@@ -2,844 +2,1134 @@
 <html lang="kk" data-theme="light">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>ЗАВАР</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
 <style>
-  :root, [data-theme="light"] {
-    --bg: #FBF1E1; --ink: #241A12; --ink-2: #8B7A63; --ink-3: #B7A88F;
-    --border: #E9DCC5; --card: #FFFCF6;
-    --dark-1: #2E2013; --dark-2: #1C130B; --dark-text: #F3E9D8; --dark-text-2: #C9B79A;
-    --accent: #E8B27A; --accent-dark: #2A1608;
-  }
-  [data-theme="dark"] {
-    --bg: #17110A; --ink: #F3E9D8; --ink-2: #B7A88F; --ink-3: #8B7A63;
-    --border: #3A2C1C; --card: #241A10;
-    --dark-1: #3A2812; --dark-2: #23180C; --dark-text: #F3E9D8; --dark-text-2: #D9C4A0;
-    --accent: #E8B27A; --accent-dark: #2A1608;
-  }
-  :root { --font-heading: 'Cormorant Garamond', serif; --font-body: 'Inter', sans-serif; }
-  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@600;700&family=Inter:wght@400;500;600;700&display=swap');
-  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--ink); font-family: var(--font-body); transition: background 0.25s ease, color 0.25s ease; }
-  h1,h2,h3 { font-family: var(--font-heading); font-weight: 700; margin: 0; }
-  #app { min-height: 100vh; padding: 12px 16px 90px; }
-  .screen { display: none; } .screen.active { display: block; }
+/* ============ TOKENS ============ */
+:root, [data-theme="light"]{
+  --paper:#F2F0E8; --paper-2:#EAE7DC; --surface:#FFFFFF; --surface-2:#FAF8F3;
+  --ink:#1B1E16; --ink-2:#5C6353; --ink-3:#949B88;
+  --line:#E3E0D5; --line-2:#D2CEBF;
+  --brand:#6E7F5B; --brand-deep:#4C5A3D; --brand-soft:#E7EDE0; --brand-ink:#33402A;
+  --brass:#B5844A; --brass-soft:#F3E7D4;
+  --dark-1:#232719; --dark-2:#141710; --dark-ink:#F0EDE2; --dark-ink-2:#A9B199;
+  --danger:#A4513A;
+  --shadow-s:0 1px 2px rgba(27,30,22,.05), 0 2px 8px rgba(27,30,22,.04);
+  --shadow-m:0 2px 6px rgba(27,30,22,.06), 0 12px 28px rgba(27,30,22,.08);
+  --shadow-l:0 8px 20px rgba(27,30,22,.10), 0 28px 60px rgba(27,30,22,.16);
+  --grain:.055;
+}
+[data-theme="dark"]{
+  --paper:#0F1109; --paper-2:#15180F; --surface:#191D13; --surface-2:#1F2418;
+  --ink:#EDF0E4; --ink-2:#A2AA92; --ink-3:#6C7462;
+  --line:#2A2F22; --line-2:#3A4130;
+  --brand:#9DB585; --brand-deep:#B9CDA3; --brand-soft:#232B1C; --brand-ink:#CFDDBC;
+  --brass:#D8A86A; --brass-soft:#2E2617;
+  --dark-1:#2B3020; --dark-2:#1A1E12; --dark-ink:#F0EDE2; --dark-ink-2:#A9B199;
+  --danger:#D9836A;
+  --shadow-s:0 1px 2px rgba(0,0,0,.3);
+  --shadow-m:0 2px 8px rgba(0,0,0,.4), 0 14px 32px rgba(0,0,0,.34);
+  --shadow-l:0 10px 24px rgba(0,0,0,.45), 0 30px 64px rgba(0,0,0,.5);
+  --grain:.075;
+}
+:root{
+  --f-display:'Manrope',system-ui,sans-serif;
+  --f-body:'Inter',system-ui,sans-serif;
+  --f-num:'Playfair Display',Georgia,serif;
+  --f-mono:'JetBrains Mono',ui-monospace,monospace;
+  --r-s:12px; --r-m:18px; --r-l:26px; --r-xl:34px;
+  --dock-h:74px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;background:var(--paper);color:var(--ink);font-family:var(--f-body);
+  -webkit-font-smoothing:antialiased;overscroll-behavior-y:none}
+body{transition:background .3s ease,color .3s ease}
+h1,h2,h3,h4{font-family:var(--f-display);margin:0;font-weight:700;letter-spacing:-.02em;line-height:1.15}
+button{font:inherit;color:inherit;border:none;background:none;cursor:pointer}
 
-  /* top utility bar: language + theme */
-  .util-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-  .lang-switch { display: flex; background: var(--card); border: 1px solid var(--border); border-radius: 100px; padding: 3px; gap: 2px; }
-  .lang-btn { font-size: 11px; font-weight: 700; padding: 6px 11px; border-radius: 100px; cursor: pointer; color: var(--ink-2); }
-  .lang-btn.on { background: var(--dark-1); color: var(--dark-text); }
-  .theme-btn { width: 32px; height: 32px; border-radius: 50%; background: var(--card); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--ink); }
+/* paper grain */
+#grain{position:fixed;inset:0;z-index:99;pointer-events:none;opacity:var(--grain);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='.55' intercept='-.22'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E")}
 
-  /* header */
-  .greet-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-  .greet-label { font-size: 11px; color: var(--ink-2); letter-spacing: 0.08em; font-weight: 600; margin-bottom: 2px; }
-  .greet-name { font-size: 26px; }
-  .greet-icons { display: flex; gap: 10px; }
-  .icon-circle { width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
-  .icon-circle.bell { background: var(--card); border: 1px solid var(--border); }
-  .icon-circle.avatar { background: var(--accent); font-family: var(--font-heading); font-weight: 700; font-size: 17px; color: var(--accent-dark); }
+#app{min-height:100vh;padding:0 18px calc(var(--dock-h) + 58px + env(safe-area-inset-bottom));max-width:560px;margin:0 auto}
+.screen{display:none}
+.screen.active{display:block;animation:rise .38s cubic-bezier(.16,.84,.28,1)}
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 
-  /* subscription widget */
-  .widget { background: linear-gradient(160deg, var(--dark-1), var(--dark-2)); border: 1px solid var(--border); border-radius: 22px; padding: 18px; margin-bottom: 20px; color: var(--dark-text); }
-  .widget-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; }
-  .widget-label { font-size: 11px; letter-spacing: 0.08em; color: var(--dark-text-2); font-weight: 600; }
-  .widget-num-row { display: flex; align-items: baseline; gap: 8px; margin-top: 6px; }
-  .widget-num { font-family: var(--font-heading); font-weight: 700; font-size: 42px; line-height: 1; }
-  .widget-of { font-size: 13px; color: var(--dark-text-2); }
-  .qr-mini-btn { width: 46px; height: 46px; border-radius: 14px; background: var(--accent); display: flex; align-items: center; justify-content: center; cursor: pointer; flex: 0 0 auto; }
-  .dash-row { display: flex; gap: 6px; }
-  .dash { flex: 1; height: 5px; border-radius: 3px; }
+/* ============ TOPBAR / LOGO ============ */
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:calc(env(safe-area-inset-top) + 16px) 0 14px}
+.brandlock{display:flex;align-items:center;gap:9px}
+.seal{width:34px;height:34px;border-radius:11px;background:linear-gradient(145deg,var(--dark-1),var(--dark-2));
+  display:grid;place-items:center;flex:0 0 auto;box-shadow:var(--shadow-s)}
+.seal svg{display:block}
+.wordmark{font-family:var(--f-num);font-weight:700;font-size:19px;letter-spacing:.16em;line-height:1}
+.topbar-actions{display:flex;gap:8px;align-items:center}
+.iconbtn{width:38px;height:38px;border-radius:50%;background:var(--surface);border:1px solid var(--line);
+  display:grid;place-items:center;color:var(--ink-2);box-shadow:var(--shadow-s);transition:transform .14s}
+.iconbtn:active{transform:scale(.93)}
+.avatar-sm{width:38px;height:38px;border-radius:50%;background:linear-gradient(145deg,var(--brand),var(--brand-deep));
+  color:#fff;display:grid;place-items:center;font-family:var(--f-num);font-weight:700;font-size:16px}
 
-  .sec-row { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px; }
-  .sec-title { font-size: 21px; }
-  .sec-link { font-size: 12.5px; color: var(--ink-2); font-weight: 500; cursor: pointer; }
-  .section-label { font-size: 12px; color: var(--ink-2); margin-bottom: 8px; letter-spacing: 0.03em; }
+/* ============ HERO ============ */
+.eyebrow{font-family:var(--f-mono);font-size:10.5px;font-weight:600;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--ink-3)}
+.hero{margin:4px 0 20px}
+.hero h1{font-size:clamp(30px,8.5vw,40px);margin-top:7px;letter-spacing:-.035em}
 
-  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 18px; }
-  .feat-card { background: var(--card); border: 1px solid var(--border); border-radius: 18px; overflow: hidden; cursor: pointer; }
-  .feat-photo { position: relative; height: 92px; margin: 8px; border: 1.5px dashed var(--border); border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; color: var(--ink-3); }
-  .feat-tag { position: absolute; top: 6px; left: 6px; background: var(--card); border: 1px solid var(--border); font-size: 9.5px; padding: 4px 8px; border-radius: 100px; color: var(--ink-2); }
-  .feat-body { padding: 0 12px 12px; }
-  .feat-name { font-size: 16px; margin-bottom: 2px; }
-  .feat-meta { font-size: 10.5px; color: var(--ink-2); }
+/* ============ PASS PREVIEW (hero card) ============ */
+.passcard{position:relative;border-radius:var(--r-xl);padding:22px 22px 18px;overflow:hidden;
+  background:linear-gradient(152deg,#2C3220 0%,var(--dark-1) 42%,var(--dark-2) 100%);
+  color:var(--dark-ink);box-shadow:var(--shadow-m);cursor:pointer;
+  transition:transform .2s cubic-bezier(.16,.84,.28,1)}
+.passcard:active{transform:scale(.985)}
+.passcard::before{content:'';position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(120% 90% at 85% 8%,rgba(181,132,74,.22),transparent 58%)}
+.passcard::after{content:'';position:absolute;top:-60%;left:-40%;width:52%;height:220%;pointer-events:none;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.13),transparent);transform:rotate(18deg);
+  animation:sheen 7s ease-in-out infinite}
+@keyframes sheen{0%,72%{transform:translateX(-30%) rotate(18deg)}92%,100%{transform:translateX(320%) rotate(18deg)}}
+.pc-top{display:flex;justify-content:space-between;align-items:flex-start;position:relative;z-index:1}
+.pc-label{font-family:var(--f-mono);font-size:10px;letter-spacing:.17em;text-transform:uppercase;color:var(--dark-ink-2)}
+.pc-num{display:flex;align-items:baseline;gap:7px;margin-top:8px}
+.pc-num b{font-family:var(--f-num);font-weight:700;font-size:52px;line-height:.9;letter-spacing:-.02em;
+  font-variant-numeric:tabular-nums}
+.pc-num span{font-size:12.5px;color:var(--dark-ink-2);font-weight:500}
+.pc-qr{width:52px;height:52px;border-radius:15px;background:linear-gradient(145deg,var(--brass),#9A6E39);
+  display:grid;place-items:center;flex:0 0 auto;box-shadow:0 6px 16px rgba(0,0,0,.28)}
+.pc-hint{position:relative;z-index:1;margin-top:16px;display:flex;align-items:center;gap:6px;
+  font-size:11.5px;color:var(--dark-ink-2);font-weight:500}
 
-  .promo { background: linear-gradient(160deg, var(--dark-1), var(--dark-2)); border: 1px solid var(--border); border-radius: 20px; padding: 16px; margin-bottom: 18px; color: var(--dark-text); display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
-  .promo-label { font-size: 11px; letter-spacing: 0.08em; color: var(--dark-text-2); font-weight: 600; margin-bottom: 4px; }
-  .promo-text { font-size: 13px; max-width: 210px; line-height: 1.4; }
-  .promo-arrow { width: 34px; height: 34px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; flex: 0 0 auto; }
+/* punch card */
+.punch{position:relative;z-index:1;display:grid;grid-template-columns:repeat(6,minmax(0,36px));
+  justify-content:space-between;gap:9px;margin-top:20px}
+.stamp{aspect-ratio:1;border-radius:50%;display:grid;place-items:center;
+  border:1.5px dashed rgba(240,237,226,.24);transition:all .3s}
+.stamp.used{border:1.5px solid transparent;background:radial-gradient(circle at 34% 30%,#C79A5E,var(--brass) 55%,#8E6532);
+  box-shadow:0 2px 6px rgba(0,0,0,.3)}
+.stamp.used svg{opacity:.85}
+.stamp.pop{animation:pop .5s cubic-bezier(.2,1.5,.4,1)}
+@keyframes pop{0%{transform:scale(0) rotate(-40deg)}60%{transform:scale(1.22) rotate(6deg)}100%{transform:scale(1)}}
 
-  .chip-row { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 12px; }
-  .chip-row::-webkit-scrollbar { display: none; }
-  .chip { flex: 0 0 auto; font-size: 12px; padding: 7px 13px; border-radius: 100px; border: 1px solid var(--border); cursor: pointer; white-space: nowrap; background: var(--card); color: var(--ink-2); }
-  .chip.on { background: var(--dark-1); color: var(--dark-text); border-color: var(--dark-1); }
+/* ============ SECTIONS ============ */
+.sec{margin:30px 0 0}
+.sec-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px;gap:12px}
+.sec-head h2{font-size:20px}
+.link{font-size:12.5px;font-weight:600;color:var(--brand-deep);display:inline-flex;align-items:center;gap:3px}
 
-  .cafe-row { display: flex; gap: 12px; background: var(--card); border: 1px solid var(--border); border-radius: 16px; margin-bottom: 10px; padding: 10px; align-items: center; }
-  .cafe-thumb { width: 56px; height: 56px; border-radius: 12px; border: 1.5px dashed var(--border); display: flex; align-items: center; justify-content: center; color: var(--ink-3); font-size: 10px; flex: 0 0 auto; }
-  .cafe-main { flex: 1; cursor: pointer; min-width: 0; }
-  .cafe-name { font-size: 15px; }
-  .cafe-meta { font-size: 11px; color: var(--ink-2); margin: 2px 0 4px; }
-  .cafe-window { font-size: 11px; color: var(--accent-dark); font-weight: 600; }
-  .tag-badge-row { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 5px; }
-  .tag-badge { font-size: 9px; padding: 2px 7px; border-radius: 100px; background: var(--border); color: var(--ink-2); white-space: nowrap; }
-  .cafe-actions { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; flex: 0 0 auto; }
-  .fav-btn { width: 26px; height: 26px; border-radius: 50%; background: var(--border); display: flex; align-items: center; justify-content: center; font-size: 13px; cursor: pointer; flex: 0 0 auto; }
-  .quick-btn { font-size: 9.5px; padding: 5px 9px; border-radius: 100px; background: var(--accent); color: var(--accent-dark); font-weight: 700; cursor: pointer; white-space: nowrap; }
-  .empty-note { font-size: 12.5px; color: var(--ink-2); padding: 30px 10px; text-align: center; line-height: 1.6; }
+/* ============ BUTTONS ============ */
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:16px 18px;
+  border-radius:var(--r-m);font-family:var(--f-display);font-size:14.5px;font-weight:700;letter-spacing:-.01em;
+  transition:transform .14s,filter .14s}
+.btn:active{transform:scale(.978)}
+.btn-primary{background:linear-gradient(140deg,var(--brand),var(--brand-deep));color:#fff;
+  box-shadow:0 4px 14px rgba(78,92,62,.3)}
+.btn-dark{background:linear-gradient(145deg,var(--dark-1),var(--dark-2));color:var(--dark-ink)}
+.btn-ghost{background:var(--surface);border:1.5px solid var(--line-2);color:var(--ink)}
+.btn-sm{padding:11px 15px;font-size:13px;border-radius:14px;width:auto}
+.chipbtn{display:inline-flex;align-items:center;gap:6px;padding:9px 14px;border-radius:100px;
+  background:var(--surface);border:1.5px solid var(--line);color:var(--ink-2);
+  font-size:12px;font-weight:600;transition:all .16s;white-space:nowrap}
+.chipbtn:active{transform:scale(.95)}
+.chipbtn.on{background:var(--brand);border-color:var(--brand);color:#fff}
+[data-theme="dark"] .chipbtn.on{color:#151810}
+[data-theme="dark"] .passcard,[data-theme="dark"] .promo,[data-theme="dark"] .pass,
+[data-theme="dark"] .btn-dark{border:1px solid rgba(240,237,226,.09)}
 
-  .back-row { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; font-size: 12px; color: var(--ink-2); cursor: pointer; }
-  .cafe-banner { height: 110px; border: 1.5px dashed var(--border); border-radius: 16px; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; color: var(--ink-3); font-size: 11px; }
-  .cafe-name-big { font-size: 26px; margin-bottom: 2px; display: flex; justify-content: space-between; align-items: center; }
-  .cafe-meta-big { font-size: 12px; color: var(--ink-2); margin-bottom: 14px; }
-  .pill-row { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
-  .pill { font-size: 12px; padding: 8px 12px; border-radius: 10px; border: 1px solid var(--border); background: var(--card); cursor: pointer; text-align: center; color: var(--ink); }
-  .pill .note { display: block; font-size: 9.5px; color: var(--ink-2); margin-top: 2px; }
-  .pill.on { background: var(--dark-1); color: var(--dark-text); border-color: var(--dark-1); }
-  .pill.on .note { color: var(--dark-text-2); }
-  .total-row { display: flex; justify-content: space-between; font-size: 12.5px; color: var(--ink-2); margin-bottom: 4px; background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 12px 14px; }
-  .confirm-note { font-size: 11.5px; color: var(--ink-2); margin-top: 8px; line-height: 1.5; }
-  .toast { font-size: 12px; color: var(--accent-dark); margin-top: 8px; min-height: 16px; font-weight: 600; }
+/* ============ CAFE CARDS ============ */
+.railwrap{margin:0 -18px;padding:0 18px;overflow-x:auto;scrollbar-width:none}
+.railwrap::-webkit-scrollbar{display:none}
+.rail{display:flex;gap:13px;padding-bottom:4px}
+.cafecard{flex:0 0 200px;border-radius:var(--r-l);overflow:hidden;background:var(--surface);
+  border:1px solid var(--line);box-shadow:var(--shadow-s);transition:transform .18s}
+.cafecard:active{transform:scale(.975)}
+.art{position:relative;height:118px;display:grid;place-items:center;overflow:hidden}
+.art .mono{font-family:var(--f-num);font-weight:700;font-size:46px;color:rgba(255,255,255,.34);letter-spacing:.04em;
+  text-shadow:0 2px 12px rgba(0,0,0,.2)}
+.art::after{content:'';position:absolute;inset:0;
+  background:repeating-linear-gradient(115deg,transparent 0 13px,rgba(255,255,255,.055) 13px 26px)}
+.badge{position:absolute;top:9px;left:9px;z-index:2;display:inline-flex;align-items:center;gap:5px;
+  padding:5px 10px;border-radius:100px;font-family:var(--f-mono);font-size:9.5px;font-weight:600;
+  letter-spacing:.05em;text-transform:uppercase;backdrop-filter:blur(8px);
+  background:rgba(255,255,255,.88);color:#2A3620}
+.badge.shut{background:rgba(24,27,18,.78);color:#E5E2D6}
+.dot{width:5px;height:5px;border-radius:50%;background:#6E7F5B;flex:0 0 auto}
+.badge.shut .dot{background:#C8927A}
+.cc-body{padding:12px 14px 14px}
+.cc-name{font-family:var(--f-display);font-weight:700;font-size:15px;letter-spacing:-.02em}
+.cc-meta{font-size:11.5px;color:var(--ink-2);margin-top:3px}
+.cc-tags{display:flex;gap:5px;flex-wrap:wrap;margin-top:9px}
+.tag{font-size:9.5px;font-weight:600;padding:3px 8px;border-radius:100px;background:var(--brand-soft);
+  color:var(--brand-ink);letter-spacing:.02em}
 
-  .price-card { background: linear-gradient(160deg, var(--dark-1), var(--dark-2)); border: 1px solid var(--border); color: var(--dark-text); border-radius: 20px; padding: 22px 16px; text-align: center; margin-bottom: 16px; }
-  .price-num { font-size: 36px; font-weight: 700; font-family: var(--font-heading); }
-  .price-period { font-size: 12px; color: var(--dark-text-2); margin-top: 2px; }
-  .benefit-item { display: flex; gap: 10px; align-items: flex-start; font-size: 12.5px; padding: 8px 0; }
-  .benefit-item .title { font-weight: 600; }
-  .benefit-item .note { color: var(--ink-2); font-size: 11.5px; }
-  .check { width: 17px; height: 17px; border-radius: 6px; background: var(--accent); flex: 0 0 auto; margin-top: 1px; }
-  .proof { text-align: center; font-size: 11px; color: var(--ink-2); margin-top: 10px; }
+/* list variant */
+.cafelist{display:flex;flex-direction:column;gap:12px}
+.cafrow{display:flex;gap:13px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r-l);
+  padding:11px;align-items:center;box-shadow:var(--shadow-s);transition:transform .18s}
+.cafrow:active{transform:scale(.99)}
+.cafrow .art{width:74px;height:74px;border-radius:16px;flex:0 0 auto}
+.cafrow .art .mono{font-size:26px}
+.cafrow-main{flex:1;min-width:0}
+.cafrow-actions{display:flex;flex-direction:column;gap:7px;align-items:flex-end;flex:0 0 auto}
+.heart{width:36px;height:36px;border-radius:50%;background:var(--paper-2);display:grid;place-items:center;
+  color:var(--ink-3);transition:all .18s}
+.heart.on{background:var(--brand-soft);color:var(--brand-deep)}
+.heart:active{transform:scale(.88)}
 
-  .tabs2 { display: flex; gap: 4px; background: var(--card); border: 1px solid var(--border); border-radius: 100px; padding: 4px; margin-bottom: 14px; }
-  .tab2 { flex: 1; text-align: center; font-size: 12px; padding: 8px 0; border-radius: 100px; cursor: pointer; color: var(--ink-2); }
-  .tab2.active { background: var(--dark-1); color: var(--dark-text); font-weight: 600; }
-  .order-item { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 12px 14px; margin-bottom: 9px; display: flex; gap: 10px; align-items: center; }
-  .order-mono { width: 40px; height: 40px; border-radius: 10px; border: 1.5px dashed var(--border); display: flex; align-items: center; justify-content: center; font-size: 9px; color: var(--ink-3); flex: 0 0 auto; }
-  .order-body { flex: 1; } .order-top { font-size: 13px; font-weight: 500; }
-  .order-meta { font-size: 11px; color: var(--ink-2); margin-top: 2px; }
-  .order-status { font-size: 10px; padding: 3px 9px; border-radius: 100px; border: 1px solid; }
+/* ============ GENERIC CARD ============ */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-l);padding:18px;
+  box-shadow:var(--shadow-s)}
+.card+.card{margin-top:12px}
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px;background:var(--surface);
+  border:1px solid var(--line);border-radius:var(--r-m);padding:15px 17px;box-shadow:var(--shadow-s);
+  transition:transform .16s}
+.row:active{transform:scale(.99)}
+.row+.row{margin-top:10px}
+.row-t{font-family:var(--f-display);font-size:14px;font-weight:700;letter-spacing:-.015em}
+.row-s{font-size:11.5px;color:var(--ink-2);margin-top:2px}
+.row-ic{width:38px;height:38px;border-radius:12px;background:var(--brand-soft);color:var(--brand-deep);
+  display:grid;place-items:center;flex:0 0 auto}
 
-  .profile-head { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
-  .avatar { width: 54px; height: 54px; border-radius: 50%; background: var(--accent); flex: 0 0 auto; display: flex; align-items: center; justify-content: center; font-family: var(--font-heading); font-size: 22px; font-weight: 700; color: var(--accent-dark); }
-  .profile-name { font-size: 21px; } .profile-sub { font-size: 11.5px; color: var(--ink-2); }
-  .status-card { display: flex; justify-content: space-between; align-items: center; background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 12px 14px; margin-bottom: 14px; }
-  .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent-dark); display: inline-block; margin-right: 6px; }
-  .status-date { font-size: 11.5px; color: var(--ink-2); }
-  .qr-box { width: 128px; height: 128px; margin: 0 auto 12px; background: #fff; border: 1px solid var(--border); border-radius: 14px; padding: 10px; }
-  .qr-grid { width: 100%; height: 100%; display: grid; grid-template-columns: repeat(7, 1fr); grid-template-rows: repeat(7, 1fr); gap: 2px; }
-  .qr-caption { text-align: center; font-size: 11.5px; color: var(--ink-2); margin-bottom: 16px; }
-  .ref-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 14px; margin-bottom: 14px; }
-  .ref-label { font-size: 12px; color: var(--ink-2); margin-bottom: 6px; }
-  .ref-code { font-size: 20px; font-weight: 700; font-family: var(--font-heading); margin-bottom: 10px; }
-  .ref-btn { text-align: center; background: var(--dark-1); color: var(--dark-text); padding: 11px; border-radius: 12px; font-size: 12.5px; font-weight: 600; cursor: pointer; }
-  .ref-note { font-size: 11px; color: var(--ink-2); margin-top: 8px; text-align: center; }
-  .row-card { display: flex; align-items: center; justify-content: space-between; background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 12px 14px; cursor: pointer; }
-  .row-card .t1 { font-size: 13px; font-weight: 600; } .row-card .t2 { font-size: 11.5px; color: var(--ink-2); }
+/* ============ PROMO / EDITORIAL ============ */
+.promo{position:relative;overflow:hidden;border-radius:var(--r-xl);padding:24px;color:var(--dark-ink);
+  background:linear-gradient(145deg,#2E3522,var(--dark-2));box-shadow:var(--shadow-m)}
+.promo::before{content:'';position:absolute;right:-30px;bottom:-40px;width:180px;height:180px;border-radius:50%;
+  background:radial-gradient(circle,rgba(181,132,74,.28),transparent 68%)}
+.promo h3{font-size:22px;max-width:15ch;margin:10px 0 8px;position:relative}
+.promo p{font-size:12.5px;color:var(--dark-ink-2);line-height:1.55;max-width:30ch;margin:0;position:relative}
+.promo .btn{margin-top:18px;position:relative}
 
-  .cancel-link { font-size: 12px; color: var(--ink-2); text-align: center; margin-top: 4px; cursor: pointer; text-decoration: underline; }
-  .confirm-box { margin-top: 10px; padding: 12px; border: 1px dashed var(--border); border-radius: 12px; text-align: center; }
-  .confirm-box .q { font-size: 12.5px; margin-bottom: 8px; }
-  .confirm-actions { display: flex; gap: 8px; }
-  .confirm-actions div { flex: 1; padding: 9px; border-radius: 10px; font-size: 12px; font-weight: 600; cursor: pointer; text-align: center; }
-  .confirm-yes { background: var(--dark-1); color: var(--dark-text); }
-  .confirm-no { background: var(--border); color: var(--ink); }
-  .low-balance-note { font-size: 11.5px; color: var(--accent); margin-top: 8px; font-weight: 600; }
+/* ============ STAT TILES ============ */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-m);padding:14px 12px;
+  text-align:center;box-shadow:var(--shadow-s)}
+.stat b{display:block;font-family:var(--f-num);font-weight:700;font-size:26px;line-height:1;
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.stat span{display:block;font-size:10px;color:var(--ink-3);margin-top:6px;font-weight:500;line-height:1.35}
 
-  .bottomnav { position: fixed; left: 0; right: 0; bottom: 0; background: var(--bg); border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 10px 0 8px; }
-  .navitem { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 10px; font-weight: 600; color: var(--ink-2); cursor: pointer; }
-  .navitem.active { color: var(--ink); }
-  .navdot { width: 4px; height: 4px; border-radius: 50%; background: transparent; }
-  .navitem.active .navdot { background: var(--accent-dark); }
+/* ============ DETAIL ============ */
+.hero-art{position:relative;height:210px;margin:0 -18px 0;display:grid;place-items:center;overflow:hidden}
+.hero-art::after{content:'';position:absolute;inset:0;
+  background:linear-gradient(to top,var(--paper) 2%,transparent 60%),
+             repeating-linear-gradient(115deg,transparent 0 16px,rgba(255,255,255,.05) 16px 32px)}
+.hero-art .mono{font-family:var(--f-num);font-size:96px;font-weight:700;color:rgba(255,255,255,.28)}
+.backfab{position:absolute;top:calc(env(safe-area-inset-top) + 12px);left:18px;z-index:3;width:40px;height:40px;
+  border-radius:50%;background:rgba(255,255,255,.9);backdrop-filter:blur(10px);display:grid;place-items:center;
+  color:#1B1E16;box-shadow:var(--shadow-s)}
+.favfab{position:absolute;top:calc(env(safe-area-inset-top) + 12px);right:18px;z-index:3;width:40px;height:40px;
+  border-radius:50%;background:rgba(255,255,255,.9);backdrop-filter:blur(10px);display:grid;place-items:center;
+  color:#5C6353;box-shadow:var(--shadow-s)}
+.favfab.on{color:var(--brand-deep)}
+.d-title{margin-top:-30px;position:relative;z-index:2}
+.d-title h1{font-size:30px;letter-spacing:-.035em}
+.d-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:9px;font-size:12px;color:var(--ink-2)}
+.pill-status{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:100px;
+  background:var(--brand-soft);color:var(--brand-ink);font-size:10.5px;font-weight:700;letter-spacing:.02em}
+.pill-status.shut{background:var(--brass-soft);color:var(--danger)}
+
+.label{font-family:var(--f-mono);font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--ink-3);margin:22px 0 10px}
+.opts{display:flex;gap:9px}
+.opt{flex:1;border:1.5px solid var(--line);background:var(--surface);border-radius:var(--r-m);padding:13px 8px;
+  text-align:center;transition:all .16s}
+.opt:active{transform:scale(.96)}
+.opt b{display:block;font-family:var(--f-display);font-size:15px;font-weight:700}
+.opt span{display:block;font-size:10px;color:var(--ink-3);margin-top:3px}
+.opt.on{border-color:var(--brand);background:var(--brand-soft);color:var(--brand-ink)}
+.opt.on span{color:var(--brand-deep)}
+.optrow{display:flex;gap:8px;flex-wrap:wrap}
+.total{display:flex;justify-content:space-between;align-items:center;margin-top:20px;padding:15px 17px;
+  background:var(--surface-2);border:1px dashed var(--line-2);border-radius:var(--r-m);font-size:13px}
+.total b{font-family:var(--f-num);font-size:19px;font-weight:700;font-variant-numeric:tabular-nums}
+.note{font-size:11.5px;color:var(--ink-2);line-height:1.6;margin-top:11px}
+
+/* ============ ORDERS TIMELINE ============ */
+.tabs{display:flex;gap:5px;background:var(--surface-2);border:1px solid var(--line);border-radius:100px;
+  padding:5px;margin-bottom:20px}
+.tab{flex:1;text-align:center;padding:10px;border-radius:100px;font-size:12.5px;font-weight:600;color:var(--ink-2);
+  transition:all .2s}
+.tab.on{background:var(--surface);color:var(--ink);box-shadow:var(--shadow-s)}
+.tl{position:relative;padding-left:26px}
+.tl::before{content:'';position:absolute;left:7px;top:8px;bottom:8px;width:1.5px;
+  background:linear-gradient(var(--line-2),transparent)}
+.tlitem{position:relative;margin-bottom:12px}
+.tlitem::before{content:'';position:absolute;left:-23px;top:20px;width:9px;height:9px;border-radius:50%;
+  background:var(--brand);border:2.5px solid var(--paper)}
+.tlitem.pending::before{background:var(--brass)}
+.tlcard{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-m);padding:15px 16px;
+  box-shadow:var(--shadow-s)}
+.tl-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.tl-t{font-family:var(--f-display);font-size:14px;font-weight:700}
+.tl-s{font-size:11.5px;color:var(--ink-2);margin-top:3px}
+.tl-st{font-family:var(--f-mono);font-size:9.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;
+  padding:4px 9px;border-radius:100px;background:var(--brand-soft);color:var(--brand-ink);white-space:nowrap}
+.tl-st.pending{background:var(--brass-soft);color:var(--brass)}
+.tl-exp{margin-top:13px;padding-top:13px;border-top:1px dashed var(--line-2)}
+.tl-id{font-family:var(--f-mono);font-size:10.5px;color:var(--ink-3);margin-bottom:10px}
+
+/* ============ PROFILE ============ */
+.phead{display:flex;align-items:center;gap:15px;margin:6px 0 22px}
+.avatar-lg{width:66px;height:66px;border-radius:24px;background:linear-gradient(145deg,var(--brand),var(--brand-deep));
+  color:#fff;display:grid;place-items:center;font-family:var(--f-num);font-weight:700;font-size:28px;
+  box-shadow:var(--shadow-m);flex:0 0 auto}
+.phead h1{font-size:25px}
+
+/* ============ PAYWALL ============ */
+.pw-hero{text-align:center;padding:14px 0 4px}
+.pw-hero h1{font-size:clamp(32px,9vw,42px);letter-spacing:-.04em;margin-top:12px}
+.pw-hero p{font-size:14px;color:var(--ink-2);line-height:1.6;margin:12px auto 0;max-width:30ch}
+.price{display:flex;align-items:baseline;justify-content:center;gap:8px;margin:22px 0 4px}
+.price b{font-family:var(--f-num);font-size:54px;font-weight:700;letter-spacing:-.03em;line-height:1}
+.price span{font-size:13px;color:var(--ink-2)}
+.benefits{margin:26px 0 0}
+.ben{display:flex;gap:14px;align-items:flex-start;padding:15px 0;border-top:1px solid var(--line)}
+.ben-ic{width:36px;height:36px;border-radius:12px;background:var(--brand-soft);color:var(--brand-deep);
+  display:grid;place-items:center;flex:0 0 auto}
+.ben b{display:block;font-family:var(--f-display);font-size:14px;font-weight:700;letter-spacing:-.015em}
+.ben span{display:block;font-size:12px;color:var(--ink-2);margin-top:3px;line-height:1.5}
+.proof{text-align:center;font-size:11.5px;color:var(--ink-3);margin-top:20px}
+
+/* ============ HOW IT WORKS ============ */
+.step{display:flex;gap:16px;align-items:flex-start;padding:18px 0;border-bottom:1px solid var(--line)}
+.step-n{width:38px;height:38px;border-radius:50%;background:var(--dark-1);color:var(--dark-ink);
+  display:grid;place-items:center;font-family:var(--f-num);font-weight:700;font-size:17px;flex:0 0 auto}
+.step b{display:block;font-family:var(--f-display);font-size:15px;font-weight:700;letter-spacing:-.02em}
+.step p{margin:5px 0 0;font-size:12.5px;color:var(--ink-2);line-height:1.6}
+
+/* ============ BANNERS ============ */
+.banner{display:flex;gap:11px;align-items:flex-start;padding:15px 16px;border-radius:var(--r-m);
+  font-size:12.5px;font-weight:600;line-height:1.5;margin-bottom:16px;animation:rise .4s cubic-bezier(.16,.84,.28,1)}
+.banner.good{background:var(--brand-soft);color:var(--brand-ink)}
+.banner.warn{background:var(--brass-soft);color:var(--danger)}
+.banner svg{flex:0 0 auto;margin-top:1px}
+.inline-note{font-size:11.5px;color:var(--brass);font-weight:600;margin-top:12px;position:relative;z-index:1}
+
+/* ============ DOCK ============ */
+.dock{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(14px + env(safe-area-inset-bottom));
+  z-index:60;display:flex;align-items:center;gap:2px;padding:7px;border-radius:100px;
+  background:color-mix(in srgb,var(--surface) 84%,transparent);backdrop-filter:blur(20px) saturate(1.5);
+  border:1px solid var(--line);box-shadow:var(--shadow-l);width:calc(100% - 36px);max-width:400px;
+  justify-content:space-between}
+.nav{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 0;border-radius:100px;
+  color:var(--ink-3);transition:color .2s}
+.nav.on{color:var(--brand-deep)}
+.nav span{font-size:9px;font-weight:600;letter-spacing:.01em}
+.navdot{width:4px;height:4px;border-radius:50%;background:transparent;margin-top:-1px}
+.nav.on .navdot{background:var(--brand)}
+.passbtn{flex:0 0 auto;width:58px;height:58px;border-radius:50%;margin:-16px 4px 0;
+  background:linear-gradient(145deg,var(--dark-1),var(--dark-2));display:grid;place-items:center;
+  box-shadow:0 8px 22px rgba(20,23,16,.4);border:3px solid var(--surface);transition:transform .2s}
+.passbtn:active{transform:scale(.92)}
+
+/* ============ PASS SHEET ============ */
+.scrim{position:fixed;inset:0;z-index:70;background:rgba(12,14,9,.62);backdrop-filter:blur(6px);
+  opacity:0;pointer-events:none;transition:opacity .3s}
+.scrim.on{opacity:1;pointer-events:auto}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:80;background:var(--paper);
+  border-radius:32px 32px 0 0;padding:12px 20px calc(26px + env(safe-area-inset-bottom));
+  transform:translateY(102%);transition:transform .42s cubic-bezier(.16,.9,.24,1);max-height:94vh;overflow-y:auto;
+  max-width:560px;margin:0 auto;box-shadow:0 -12px 50px rgba(0,0,0,.28)}
+.sheet.on{transform:none}
+.handle{width:40px;height:4px;border-radius:100px;background:var(--line-2);margin:0 auto 18px}
+
+/* the real pass */
+.pass{position:relative;border-radius:28px;overflow:hidden;padding:24px 22px 22px;
+  background:linear-gradient(160deg,#333A25 0%,var(--dark-1) 45%,#0E1108 100%);color:var(--dark-ink);
+  box-shadow:var(--shadow-l)}
+.pass::before{content:'';position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(90% 60% at 20% 0%,rgba(181,132,74,.25),transparent 60%)}
+.pass-head{display:flex;justify-content:space-between;align-items:center;position:relative;z-index:1}
+.pass-name{font-family:var(--f-display);font-size:17px;font-weight:700;margin-top:14px;position:relative;z-index:1}
+.pass-sub{font-family:var(--f-mono);font-size:10px;letter-spacing:.13em;text-transform:uppercase;
+  color:var(--dark-ink-2);margin-top:3px;position:relative;z-index:1}
+.perf{position:relative;z-index:1;height:20px;margin:18px -22px 0;
+  background:repeating-linear-gradient(90deg,rgba(240,237,226,.22) 0 7px,transparent 7px 14px);
+  background-size:100% 1.5px;background-repeat:no-repeat;background-position:center}
+.perf::before,.perf::after{content:'';position:absolute;top:50%;transform:translateY(-50%);width:20px;height:20px;
+  border-radius:50%;background:var(--paper)}
+.perf::before{left:-10px}
+.perf::after{right:-10px}
+.qrwrap{position:relative;z-index:1;width:190px;margin:16px auto 0;padding:14px;border-radius:20px;background:#FBF9F3;
+  box-shadow:0 8px 24px rgba(0,0,0,.24)}
+.qrwrap svg{display:block;width:100%;height:auto}
+.qr-seal{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:42px;height:42px;
+  border-radius:13px;background:#FBF9F3;display:grid;place-items:center}
+.qr-seal div{width:32px;height:32px;border-radius:10px;background:linear-gradient(145deg,var(--dark-1),var(--dark-2));
+  display:grid;place-items:center}
+.pass-foot{position:relative;z-index:1;display:flex;justify-content:space-between;align-items:center;margin-top:18px}
+.pass-foot .k{font-family:var(--f-mono);font-size:9.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--dark-ink-2)}
+.pass-foot .v{font-family:var(--f-display);font-size:13px;font-weight:700;margin-top:3px}
+.sheet-hint{text-align:center;font-size:12px;color:var(--ink-2);line-height:1.6;margin:18px auto 0;max-width:32ch}
+
+.empty{text-align:center;padding:48px 20px;color:var(--ink-3);font-size:13px;line-height:1.7}
+.empty svg{margin-bottom:14px;opacity:.5}
+.confirm{margin-top:12px;padding:16px;border:1px dashed var(--line-2);border-radius:var(--r-m);text-align:center}
+.confirm p{margin:0 0 12px;font-size:13px;font-weight:600}
+.confirm-row{display:flex;gap:9px}
+.spacer{height:8px}
 </style>
 </head>
 <body>
-<div id="app">
-
-  <div class="util-bar">
-    <div class="lang-switch">
-      <div class="lang-btn on" id="lang-kk-btn" onclick="app.setLang('kk')">ҚАЗ</div>
-      <div class="lang-btn" id="lang-ru-btn" onclick="app.setLang('ru')">РУС</div>
-    </div>
-    <div class="theme-btn" id="theme-btn" onclick="app.toggleTheme()">
-      <svg id="theme-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3a9 9 0 109 9c0-.46-.04-.92-.1-1.36A5.5 5.5 0 0112.36 3.1c-.44-.06-.9-.1-1.36-.1z"/></svg>
-    </div>
-  </div>
-
-  <!-- HOME -->
-  <div class="screen active" id="screen-home">
-    <div class="greet-row">
-      <div><div class="greet-label" id="greet-label">ҚАЙЫРЛЫ ТАҢ</div><div class="greet-name" id="greet-name">Қонақ</div></div>
-      <div class="greet-icons">
-        <div class="icon-circle bell" onclick="app.pingBell()">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 01-3.4 0"/></svg>
-        </div>
-        <div class="icon-circle avatar" id="avatar-letter">Қ</div>
-      </div>
-    </div>
-
-    <div class="widget">
-      <div class="widget-top">
-        <div><div class="widget-label" id="widget-month">ҚЫРКҮЙЕКТЕ ҚАЛҒАН</div>
-          <div class="widget-num-row"><span class="widget-num" id="widget-num">12</span><span class="widget-of" id="widget-of">сусыннан 12</span></div>
-        </div>
-        <div class="qr-mini-btn" onclick="app.switchTab('profile')">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2A1608" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 14h3v3h-3zM19 14h2v2h-2zM14 19h2v2h-2zM19 19h2v2h-2z"/></svg>
-        </div>
-      </div>
-      <div class="dash-row" id="dash-row"></div>
-      <div class="low-balance-note" id="low-balance-note" style="display:none;"></div>
-    </div>
-
-    <div class="sec-row"><h3 class="sec-title" id="offpeak-title">Оффпик қазір</h3><span class="sec-link" id="allcafes-link" onclick="app.switchTab('catalog')">Барлық кофеханалар →</span></div>
-    <div class="grid2" id="featured-grid"></div>
-
-    <div class="promo" onclick="app.shareReferral()">
-      <div><div class="promo-label" id="promo-label">ДОСЫҢДЫ ШАҚЫР</div><div class="promo-text" id="promo-text">Екеуің де осы айда лимиттен тыс 1 сусын аласыңдар</div></div>
-      <div class="promo-arrow"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2A1608" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg></div>
-    </div>
-  </div>
-
-  <!-- CATALOG -->
-  <div class="screen" id="screen-catalog">
-    <h3 class="sec-title" id="catalog-title" style="margin-bottom:14px;">Кофеханалар</h3>
-    <div class="chip-row" id="sort-chips"></div>
-    <div class="chip-row" id="category-chips"></div>
-    <div class="chip-row" id="tag-chips"></div>
-    <div id="catalog-list"></div>
-  </div>
-
-  <!-- ORDERS -->
-  <div class="screen" id="screen-orders">
-    <h3 class="sec-title" id="orders-title" style="margin-bottom:14px;">Тапсырыстар</h3>
-    <div class="tabs2" id="order-tabs"></div>
-    <div id="orders-list"></div>
-  </div>
-
-  <!-- PROFILE -->
-  <div class="screen" id="screen-profile">
-    <div class="profile-head">
-      <div class="avatar" id="profile-avatar">Қ</div>
-      <div><div class="profile-name" id="profile-name">Қонақ</div><div class="profile-sub" id="profile-sub">ЗАВАР жазылушысы</div></div>
-      <div class="icon-circle bell" id="settings-btn" onclick="app.openSettings()" style="margin-left:auto;">
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 11-2.83 2.83l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09a1.65 1.65 0 00-1-1.51 1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 11-2.83-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09a1.65 1.65 0 001.51-1 1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 112.83-2.83l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 112.83 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
-      </div>
-    </div>
-    <div class="status-card"><span><span class="status-dot"></span><span id="sub-active-text">Жазылым белсенді</span></span><span class="status-date" id="profile-status-date">4 қазанға дейін</span></div>
-    <div class="qr-box"><div class="qr-grid" id="qr-pattern"></div></div>
-    <div class="qr-caption" id="qr-caption">Сусынды есептен шығару үшін баристаға көрсетіңіз</div>
-  </div>
-
-  <!-- SETTINGS -->
-  <div class="screen" id="screen-settings">
-    <div class="back-row" id="settings-back-label" onclick="app.switchTab('profile')">‹ Артқа</div>
-    <h3 class="sec-title" id="settings-title" style="margin-bottom:14px;">Баптаулар</h3>
-    <div class="ref-card">
-      <div class="ref-label" id="sub-card-label">Жазылым</div>
-      <div class="status-card" style="margin-bottom:10px;">
-        <span><span class="status-dot"></span><span id="sub-status-text">Жазылым белсенді</span></span>
-        <span class="status-date" id="sub-status-date">4 қазанға дейін</span>
-      </div>
-      <div class="cancel-link" id="cancel-link" onclick="app.toggleCancelConfirm()">Жазылымды тоқтату</div>
-      <div class="confirm-box" id="cancel-confirm-box" style="display:none;">
-        <div class="q" id="cancel-confirm-q">Шынымен тоқтатасыз ба?</div>
-        <div class="confirm-actions">
-          <div class="confirm-no" id="cancel-no-btn" onclick="app.dismissCancelConfirm()">Жоқ</div>
-          <div class="confirm-yes" id="cancel-yes-btn" onclick="app.confirmCancel()">Иә, тоқтату</div>
-        </div>
-      </div>
-    </div>
-    <div class="ref-card">
-      <div class="ref-label" id="ref-label-text">Сенің реферал кодың</div>
-      <div class="ref-code" id="ref-code">ZAVAR-0000</div>
-      <div class="ref-btn" id="invite-btn-text" onclick="app.shareReferral()">Досыңды шақыр</div>
-      <div class="ref-note" id="ref-note-text">Дос жеңілдікпен бірінші айды алады, сен — бонус сусын</div>
-    </div>
-    <div class="row-card" onclick="app.openSupport()" style="margin-bottom:0;">
-      <div><div class="t1" id="support-title">Қолдау</div><div class="t2" id="support-sub">Telegram-да бір сағат ішінде жауап береміз</div></div>
-      <div class="t2">›</div>
-    </div>
-  </div>
-
-  <!-- CAFE DETAIL -->
-  <div class="screen" id="screen-detail">
-    <div class="back-row" id="back-label" onclick="app.switchTab(state_tab)">‹ Артқа</div>
-    <div class="cafe-banner" id="banner-text">Мекеменің суреті</div>
-    <div class="cafe-name-big"><span id="detail-name">CULT COFFEE</span><span class="fav-btn" id="detail-fav" onclick="app.toggleFavActive()">♥</span></div>
-    <div class="cafe-meta-big" id="detail-meta">Есентай · 400 м · 22:00 дейін</div>
-
-    <div id="drink-mode">
-      <div class="section-label" id="field-size-label">Өлшем</div>
-      <div class="pill-row" id="size-pills"></div>
-      <div class="section-label" id="field-milk-label">Сүт</div>
-      <div class="pill-row" id="milk-pills"></div>
-      <div class="total-row"><span id="extra-label">Жазылымнан тыс төлем</span><span id="extra-total">0 ₸</span></div>
-      <div class="confirm-note" id="drink-note">Негізгі сусын жазылымға кіреді, қосымша төлем — тек L өлшемі немесе балама сүт үшін.</div>
-      <div class="sec-link" id="save-usual-link" onclick="app.saveCafeDefault()" style="margin-top:16px;">Осы жерде негізгі ретінде сақтау →</div>
-      <div class="sec-link" id="table-link" onclick="app.setMode('table')" style="margin-top:8px;">Үстел брондау →</div>
-    </div>
-
-    <div id="table-mode" style="display:none;">
-      <div class="back-row" id="table-back-label" onclick="app.setMode('drink')">‹ Сусынға оралу</div>
-      <div class="section-label" id="field-time-label">Уақыт</div>
-      <div class="pill-row" id="slot-pills"></div>
-      <div class="section-label" id="field-guests-label">Қонақтар</div>
-      <div class="pill-row" id="guest-pills"></div>
-      <div class="confirm-note" id="book-note">Броннан кейін WhatsApp-та 10 минут ішінде растаймыз.</div>
-    </div>
-    <div class="toast" id="toast"></div>
-  </div>
-
-  <!-- PAYWALL -->
-  <div class="screen" id="screen-paywall">
-    <div class="back-row" id="paywall-back-label" onclick="app.closePaywall()">‹ Артқа</div>
-    <div class="price-card">
-      <div class="price-num">8 000 ₸</div>
-      <div class="price-period" id="paywall-period">айына · кез келген уақытта тоқтатуға болады</div>
-    </div>
-    <div class="benefit-item"><span class="check"></span><div><div class="title" id="b1-title">Айына 12 сусын</div><div class="note" id="b1-note">Қаладағы серіктес желісінде</div></div></div>
-    <div class="benefit-item"><span class="check"></span><div><div class="title" id="b2-title">Кезексіз үстел</div><div class="note" id="b2-note">Жұмыс күндері, 10 минутта растау</div></div></div>
-    <div class="benefit-item"><span class="check"></span><div><div class="title" id="b3-title">Жаңа кофеханалар бірінші болып</div><div class="note" id="b3-note">Telegram-да хабарландыру</div></div></div>
-    <div class="proof" id="proof-text">Алматыда 210 жазылушы бар</div>
-  </div>
-
-</div>
-
-<div class="bottomnav">
-  <div class="navitem active" id="nav-home" onclick="app.switchTab('home')">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/></svg>
-    <div class="navdot"></div><span id="nav-home-label">Басты бет</span>
-  </div>
-  <div class="navitem" id="nav-catalog" onclick="app.switchTab('catalog')">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="8" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/><rect x="13" y="13" width="8" height="8" rx="2"/></svg>
-    <div class="navdot"></div><span id="nav-catalog-label">Кофеханалар</span>
-  </div>
-  <div class="navitem" id="nav-orders" onclick="app.switchTab('orders')">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>
-    <div class="navdot"></div><span id="nav-orders-label">Тапсырыстар</span>
-  </div>
-  <div class="navitem" id="nav-profile" onclick="app.switchTab('profile')">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>
-    <div class="navdot"></div><span id="nav-profile-label">Профиль</span>
-  </div>
-</div>
+<div id="grain"></div>
+<div id="app"></div>
+<div class="dock" id="dock"></div>
+<div class="scrim" id="scrim" data-act="pass:close"></div>
+<div class="sheet" id="sheet"></div>
 
 <script>
-var state_tab = 'home';
-var app = (function(){
-  var tg = window.Telegram && window.Telegram.WebApp;
-  var cfg = { support: 'zavar_support', kaspi: 'https://pay.kaspi.kz/', whatsapp: '77000000000', bot: 'zavar_bot', app: 'app' };
-  var limit = 12;
+var App = (function(){
+'use strict';
 
-  // ---------- переводы: казахский — язык по умолчанию ----------
-  var T = {
-    kk: {
-      navHome:'Басты бет', navCatalog:'Кофеханалар', navOrders:'Тапсырыстар', navProfile:'Профиль',
-      greetMorning:'ҚАЙЫРЛЫ ТАҢ', greetDay:'ҚАЙЫРЛЫ КҮН', greetEvening:'ҚАЙЫРЛЫ КЕШ',
-      guest:'Қонақ', subscriberOf:'ЗАВАР жазылушысы', subActive:'Жазылым белсенді',
-      widgetOf:function(n){ return 'сусыннан ' + n; },
-      months:['қаңтарда','ақпанда','наурызда','сәуірде','мамырда','маусымда','шілдеде','тамызда','қыркүйекте','қазанда','қарашада','желтоқсанда'],
-      remainingIn:function(m){ return (m.charAt(0).toUpperCase()+m.slice(1)) + ' қалған'; },
-      offpeak:'Оффпик қазір', allCafes:'Барлық кофеханалар →', catalogTitle:'Кофеханалар', ordersTitle:'Тапсырыстар',
-      catAll:'Барлығы', catEspresso:'Эспрессо', catSpecialty:'Спешелти', catLatte:'Латте', catCold:'Салқын',
-      tagWifi:'Wi-Fi', tagQuiet:'Тыныш', tagDog:'Итке рұқсат', tagFood:'Нан-тоқаш',
-      promoLabel:'ДОСЫҢДЫ ШАҚЫР', promoText:'Екеуің де осы айда лимиттен тыс 1 сусын аласыңдар',
-      ordersActive:'Белсенді', ordersHistory:'Тарих', orderDone:'Дайын', orderPending:'Күтуде',
-      emptyOrdersActive:'Белсенді тапсырыс жоқ.', emptyOrdersHistory:'Тарих әзірге бос.', emptyFilter:'Бұл сүзгіге сәйкес кофехана жоқ.',
-      back:'‹ Артқа', bannerText:'Мекеменің суреті', modeD:'Сусын', modeT:'Үстел',
-      fieldSize:'Өлшем', fieldMilk:'Сүт', fieldTime:'Уақыт', fieldGuests:'Қонақтар',
-      extraLabel:'Жазылымнан тыс төлем',
-      drinkNote:'Негізгі сусын жазылымға кіреді, қосымша төлем — тек L өлшемі немесе балама сүт үшін.',
-      bookNote:'Броннан кейін WhatsApp-та 10 минут ішінде растаймыз.',
-      mainDrinkBtn:'QR-код алу', mainBookBtn:'Броньды растау',
-      paywallPeriod:'айына · кез келген уақытта тоқтатуға болады',
-      b1t:'Айына 12 сусын', b1n:'Қаладағы серіктес желісінде',
-      b2t:'Кезексіз үстел', b2n:'Жұмыс күндері, 10 минутта растау',
-      b3t:'Жаңа кофеханалар бірінші болып', b3n:'Telegram-да хабарландыру',
-      proof:'Алматыда 210 жазылушы бар',
-      refLabel:'Сенің реферал кодың', invite:'Досыңды шақыр',
-      refNote:'Дос жеңілдікпен бірінші айды алады, сен — бонус сусын',
-      support:'Қолдау', supportSub:'Telegram-да бір сағат ішінде жауап береміз',
-      quickCoffee:'Менің кофем',
-      milkNormal:'Әдеттегі', milkOat:'Сұлы', milkAlmond:'Бадам', milkNone:'Сүтсіз',
-      guest1:'1 қонақ', guest2:'2 қонақ', guest34:'3–4 қонақ',
-      qrCaption:'Сусынды есептен шығару үшін баристаға көрсетіңіз',
-      tableLinkText:'Үстел брондау →', backToDrinkText:'‹ Сусынға оралу',
-      settingsTitle:'Баптаулар',
-      sortRecommended:'Ұсынылған', sortNearby:'Жақын маған',
-      subCardLabel:'Жазылым', renewDate:'4 қазанға дейін',
-      cancelLinkText:'Жазылымды тоқтату', resumeLinkText:'Жазылымды қалпына келтіру',
-      cancelConfirmQ:'Шынымен тоқтатасыз ба?', cancelYes:'Иә, тоқтату', cancelNo:'Жоқ',
-      subCancelledPending:'Тоқтатылады',
-      subCancelScheduled:function(d){ return d + ' — содан кейін жазылым тоқтайды'; },
-      saveUsualLink:'Осы жерде негізгі ретінде сақтау →',
-      saveUsualToastSaved:'Сақталды — келесі жолы осы жерде бірден осылай тапсырыс аласыз',
-      lowBalance:function(n){ return 'Соңғы ' + n + ' сусын қалды'; }
-    },
-    ru: {
-      navHome:'Главная', navCatalog:'Кофейни', navOrders:'Заказы', navProfile:'Профиль',
-      greetMorning:'ДОБРОЕ УТРО', greetDay:'ДОБРЫЙ ДЕНЬ', greetEvening:'ДОБРЫЙ ВЕЧЕР',
-      guest:'Гость', subscriberOf:'Подписчик ЗАВАР', subActive:'Подписка активна',
-      widgetOf:function(n){ return 'напитков из ' + n; },
-      months:['январе','феврале','марте','апреле','мае','июне','июле','августе','сентябре','октябре','ноябре','декабре'],
-      remainingIn:function(m){ return 'Осталось в ' + m.toUpperCase(); },
-      offpeak:'Оффпик сейчас', allCafes:'Все кофейни →', catalogTitle:'Кофейни', ordersTitle:'Заказы',
-      catAll:'Все', catEspresso:'Эспрессо', catSpecialty:'Спешелти', catLatte:'Латте', catCold:'Холодный',
-      tagWifi:'Wi-Fi', tagQuiet:'Тихо', tagDog:'Dog-friendly', tagFood:'Выпечка',
-      promoLabel:'ПРИВЕДИ ДРУГА', promoText:'Оба получаете +1 напиток сверх лимита в этом месяце',
-      ordersActive:'Активные', ordersHistory:'История', orderDone:'Готово', orderPending:'Ожидание',
-      emptyOrdersActive:'Нет активных заказов.', emptyOrdersHistory:'История пока пуста.', emptyFilter:'Нет кофеен с такими фильтрами.',
-      back:'‹ Назад', bannerText:'Фото заведения', modeD:'Напиток', modeT:'Стол',
-      fieldSize:'Размер', fieldMilk:'Молоко', fieldTime:'Время', fieldGuests:'Гости',
-      extraLabel:'Доплата сверх подписки',
-      drinkNote:'Базовый напиток входит в подписку, доплата — только за размер L или альтернативное молоко.',
-      bookNote:'После брони мы подтвердим место в WhatsApp в течение 10 минут.',
-      mainDrinkBtn:'Получить QR-код', mainBookBtn:'Подтвердить бронь',
-      paywallPeriod:'в месяц · отмена в любой момент',
-      b1t:'12 напитков в месяц', b1n:'в сети партнёров по всему городу',
-      b2t:'Стол без очереди', b2n:'в будни, подтверждение за 10 минут',
-      b3t:'Новые кофейни первыми', b3n:'уведомления прямо в Telegram',
-      proof:'Уже 210 подписчиков в Алматы',
-      refLabel:'Ваш реферальный код', invite:'Пригласить друга',
-      refNote:'Друг получает первый месяц со скидкой, вы — бонусный напиток',
-      support:'Поддержка', supportSub:'Ответим в Telegram в течение часа',
-      quickCoffee:'Мой кофе',
-      milkNormal:'Обычное', milkOat:'Овсяное', milkAlmond:'Миндальное', milkNone:'Без молока',
-      guest1:'1 гость', guest2:'2 гостя', guest34:'3–4 гостя',
-      qrCaption:'Покажите бариста для списания напитка',
-      tableLinkText:'Забронировать стол →', backToDrinkText:'‹ Назад к напитку',
-      settingsTitle:'Настройки',
-      sortRecommended:'Рекомендуемые', sortNearby:'Ближе всего',
-      subCardLabel:'Подписка', renewDate:'4 октября',
-      cancelLinkText:'Отменить подписку', resumeLinkText:'Возобновить подписку',
-      cancelConfirmQ:'Точно хотите отменить?', cancelYes:'Да, отменить', cancelNo:'Нет',
-      subCancelledPending:'Будет отменена',
-      subCancelScheduled:function(d){ return 'до ' + d + ' — затем подписка отменится'; },
-      saveUsualLink:'Сохранить как основной здесь →',
-      saveUsualToastSaved:'Сохранено — в следующий раз здесь сразу будет этот заказ',
-      lowBalance:function(n){ return n===1 ? 'Остался последний напиток' : 'Осталось всего ' + n + ' напитка'; }
-    }
-  };
+var tg = window.Telegram && window.Telegram.WebApp;
+var nativeUI = !!(tg && tg.platform && tg.platform !== 'unknown');
+var cfg = { support:'zavar_support', kaspi:'https://pay.kaspi.kz/', whatsapp:'77000000000',
+            bot:'zavar_bot', app:'app', price:8000, avgCup:1200 };
+var LIMIT = 12;
 
-  var state = {
-    lang: 'kk', theme: 'light',
-    tab: 'home', screen: 'home', subscribed: false, used: 0, cancelScheduled: false,
-    category: 'all', tagFilters: [], sortMode: 'default', size: 'M', milk: 'normal', slot: '12:00', guests: 'g2',
-    cafeDefaults: {},
-    mode: 'drink', orderTab: 'history', activeCafe: 1,
-    cafes: [
-      { id: 1, name: 'CULT COFFEE', rating: '4.7', cat: 'espresso', meta: 'Есентай · 400 м · 22:00', win: '13:00', fav: false, tags: ['wifi','quiet'] },
-      { id: 2, name: 'MOTO COFFEE', rating: '4.5', cat: 'specialty', meta: 'Абая · 750 м · 23:00', win: '13:00', fav: true, tags: ['wifi','food'] },
-      { id: 3, name: 'SHOKO', rating: '4.8', cat: 'latte', meta: 'Достык · 1.1 км · 21:00', win: 'free', fav: false, tags: ['dog','quiet'] },
-      { id: 4, name: 'BURO', rating: '4.6', cat: 'cold', meta: 'Сатпаева · 1.4 км · 22:00', win: '12:00', fav: false, tags: ['wifi','dog','food'] }
-    ],
-    history: [
-      { id: 20441, size:'M', milk:'normal', cafe: 'MOTO COFFEE', when: '4 сент, 09:20', status: 'done' },
-      { id: 20418, booking:true, cafe: 'SHOKO', when: '2 сент', status: 'done' }
-    ]
-  };
+/* ---------- i18n ---------- */
+var T = {
+kk:{
+  navHome:'Басты', navCafes:'Кофехана', navOrders:'Тапсырыс', navProfile:'Профиль',
+  greetM:'Қайырлы таң', greetD:'Қайырлы күн', greetE:'Қайырлы кеш',
+  guest:'Қонақ', member:'ЗАВАР мүшесі',
+  months:['Қаңтар','Ақпан','Наурыз','Сәуір','Мамыр','Маусым','Шілде','Тамыз','Қыркүйек','Қазан','Қараша','Желтоқсан'],
+  remainLabel:function(m){ return m + ' айында қалды'; },
+  ofLimit:function(n){ return n + ' сусыннан'; },
+  openPass:'Картаны ашу',
+  openNowSec:'Қазір ашық', allCafes:'Барлығы', cafesTitle:'Кофеханалар', ordersTitle:'Тапсырыстар',
+  profileTitle:'Профиль', settingsTitle:'Баптаулар', planTitle:'Жазылым туралы', howTitle:'Қалай жұмыс істейді',
+  open:'Ашық', shut:'Жабық', offpeak:function(t){ return 'Оффпик ' + t; }, freeTables:'Бос үстелдер',
+  sortRec:'Ұсынылған', sortNear:'Жақын', favOnly:'Таңдаулы',
+  tagWifi:'Wi-Fi', tagQuiet:'Тыныш', tagDog:'Итпен', tagFood:'Нан-тоқаш',
+  emptyFilter:'Бұл сүзгіге сәйкес кофехана жоқ.',
+  size:'Өлшем', milk:'Сүт', time:'Уақыт', guests:'Қонақтар',
+  milkNormal:'Әдеттегі', milkOat:'Сұлы', milkAlmond:'Бадам', milkNone:'Сүтсіз',
+  g1:'1 қонақ', g2:'2 қонақ', g34:'3–4 қонақ',
+  surcharge:'Жазылымнан тыс', drinkNote:'Негізгі сусын жазылымға кіреді. Қосымша төлем — тек L өлшемі мен балама сүт үшін.',
+  saveUsual:'Осында негізгі ету', saved:'Сақталды — келесіде осында бірден осы рецепт',
+  getDrink:'QR-код алу', bookTable:'Үстел брондау', confirmBook:'Броньды растау',
+  bookNote:'Броннан кейін WhatsApp-та 10 минут ішінде растаймыз.',
+  directions:'Бағыт', closedNote:'Кофехана қазір жабық — тапсырыс уақытша қолжетімсіз.',
+  closedToast:'Кофехана қазір жабық',
+  tabActive:'Белсенді', tabHistory:'Тарих', stDone:'Дайын', stPending:'Күтуде',
+  emptyActive:'Белсенді тапсырыс жоқ.', emptyHistory:'Әзірге тарих бос.',
+  reorder:'Қайталау', modifyBooking:'WhatsApp-та өзгерту', report:'Мәселе туралы',
+  quickOrder:function(n){ return 'Тез тапсырыс · ' + n; }, quickShort:'Тапсыру',
+  statDrinks:'Осы айда сусын', statSaved:'Үнемделді', statFav:'Таңдаулы',
+  subActive:'Жазылым белсенді', subEnding:'Тоқтатылады', until:function(d){ return d + ' дейін'; },
+  endingOn:function(d){ return d + ' дейін, содан кейін тоқтайды'; },
+  renewDate:'4 қазан',
+  cancelSub:'Жазылымды тоқтату', resumeSub:'Жазылымды жалғастыру',
+  cancelQ:'Шынымен тоқтатасыз ба?', yes:'Иә, тоқтату', no:'Жоқ',
+  planRow:'Жазылым туралы', planRowSub:'Не кіреді, баға, шарттар',
+  howRow:'Қалай жұмыс істейді', howRowSub:'Үш қадам — бір минут',
+  refRow:'Досыңды шақыр', refRowSub:'Екеуің де бонус сусын аласыңдар',
+  supportRow:'Қолдау', supportRowSub:'Telegram-да бір сағат ішінде',
+  settingsRow:'Баптаулар', settingsRowSub:'Тіл, тақырып',
+  lang:'Тіл', theme:'Тақырып', themeLight:'Ашық', themeDark:'Күңгірт',
+  pwTitle:'Күнделікті кофе, әр кесе үшін төлемей.',
+  pwSub:'Айына бір төлем — қаладағы серіктес кофеханаларда 12 сусын және кезексіз үстел.',
+  perMonth:'айына', cancelAny:'кез келген уақытта тоқтатуға болады',
+  b1:'Айына 12 сусын', b1s:'Есентай мен орталықтағы серіктес желіде',
+  b2:'Кезексіз үстел', b2s:'Жұмыс күндері, 10 минутта растау',
+  b3:'Жаңа кофеханалар бірінші', b3s:'Ботта хабарландыру келеді',
+  proof:'Алматыда 210 жазылушы', subscribe:'Kaspi арқылы жазылу',
+  step1:'Кофеханаға кіріңіз', step1s:'Картадан қалаған серіктес кофеханаңызды таңдаңыз — жақын әрі ашық болғанын.',
+  step2:'Картаны ашыңыз', step2s:'Төмендегі дөңгелек батырма кез келген экраннан ЗАВАР картаңызды ашады.',
+  step3:'Баристаға көрсетіңіз', step3s:'Бариста QR-кодты сканерлейді — сусын жазылымнан есептеледі. Бітті.',
+  passValid:'Жарамды', passMember:'Мүше', passLeft:'Қалды',
+  passHint:'Баристаға осы QR-кодты көрсетіңіз. Сусын жазылымнан автоматты есептеледі.',
+  successSub:'Сіз жазылдыңыз! Сусын алу үшін картаны ашып, QR-кодты баристаға көрсетіңіз.',
+  successRedeem:function(n){ return 'Сусын есептелді! Ертең тағы келіңіз — ' + n + ' сусын қалды.'; },
+  lowBalance:function(n){ return 'Соңғы ' + n + ' сусын қалды'; },
+  savings:function(v){ return 'Осы айда шамамен ' + v + ' ₸ үнемдедіңіз.'; },
+  terms:'Пайдалану шарттары', termsNote:'Заңгермен келісілгеннен кейін осында қосылады',
+  bookedToast:function(t){ return t + ' броны WhatsApp-та расталады'; }
+},
+ru:{
+  navHome:'Главная', navCafes:'Кофейни', navOrders:'Заказы', navProfile:'Профиль',
+  greetM:'Доброе утро', greetD:'Добрый день', greetE:'Добрый вечер',
+  guest:'Гость', member:'Участник ЗАВАР',
+  months:['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'],
+  remainLabel:function(m){ return 'Осталось в ' + m.toLowerCase(); },
+  ofLimit:function(n){ return 'из ' + n + ' напитков'; },
+  openPass:'Открыть карту',
+  openNowSec:'Открыто сейчас', allCafes:'Все', cafesTitle:'Кофейни', ordersTitle:'Заказы',
+  profileTitle:'Профиль', settingsTitle:'Настройки', planTitle:'О подписке', howTitle:'Как это работает',
+  open:'Открыто', shut:'Закрыто', offpeak:function(t){ return 'Оффпик до ' + t; }, freeTables:'Свободные столы',
+  sortRec:'Рекомендуем', sortNear:'Ближе', favOnly:'Избранное',
+  tagWifi:'Wi-Fi', tagQuiet:'Тихо', tagDog:'С собакой', tagFood:'Выпечка',
+  emptyFilter:'Нет кофеен с такими фильтрами.',
+  size:'Размер', milk:'Молоко', time:'Время', guests:'Гости',
+  milkNormal:'Обычное', milkOat:'Овсяное', milkAlmond:'Миндальное', milkNone:'Без молока',
+  g1:'1 гость', g2:'2 гостя', g34:'3–4 гостя',
+  surcharge:'Доплата сверх подписки', drinkNote:'Базовый напиток входит в подписку. Доплата — только за размер L и альтернативное молоко.',
+  saveUsual:'Сделать основным здесь', saved:'Сохранено — в следующий раз здесь сразу этот рецепт',
+  getDrink:'Получить QR-код', bookTable:'Забронировать стол', confirmBook:'Подтвердить бронь',
+  bookNote:'После брони подтвердим место в WhatsApp в течение 10 минут.',
+  directions:'Маршрут', closedNote:'Кофейня сейчас закрыта — заказ временно недоступен.',
+  closedToast:'Кофейня сейчас закрыта',
+  tabActive:'Активные', tabHistory:'История', stDone:'Готово', stPending:'Ожидание',
+  emptyActive:'Нет активных заказов.', emptyHistory:'История пока пуста.',
+  reorder:'Повторить', modifyBooking:'Изменить в WhatsApp', report:'Сообщить о проблеме',
+  quickOrder:function(n){ return 'Быстрый заказ · ' + n; }, quickShort:'Заказать',
+  statDrinks:'Напитков за месяц', statSaved:'Сэкономлено', statFav:'Избранных',
+  subActive:'Подписка активна', subEnding:'Будет отменена', until:function(d){ return 'до ' + d; },
+  endingOn:function(d){ return 'до ' + d + ', затем отменится'; },
+  renewDate:'4 октября',
+  cancelSub:'Отменить подписку', resumeSub:'Возобновить подписку',
+  cancelQ:'Точно хотите отменить?', yes:'Да, отменить', no:'Нет',
+  planRow:'О подписке', planRowSub:'Что входит, цена, условия',
+  howRow:'Как это работает', howRowSub:'Три шага — одна минута',
+  refRow:'Пригласить друга', refRowSub:'Оба получаете бонусный напиток',
+  supportRow:'Поддержка', supportRowSub:'Ответим в Telegram в течение часа',
+  settingsRow:'Настройки', settingsRowSub:'Язык, тема',
+  lang:'Язык', theme:'Тема', themeLight:'Светлая', themeDark:'Тёмная',
+  pwTitle:'Кофе каждый день, без оплаты за каждую чашку.',
+  pwSub:'Один платёж в месяц — 12 напитков в партнёрских кофейнях города и стол без очереди.',
+  perMonth:'в месяц', cancelAny:'отмена в любой момент',
+  b1:'12 напитков в месяц', b1s:'В партнёрской сети у Есентая и в центре',
+  b2:'Стол без очереди', b2s:'В будни, подтверждение за 10 минут',
+  b3:'Новые кофейни первыми', b3s:'Уведомление приходит в бот',
+  proof:'210 подписчиков в Алматы', subscribe:'Подписаться через Kaspi',
+  step1:'Зайдите в кофейню', step1s:'Выберите партнёрскую кофейню на карте — ту, что ближе и открыта сейчас.',
+  step2:'Откройте карту', step2s:'Круглая кнопка внизу открывает вашу карту ЗАВАР с любого экрана.',
+  step3:'Покажите бариста', step3s:'Бариста сканирует QR-код — напиток списывается с подписки. Готово.',
+  passValid:'Действует', passMember:'Участник', passLeft:'Осталось',
+  passHint:'Покажите этот QR-код бариста. Напиток спишется с подписки автоматически.',
+  successSub:'Вы подписались! Чтобы получить напиток, откройте карту и покажите QR бариста.',
+  successRedeem:function(n){ return n===1 ? 'Напиток списан! Приходите завтра — остался последний.' : 'Напиток списан! Приходите завтра — осталось ещё ' + n + '.'; },
+  lowBalance:function(n){ return n===1 ? 'Остался последний напиток' : 'Осталось всего ' + n + ' напитка'; },
+  savings:function(v){ return 'В этом месяце вы сэкономили примерно ' + v + ' ₸.'; },
+  terms:'Условия использования', termsNote:'Появится здесь после согласования с юристом',
+  bookedToast:function(t){ return 'Бронь на ' + t + ' отправлена — подтвердим в WhatsApp'; }
+}};
 
-  var userId = (tg && tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.id) || Math.floor(Math.random()*9000+1000);
-  var userName = (tg && tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.first_name) || null;
-  var qrPattern = [1,0,1,1,1,0,1, 1,0,1,0,1,0,1, 1,0,1,1,1,0,1, 0,0,0,1,0,0,0, 1,0,0,1,0,0,1, 1,0,1,0,1,0,1, 1,1,1,0,1,1,1];
+/* ---------- state ---------- */
+var S = {
+  lang:'kk', theme:'light', screen:'home', tab:'home',
+  subscribed:false, used:0, cancelScheduled:false,
+  sort:'rec', tags:[], favOnly:false,
+  cafe:1, size:'M', milk:'normal', slot:'12:00', guests:'g2', booking:false,
+  defaults:{}, orderTab:'history', expanded:null, popIndex:-1,
+  banner:null, toast:'',
+  cafes:[
+    {id:1,name:'CULT COFFEE',rating:'4.7',meta:'Есентай',dist:'400 м',close:'22:00',win:'13:00',fav:false,tags:['wifi','quiet']},
+    {id:2,name:'MOTO COFFEE',rating:'4.5',meta:'Абая',dist:'750 м',close:'23:00',win:'13:00',fav:true,tags:['wifi','food']},
+    {id:3,name:'SHOKO',rating:'4.8',meta:'Достык',dist:'1.1 км',close:'21:00',win:'free',fav:false,tags:['dog','quiet']},
+    {id:4,name:'BURO',rating:'4.6',meta:'Сатпаева',dist:'1.4 км',close:'22:00',win:'12:00',fav:false,tags:['wifi','dog','food']}
+  ],
+  history:[
+    {id:20441,size:'M',milk:'normal',cafe:'MOTO COFFEE',when:'4 сент, 09:20',status:'done'},
+    {id:20418,booking:true,time:'13:00',guests:'g2',cafe:'SHOKO',when:'2 сент',status:'done'}
+  ]
+};
 
-  function t(){ return T[state.lang]; }
-  function haptic(style){ if (tg && tg.HapticFeedback) tg.HapticFeedback.impactOccurred(style || 'light'); }
-  function mono(name){ return name.split(' ').slice(0,2).map(function(w){ return w.charAt(0); }).join(''); }
-  function cafeById(id){ return state.cafes.find(function(c){ return c.id === id; }); }
-  function cafeDefaultFor(id){ return state.cafeDefaults[id] || { size: 'M', milk: 'normal' }; }
-  function milkLabel(key){ return { normal:t().milkNormal, oat:t().milkOat, almond:t().milkAlmond, none:t().milkNone }[key]; }
-  function guestLabel(key){ return { g1:t().guest1, g2:t().guest2, g34:t().guest34 }[key]; }
-  function windowLabel(win){
-    if (win === 'free') return state.lang === 'kk' ? 'Бос үстелдер бар' : 'Свободные столы';
-    return (state.lang === 'kk' ? 'Оффпик ' : 'Оффпик до ') + win;
+var userId = (tg && tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.id) || (1000 + Math.floor(Math.random()*9000));
+var userName = (tg && tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.first_name) || null;
+
+/* ---------- utils ---------- */
+function t(){ return T[S.lang]; }
+function esc(s){ return String(s).replace(/[&<>"]/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+function hap(k){ if(tg&&tg.HapticFeedback){ k==='n'?tg.HapticFeedback.notificationOccurred('success'):tg.HapticFeedback.impactOccurred(k||'light'); } }
+function hash(str){ var h=2166136261; for(var i=0;i<str.length;i++){ h^=str.charCodeAt(i); h=Math.imul(h,16777619); } return h>>>0; }
+function rng(seed){ return function(){ seed|=0; seed=seed+0x6D2B79F5|0; var x=Math.imul(seed^seed>>>15,1|seed);
+  x=x+Math.imul(x^x>>>7,61|x)^x; return ((x^x>>>14)>>>0)/4294967296; }; }
+function num(n){ return String(n).replace(/\B(?=(\d{3})+(?!\d))/g,' '); }
+function userInitial(){ return (userName || t().guest).charAt(0).toUpperCase(); }
+function cafeById(id){ for(var i=0;i<S.cafes.length;i++){ if(S.cafes[i].id===id) return S.cafes[i]; } return null; }
+function defFor(id){ return S.defaults[id] || {size:'M',milk:'normal'}; }
+function milkLabel(k){ return {normal:t().milkNormal,oat:t().milkOat,almond:t().milkAlmond,none:t().milkNone}[k]; }
+function guestLabel(k){ return {g1:t().g1,g2:t().g2,g34:t().g34}[k]; }
+function closeMins(c){ var m=/(\d{1,2}):(\d{2})/.exec(c.close); return m? (+m[1])*60 + (+m[2]) : null; }
+function isOpenNow(c){ var m=closeMins(c); if(m===null) return true; var d=new Date(); return d.getHours()*60+d.getMinutes() < m; }
+function distMeters(c){ var m=/([\d.]+)\s*(км|м)/.exec(c.dist); if(!m) return Infinity;
+  return /км/.test(m[2]) ? parseFloat(m[1])*1000 : parseFloat(m[1]); }
+/* per-drink saving: walk-in price minus this drink's share of the monthly fee.
+   avgCup is a PLACEHOLDER until real partner pricing exists. */
+function savedSoFar(){ return Math.max(0, Math.round(S.used * (cfg.avgCup - cfg.price/LIMIT))); }
+
+/* generated artwork per cafe — deterministic, never looks broken */
+function artStyle(name){
+  // earthy spread: terracotta -> amber -> olive -> sage, distinct per cafe
+  var h = hash(name);
+  var a = 16 + (h % 122);                 // 16..138
+  var b = a + 18 + ((h>>7) % 26);
+  var s1 = 26 + ((h>>3) % 22), s2 = 34 + ((h>>11) % 20);
+  var l1 = 34 + ((h>>5) % 16), l2 = 15 + ((h>>9) % 11);
+  return 'background:linear-gradient(145deg,hsl('+a+' '+s1+'% '+l1+'%),hsl('+b+' '+s2+'% '+l2+'%))';
+}
+function monoOf(n){ return n.split(' ').slice(0,2).map(function(w){return w.charAt(0);}).join(''); }
+
+/* ---------- icons ---------- */
+var I = {
+  logo:function(s,c){ s=s||22;c=c||'#F0EDE2'; return '<svg width="'+s+'" height="'+s+'" viewBox="0 0 28 28" fill="none">'+
+    '<path d="M9 7.6c4.2-2.6 8-1 8 2.2 0 2.5-2.2 3.6-4.3 3.6 2.6 0 5 1.1 5 3.9 0 3.4-4 5.2-8.4 2.9" stroke="'+c+'" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/>'+
+    '<path d="M11.5 4.4c.9-.7.5-1.6 0-2.2M15.6 4.2c.9-.7.5-1.6 0-2.2" stroke="'+c+'" stroke-width="1.5" stroke-linecap="round" opacity=".75"/></svg>'; },
+  qr:'<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#1B1E16" stroke-width="1.9" stroke-linecap="round"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><path d="M14 14h3v3h-3zM19.5 14H21v1.5M14 19.5V21h1.5M19 19h2v2h-2z"/></svg>',
+  home:'<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 10.5 12 4l8.5 6.5"/><path d="M5.8 9.6V20h12.4V9.6"/></svg>',
+  cup:'<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 8h13v6a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5V8Z"/><path d="M17 9.5h1.8a2.7 2.7 0 0 1 0 5.4H17"/><path d="M8 4.6c.7-.6.4-1.3 0-1.8M12 4.6c.7-.6.4-1.3 0-1.8"/></svg>',
+  list:'<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6h12M8 12h12M8 18h8"/><circle cx="4" cy="6" r="1.2"/><circle cx="4" cy="12" r="1.2"/><circle cx="4" cy="18" r="1.2"/></svg>',
+  user:'<svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8.5" r="3.8"/><path d="M4.5 20.5c1-4 4-6 7.5-6s6.5 2 7.5 6"/></svg>',
+  bell:'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8.5a6 6 0 1 0-12 0c0 6.5-2.6 8.5-2.6 8.5h17.2S18 15 18 8.5"/><path d="M13.7 20.5a2 2 0 0 1-3.4 0"/></svg>',
+  back:'<svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 5.5 8 12l6.5 6.5"/></svg>',
+  heart:function(f){ return '<svg width="18" height="18" viewBox="0 0 24 24" fill="'+(f?'currentColor':'none')+'" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"><path d="M12 20s-7.5-4.6-7.5-9.6A4.4 4.4 0 0 1 12 7.8a4.4 4.4 0 0 1 7.5 2.6c0 5-7.5 9.6-7.5 9.6Z"/></svg>'; },
+  pin:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-6.5-6.6-6.5-11a6.5 6.5 0 0 1 13 0c0 4.4-6.5 11-6.5 11Z"/><circle cx="12" cy="10" r="2.3"/></svg>',
+  cal:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="5.5" width="17" height="15" rx="3"/><path d="M3.5 10.5h17M8.5 3v4M15.5 3v4"/></svg>',
+  check:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6.5 9.5 17.5 4.5 12.5"/></svg>',
+  chev:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 5.5 16 12l-6.5 6.5"/></svg>',
+  bean:'<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#2A1F0E" stroke-width="2" stroke-linecap="round"><path d="M6 18c6 0 12-5 12-12M6 18C2.5 14.5 3 7 8 4.5M6 18c5.5 2.5 12-2 12-12"/></svg>',
+  gift:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="9" width="17" height="11.5" rx="2.5"/><path d="M3.5 13.5h17M12 9v11.5M12 9C10 9 7 8 7 6a2.5 2.5 0 0 1 5 0c0-2.8 5-2.8 5 0 0 2-3 3-5 3Z"/></svg>',
+  spark:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.5 13.9 9 19.5 11 13.9 13 12 18.5 10.1 13 4.5 11 10.1 9Z"/></svg>',
+  sun:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.2 5.2l1.4 1.4M17.4 17.4l1.4 1.4M18.8 5.2l-1.4 1.4M6.6 17.4l-1.4 1.4"/></svg>',
+  moon:'<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13.4A8.2 8.2 0 0 1 10.6 4a8.5 8.5 0 1 0 9.4 9.4Z"/></svg>'
+};
+
+/* ---------- QR (visual placeholder, deterministic per user) ---------- */
+function qrSvg(seedStr){
+  var N=25, r=rng(hash(seedStr)), grid=[];
+  for(var i=0;i<N;i++){ grid.push([]); for(var j=0;j<N;j++) grid[i].push(0); }
+  function finder(ox,oy){ for(var y=0;y<7;y++) for(var x=0;x<7;x++){
+    var on = (x===0||x===6||y===0||y===6) || (x>=2&&x<=4&&y>=2&&y<=4); grid[oy+y][ox+x]=on?1:0; } }
+  finder(0,0); finder(N-7,0); finder(0,N-7);
+  for(var k=8;k<N-8;k++){ grid[6][k]=k%2?0:1; grid[k][6]=k%2?0:1; }
+  for(var y2=0;y2<N;y2++) for(var x2=0;x2<N;x2++){
+    var inF = (x2<8&&y2<8)||(x2>N-9&&y2<8)||(x2<8&&y2>N-9);
+    if(inF||x2===6||y2===6) continue;
+    grid[y2][x2] = r()>0.52?1:0;
   }
+  var d='';
+  for(var a=0;a<N;a++) for(var b=0;b<N;b++) if(grid[a][b]) d+='M'+b+' '+a+'h1v1h-1z';
+  return '<svg viewBox="0 0 '+N+' '+N+'" shape-rendering="crispEdges"><path d="'+d+'" fill="#17190F"/></svg>';
+}
 
-  function init(){
-    if (tg) { tg.ready(); tg.expand(); }
-    document.getElementById('profile-avatar').textContent = (userName || t().guest).charAt(0).toUpperCase();
-    document.getElementById('ref-code').textContent = 'ZAVAR-' + userId;
-    var qrHtml = ''; for (var i=0;i<qrPattern.length;i++){ qrHtml += '<div style="background:' + (qrPattern[i]?'#15100B':'#fff') + '"></div>'; }
-    document.getElementById('qr-pattern').innerHTML = qrHtml;
-    applyLanguage();
-    applyTheme();
-    if (tg && tg.BackButton) { tg.BackButton.onClick(function(){
-      if (state.screen === 'paywall') { app.closePaywall(); }
-      else if (state.screen === 'settings') { app.switchTab('profile'); }
-      else { app.switchTab(state.tab); }
-    }); }
-    updateMainButton();
+/* ---------- nearby ranking ---------- */
+// TODO(human): rank `list` for the "Жақын / Ближе" catalog sort.
+// Available per cafe: distMeters(c) -> distance in meters,
+// isOpenNow(c) -> whether it is currently open,
+// c.win ('free' = tables open now, otherwise an off-peak-until time like '13:00').
+// Decide: sort purely by distance, or also weight open/free cafes higher,
+// and what tie-break to use when two cafes are equally close.
+// Return a NEW sorted array — don't mutate `list` in place.
+function sortCafesNearbyOpenNow(list){
+  // TODO(human): implement the ranking
+  return list;
+}
+
+/* ---------- pieces ---------- */
+function punchHtml(){
+  var h='';
+  for(var i=0;i<LIMIT;i++){
+    var used = i < S.used;
+    var pop = (i === S.popIndex) ? ' pop' : '';
+    h += '<div class="stamp'+(used?' used':'')+pop+'">'+(used?I.bean:'')+'</div>';
   }
+  return h;
+}
+function artHtml(c,big){
+  return '<div class="art" style="'+artStyle(c.name)+'"><div class="mono">'+esc(monoOf(c.name))+'</div></div>';
+}
+function statusBadge(c){
+  var open = isOpenNow(c);
+  if(!open) return '<div class="badge shut"><span class="dot"></span>'+t().shut+'</div>';
+  var lab = c.win==='free' ? t().freeTables : t().offpeak(c.win);
+  return '<div class="badge"><span class="dot"></span>'+esc(lab)+'</div>';
+}
+function cafeCard(c){
+  return '<div class="cafecard" data-act="cafe" data-val="'+c.id+'">'+
+    '<div style="position:relative">'+statusBadge(c)+artHtml(c)+'</div>'+
+    '<div class="cc-body"><div class="cc-name">'+esc(c.name)+'</div>'+
+    '<div class="cc-meta">'+esc(c.meta)+' · '+esc(c.dist)+' · '+esc(c.rating)+'</div></div></div>';
+}
+function cafeRow(c){
+  var L=t(), open=isOpenNow(c);
+  var labels={wifi:L.tagWifi,quiet:L.tagQuiet,dog:L.tagDog,food:L.tagFood};
+  var tags = c.tags.map(function(k){ return '<span class="tag">'+labels[k]+'</span>'; }).join('');
+  var quick = (S.subscribed && open) ? '<button class="chipbtn" data-act="quick" data-val="'+c.id+'">'+esc(L.quickShort)+'</button>' : '';
+  return '<div class="cafrow">'+
+    '<div data-act="cafe" data-val="'+c.id+'" style="display:flex;gap:13px;flex:1;min-width:0;align-items:center">'+
+      artHtml(c)+
+      '<div class="cafrow-main">'+
+        '<div class="cc-name">'+esc(c.name)+'</div>'+
+        '<div class="cc-meta">'+esc(c.meta)+' · '+esc(c.dist)+' · '+(open? esc(c.close) : L.shut)+'</div>'+
+        '<div class="cc-tags">'+tags+'</div>'+
+      '</div>'+
+    '</div>'+
+    '<div class="cafrow-actions">'+
+      '<button class="heart'+(c.fav?' on':'')+'" data-act="fav" data-val="'+c.id+'">'+I.heart(c.fav)+'</button>'+
+      quick+
+    '</div></div>';
+}
+function bannerHtml(){
+  if(!S.banner) return '';
+  var b=S.banner;
+  return '<div class="banner '+(b.kind||'good')+'">'+I.check+'<div>'+esc(b.text)+'</div></div>';
+}
+function topbar(){
+  return '<div class="topbar"><div class="brandlock"><div class="seal">'+I.logo(20)+'</div>'+
+    '<div class="wordmark">ЗАВАР</div></div>'+
+    '<div class="topbar-actions">'+
+      '<button class="iconbtn" data-act="bot">'+I.bell+'</button>'+
+      '<button class="avatar-sm" data-act="go" data-val="profile">'+esc(userInitial())+'</button>'+
+    '</div></div>';
+}
 
-  function applyLanguage(){
-    var L = t();
-    document.documentElement.lang = state.lang;
-    document.getElementById('lang-kk-btn').classList.toggle('on', state.lang === 'kk');
-    document.getElementById('lang-ru-btn').classList.toggle('on', state.lang === 'ru');
+/* ---------- screens ---------- */
+function vHome(){
+  var L=t(), h=new Date().getHours();
+  var greet = h<12?L.greetM:(h<18?L.greetD:L.greetE);
+  var left = LIMIT - S.used;
+  var month = L.months[new Date().getMonth()];
+  var openCafes = S.cafes.filter(isOpenNow);
+  var rail = (openCafes.length?openCafes:S.cafes).map(cafeCard).join('');
 
-    var hour = new Date().getHours();
-    var greet = hour < 12 ? L.greetMorning : (hour < 18 ? L.greetDay : L.greetEvening);
-    document.getElementById('greet-label').textContent = greet;
-    var name = userName || L.guest;
-    document.getElementById('greet-name').textContent = name;
-    document.getElementById('avatar-letter').textContent = name.charAt(0).toUpperCase();
-    document.getElementById('profile-name').textContent = name;
-    document.getElementById('profile-sub').textContent = L.subscriberOf;
-    document.getElementById('sub-active-text').textContent = L.subActive;
-    document.getElementById('qr-caption').textContent = L.qrCaption;
+  var lastDrink=null;
+  for(var i=S.history.length-1;i>=0;i--){ if(!S.history[i].booking){ lastDrink=S.history[i]; break; } }
+  var qc = null;
+  if(S.subscribed && lastDrink){ var f=S.cafes.filter(function(x){return x.name===lastDrink.cafe;})[0];
+    if(f && isOpenNow(f)) qc=f; }
 
-    var m = L.months[new Date().getMonth()];
-    document.getElementById('widget-month').textContent = L.remainingIn(m);
-    document.getElementById('widget-of').textContent = L.widgetOf(limit);
+  return topbar()+
+  bannerHtml()+
+  '<div class="hero"><div class="eyebrow">'+esc(greet)+'</div><h1>'+esc(userName||L.guest)+'</h1></div>'+
 
-    document.getElementById('offpeak-title').textContent = L.offpeak;
-    document.getElementById('allcafes-link').textContent = L.allCafes;
-    document.getElementById('catalog-title').textContent = L.catalogTitle;
-    document.getElementById('orders-title').textContent = L.ordersTitle;
-    document.getElementById('promo-label').textContent = L.promoLabel;
-    document.getElementById('promo-text').textContent = L.promoText;
+  '<div class="passcard" data-act="pass:open">'+
+    '<div class="pc-top"><div>'+
+      '<div class="pc-label">'+esc(L.remainLabel(month))+'</div>'+
+      '<div class="pc-num"><b>'+left+'</b><span>'+esc(L.ofLimit(LIMIT))+'</span></div>'+
+    '</div><div class="pc-qr">'+I.qr+'</div></div>'+
+    '<div class="punch">'+punchHtml()+'</div>'+
+    (S.subscribed && left<=2 && left>=0 ? '<div class="inline-note">'+esc(L.lowBalance(left))+'</div>' : '')+
+    '<div class="pc-hint">'+esc(L.openPass)+' '+I.chev+'</div>'+
+  '</div>'+
 
-    document.getElementById('back-label').textContent = L.back;
-    document.getElementById('banner-text').textContent = L.bannerText;
-    document.getElementById('table-link').textContent = L.tableLinkText;
-    document.getElementById('table-back-label').textContent = L.backToDrinkText;
-    document.getElementById('paywall-back-label').textContent = L.back;
-    document.getElementById('settings-back-label').textContent = L.back;
-    document.getElementById('settings-title').textContent = L.settingsTitle;
-    document.getElementById('field-size-label').textContent = L.fieldSize;
-    document.getElementById('field-milk-label').textContent = L.fieldMilk;
-    document.getElementById('field-time-label').textContent = L.fieldTime;
-    document.getElementById('field-guests-label').textContent = L.fieldGuests;
-    document.getElementById('extra-label').textContent = L.extraLabel;
-    document.getElementById('drink-note').textContent = L.drinkNote;
-    document.getElementById('book-note').textContent = L.bookNote;
+  (qc ? '<div style="margin-top:14px"><button class="btn btn-primary" data-act="quick" data-val="'+qc.id+'">'+
+      I.cup.replace('21','18').replace('21','18')+esc(L.quickOrder(qc.name))+'</button></div>' : '')+
 
-    document.getElementById('paywall-period').textContent = L.paywallPeriod;
-    document.getElementById('b1-title').textContent = L.b1t; document.getElementById('b1-note').textContent = L.b1n;
-    document.getElementById('b2-title').textContent = L.b2t; document.getElementById('b2-note').textContent = L.b2n;
-    document.getElementById('b3-title').textContent = L.b3t; document.getElementById('b3-note').textContent = L.b3n;
-    document.getElementById('proof-text').textContent = L.proof;
+  '<div class="sec"><div class="sec-head"><h2>'+esc(L.openNowSec)+'</h2>'+
+    '<span class="link" data-act="go" data-val="cafes">'+esc(L.allCafes)+' '+I.chev+'</span></div>'+
+    '<div class="railwrap"><div class="rail">'+rail+'</div></div></div>'+
 
-    document.getElementById('sub-card-label').textContent = L.subCardLabel;
-    document.getElementById('cancel-confirm-q').textContent = L.cancelConfirmQ;
-    document.getElementById('cancel-no-btn').textContent = L.cancelNo;
-    document.getElementById('cancel-yes-btn').textContent = L.cancelYes;
-    document.getElementById('save-usual-link').textContent = L.saveUsualLink;
-    document.getElementById('ref-label-text').textContent = L.refLabel;
-    document.getElementById('invite-btn-text').textContent = L.invite;
-    document.getElementById('ref-note-text').textContent = L.refNote;
-    document.getElementById('support-title').textContent = L.support;
-    document.getElementById('support-sub').textContent = L.supportSub;
+  '<div class="sec"><div class="promo">'+I.gift+
+    '<h3>'+(S.lang==='kk'?'Досыңды шақыр':'Приведи друга')+'</h3>'+
+    '<p>'+(S.lang==='kk'?'Екеуің де осы айда лимиттен тыс бір сусын аласыңдар.':'Оба получаете один напиток сверх лимита в этом месяце.')+'</p>'+
+    '<button class="btn btn-ghost" data-act="share" style="color:var(--ink)">'+esc(L.refRow)+'</button>'+
+  '</div></div>';
+}
 
-    document.getElementById('nav-home-label').textContent = L.navHome;
-    document.getElementById('nav-catalog-label').textContent = L.navCatalog;
-    document.getElementById('nav-orders-label').textContent = L.navOrders;
-    document.getElementById('nav-profile-label').textContent = L.navProfile;
+function vCafes(){
+  var L=t();
+  var list = S.cafes.slice();
+  if(S.favOnly) list = list.filter(function(c){ return c.fav; });
+  if(S.tags.length) list = list.filter(function(c){ return S.tags.every(function(k){ return c.tags.indexOf(k)>=0; }); });
+  if(S.sort==='near') list = sortCafesNearbyOpenNow(list);
+  var tagDefs=[['wifi',L.tagWifi],['quiet',L.tagQuiet],['dog',L.tagDog],['food',L.tagFood]];
+  return topbar()+
+  '<div class="hero"><div class="eyebrow">'+S.cafes.length+' '+(S.lang==='kk'?'серіктес':'партнёров')+'</div>'+
+    '<h1>'+esc(L.cafesTitle)+'</h1></div>'+
+  '<div style="display:flex;gap:8px;margin-bottom:12px">'+
+    '<button class="chipbtn'+(S.sort==='rec'?' on':'')+'" data-act="sort" data-val="rec">'+esc(L.sortRec)+'</button>'+
+    '<button class="chipbtn'+(S.sort==='near'?' on':'')+'" data-act="sort" data-val="near">'+I.pin+esc(L.sortNear)+'</button>'+
+    '<button class="chipbtn'+(S.favOnly?' on':'')+'" data-act="favonly">'+I.heart(S.favOnly)+esc(L.favOnly)+'</button>'+
+  '</div>'+
+  '<div style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:18px">'+
+    tagDefs.map(function(d){ return '<button class="chipbtn'+(S.tags.indexOf(d[0])>=0?' on':'')+'" data-act="tag" data-val="'+d[0]+'">'+d[1]+'</button>'; }).join('')+
+  '</div>'+
+  (list.length ? '<div class="cafelist">'+list.map(cafeRow).join('')+'</div>'
+               : '<div class="empty">'+I.cup+'<div>'+esc(L.emptyFilter)+'</div></div>');
+}
 
-    renderDash(); renderFeatured(); renderSortChips(); renderCategoryChips(); renderTagChips(); renderCatalog();
-    renderOrderTabs(); renderOrders(); renderPills(); renderSubscription();
-    updateMainButton();
-  }
+function vDetail(){
+  var L=t(), c=cafeById(S.cafe); if(!c) return '';
+  var open=isOpenNow(c);
+  var extra=(S.milk==='oat'||S.milk==='almond'?500:0)+(S.size==='L'?500:0);
+  var sizes=[['S','250 мл'],['M','300 мл'],['L','+500 ₸']];
+  var milks=[['normal',L.milkNormal],['oat',L.milkOat],['almond',L.milkAlmond],['none',L.milkNone]];
 
-  function applyTheme(){
-    document.documentElement.setAttribute('data-theme', state.theme);
-    document.getElementById('theme-icon').innerHTML = state.theme === 'light'
-      ? '<path d="M12 3a9 9 0 109 9c0-.46-.04-.92-.1-1.36A5.5 5.5 0 0112.36 3.1c-.44-.06-.9-.1-1.36-.1z"/>'
-      : '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>';
-    if (tg) { tg.setHeaderColor(state.theme === 'light' ? '#FBF1E1' : '#17110A'); tg.setBackgroundColor(state.theme === 'light' ? '#FBF1E1' : '#17110A'); }
-  }
+  var book = S.booking ? '<div class="card" style="margin-top:14px">'+
+      '<div class="label" style="margin-top:0">'+esc(L.time)+'</div>'+
+      '<div class="optrow">'+['11:00','12:00','13:00'].map(function(s){
+        return '<button class="chipbtn'+(S.slot===s?' on':'')+'" data-act="slot" data-val="'+s+'">'+s+'</button>';}).join('')+'</div>'+
+      '<div class="label">'+esc(L.guests)+'</div>'+
+      '<div class="optrow">'+[['g1',L.g1],['g2',L.g2],['g34',L.g34]].map(function(g){
+        return '<button class="chipbtn'+(S.guests===g[0]?' on':'')+'" data-act="guests" data-val="'+g[0]+'">'+g[1]+'</button>';}).join('')+'</div>'+
+      '<div class="note">'+esc(L.bookNote)+'</div>'+
+      (nativeUI?'':'<button class="btn btn-dark" style="margin-top:14px" data-act="bookconfirm">'+esc(L.confirmBook)+'</button>')+
+    '</div>' : '';
 
-  function renderDash(){
-    var html = '';
-    for (var i=0;i<limit;i++){ html += '<div class="dash" style="background:' + (i < limit - state.used ? 'var(--accent)' : 'rgba(255,255,255,0.16)') + '"></div>'; }
-    document.getElementById('dash-row').innerHTML = html;
-    document.getElementById('widget-num').textContent = (limit - state.used);
-  }
+  return '<div style="position:relative">'+
+    '<button class="backfab" data-act="go" data-val="'+(S.tab==='cafes'?'cafes':'home')+'">'+I.back+'</button>'+
+    '<button class="favfab'+(c.fav?' on':'')+'" data-act="fav" data-val="'+c.id+'">'+I.heart(c.fav)+'</button>'+
+    '<div class="hero-art" style="'+artStyle(c.name)+'"><div class="mono">'+esc(monoOf(c.name))+'</div></div>'+
+  '</div>'+
+  '<div class="d-title"><h1>'+esc(c.name)+'</h1>'+
+    '<div class="d-meta">'+
+      '<span class="pill-status'+(open?'':' shut')+'">'+(open?L.open:L.shut)+'</span>'+
+      '<span>'+esc(c.meta)+' · '+esc(c.dist)+'</span><span>·</span><span>'+esc(c.close)+'</span><span>·</span><span>★ '+esc(c.rating)+'</span>'+
+    '</div></div>'+
+  '<div style="display:flex;gap:8px;margin-top:16px">'+
+    '<button class="chipbtn" data-act="directions">'+I.pin+esc(L.directions)+'</button>'+
+    '<button class="chipbtn'+(S.booking?' on':'')+'" data-act="booktoggle">'+I.cal+esc(L.bookTable)+'</button>'+
+  '</div>'+
+  book+
+  (open?'':'<div class="banner warn" style="margin-top:16px">'+I.check+'<div>'+esc(L.closedNote)+'</div></div>')+
+  '<div class="label">'+esc(L.size)+'</div>'+
+  '<div class="opts">'+sizes.map(function(s){
+    return '<button class="opt'+(S.size===s[0]?' on':'')+'" data-act="size" data-val="'+s[0]+'"><b>'+s[0]+'</b><span>'+s[1]+'</span></button>';}).join('')+'</div>'+
+  '<div class="label">'+esc(L.milk)+'</div>'+
+  '<div class="optrow">'+milks.map(function(m){
+    return '<button class="chipbtn'+(S.milk===m[0]?' on':'')+'" data-act="milk" data-val="'+m[0]+'">'+m[1]+'</button>';}).join('')+'</div>'+
+  '<div class="total"><span>'+esc(L.surcharge)+'</span><b>'+(extra?num(extra)+' ₸':'0 ₸')+'</b></div>'+
+  '<div class="note">'+esc(L.drinkNote)+'</div>'+
+  (S.toast?'<div class="banner good" style="margin-top:14px">'+I.check+'<div>'+esc(S.toast)+'</div></div>':'')+
+  '<div style="margin-top:16px;display:flex;gap:9px">'+
+    '<button class="chipbtn" data-act="saveusual">'+I.check+esc(L.saveUsual)+'</button>'+
+  '</div>'+
+  (nativeUI?'':'<div style="margin-top:16px"><button class="btn btn-primary" data-act="redeem">'+esc(L.getDrink)+'</button></div>');
+}
 
-  function featCardHtml(c){
-    return '<div class="feat-card" onclick="app.openCafe(' + c.id + ')">' +
-      '<div class="feat-photo"><span class="feat-tag">' + windowLabel(c.win) + '</span><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="8" cy="10" r="1.5"/><path d="M21 16l-5-5-4 4-3-3-6 6"/></svg></div>' +
-      '<div class="feat-body"><div class="feat-name">' + c.name + '</div><div class="feat-meta">' + c.meta + '</div></div>' +
-    '</div>';
-  }
-  function renderFeatured(){ document.getElementById('featured-grid').innerHTML = state.cafes.slice(0,2).map(featCardHtml).join(''); }
-
-  function cafeRowHtml(c){
-    var L = t();
-    var tagLabels = { wifi:L.tagWifi, quiet:L.tagQuiet, dog:L.tagDog, food:L.tagFood };
-    var badges = c.tags.map(function(tg2){ return '<div class="tag-badge">' + tagLabels[tg2] + '</div>'; }).join('');
-    var quickBtn = state.subscribed ? '<div class="quick-btn" onclick="app.quickOrder(' + c.id + ')">' + L.quickCoffee + '</div>' : '';
-    return '<div class="cafe-row">' +
-      '<div class="cafe-thumb"></div>' +
-      '<div class="cafe-main" onclick="app.openCafe(' + c.id + ')"><div class="cafe-name">' + c.name + ' · ' + c.rating + '</div><div class="cafe-meta">' + c.meta + '</div><div class="cafe-window">' + windowLabel(c.win) + '</div><div class="tag-badge-row">' + badges + '</div></div>' +
-      '<div class="cafe-actions"><div class="fav-btn" style="color:' + (c.fav ? 'var(--accent-dark)' : 'var(--ink-2)') + '" onclick="app.toggleFav(' + c.id + ')">♥</div>' + quickBtn + '</div>' +
-    '</div>';
-  }
-
-  function parseDistanceMeters(meta){
-    var m = meta.match(/([\d.]+)\s*(км|km|м|m)\b/i);
-    if (!m) return Infinity;
-    var val = parseFloat(m[1]);
-    return /км|km/i.test(m[2]) ? val * 1000 : val;
-  }
-
-  // TODO(human): rank `list` for the "Жақын маған / Ближе всего" catalog sort.
-  // Available per cafe: parseDistanceMeters(c.meta) -> distance in meters,
-  // c.win ('free' = tables open now, otherwise an off-peak-until time like '13:00'),
-  // windowLabel(c.win) for the display string already used elsewhere.
-  // Decide: sort purely by distance, or also weight win === 'free' higher,
-  // and what tie-break to use when two cafes are equally close.
-  // Return a NEW sorted array — don't mutate `list` in place.
-  function sortCafesNearbyOpenNow(list){
-    // TODO(human): implement the ranking
-    return list;
-  }
-
-  function renderSortChips(){
-    var L = t();
-    var modes = [['default', L.sortRecommended], ['nearby', L.sortNearby]];
-    document.getElementById('sort-chips').innerHTML = modes.map(function(mo){
-      var on = state.sortMode === mo[0];
-      return '<div class="chip ' + (on?'on':'') + '" onclick="app.setSortMode(\'' + mo[0] + '\')">' + mo[1] + '</div>';
-    }).join('');
-  }
-
-  function renderCategoryChips(){
-    var L = t();
-    var cats = [['all',L.catAll],['espresso',L.catEspresso],['specialty',L.catSpecialty],['latte',L.catLatte],['cold',L.catCold]];
-    document.getElementById('category-chips').innerHTML = cats.map(function(c){
-      var on = state.category === c[0];
-      return '<div class="chip ' + (on?'on':'') + '" onclick="app.setCategory(\'' + c[0] + '\')">' + c[1] + '</div>';
-    }).join('');
-  }
-  function renderTagChips(){
-    var L = t();
-    var tags = [['wifi',L.tagWifi],['quiet',L.tagQuiet],['dog',L.tagDog],['food',L.tagFood]];
-    document.getElementById('tag-chips').innerHTML = tags.map(function(tg2){
-      var on = state.tagFilters.indexOf(tg2[0]) !== -1;
-      return '<div class="chip ' + (on?'on':'') + '" onclick="app.toggleTagFilter(\'' + tg2[0] + '\')">' + tg2[1] + '</div>';
-    }).join('');
-  }
-  function renderCatalog(){
-    var list = state.category === 'all' ? state.cafes : state.cafes.filter(function(c){ return c.cat === state.category; });
-    if (state.tagFilters.length) { list = list.filter(function(c){ return state.tagFilters.every(function(tg2){ return c.tags.indexOf(tg2) !== -1; }); }); }
-    if (state.sortMode === 'nearby') { list = sortCafesNearbyOpenNow(list); }
-    document.getElementById('catalog-list').innerHTML = list.length ? list.map(cafeRowHtml).join('') : '<div class="empty-note">' + t().emptyFilter + '</div>';
-  }
-
-  function renderOrderTabs(){
-    var L = t();
-    var tabs = [['active',L.ordersActive],['history',L.ordersHistory]];
-    document.getElementById('order-tabs').innerHTML = tabs.map(function(tb){
-      var on = state.orderTab === tb[0];
-      return '<div class="tab2 ' + (on?'active':'') + '" onclick="app.setOrderTab(\'' + tb[0] + '\')">' + tb[1] + '</div>';
-    }).join('');
-  }
-  function renderOrders(){
-    var L = t();
-    var wantPending = state.orderTab === 'active';
-    var orders = state.history.slice().reverse().filter(function(h){ return (h.status === 'pending') === wantPending; });
-    if (!orders.length) { document.getElementById('orders-list').innerHTML = '<div class="empty-note">' + (wantPending ? L.emptyOrdersActive : L.emptyOrdersHistory) + '</div>'; return; }
-    document.getElementById('orders-list').innerHTML = orders.map(function(h){
-      var done = h.status === 'done';
-      var desc = h.booking ? (L.fieldTime + ' · ' + (h.time||'')) : (h.size + ' · ' + milkLabel(h.milk));
-      return '<div class="order-item"><div class="order-mono">' + mono(h.cafe||'З') + '</div>' +
-        '<div class="order-body"><div class="order-top">' + desc + '</div><div class="order-meta">' + h.cafe + ' · ' + h.when + '</div></div>' +
-        '<div class="order-status" style="border-color:' + (done?'var(--border)':'var(--accent-dark)') + ';color:' + (done?'var(--ink-2)':'var(--accent-dark)') + '">' + (done?L.orderDone:L.orderPending) + '</div></div>';
-    }).join('');
-  }
-
-  function renderPills(){
-    var L = t();
-    var sizes = [['S','250 мл',0],['M','300 мл',0],['L','+500 ₸',500]];
-    document.getElementById('size-pills').innerHTML = sizes.map(function(s){
-      var on = state.size === s[0];
-      return '<div class="pill ' + (on?'on':'') + '" onclick="app.setSize(\'' + s[0] + '\')">' + s[0] + '<span class="note">' + s[1] + '</span></div>';
-    }).join('');
-    var milks = [['normal',L.milkNormal,0],['oat',L.milkOat,500],['almond',L.milkAlmond,500],['none',L.milkNone,0]];
-    document.getElementById('milk-pills').innerHTML = milks.map(function(m){
-      var on = state.milk === m[0];
-      return '<div class="pill ' + (on?'on':'') + '" onclick="app.setMilk(\'' + m[0] + '\')">' + m[1] + '</div>';
-    }).join('');
-    var slots = ['11:00','12:00','13:00'];
-    document.getElementById('slot-pills').innerHTML = slots.map(function(s){
-      var on = state.slot === s;
-      return '<div class="pill ' + (on?'on':'') + '" onclick="app.setSlot(\'' + s + '\')">' + s + '</div>';
-    }).join('');
-    var guests = [['g1',L.guest1],['g2',L.guest2],['g34',L.guest34]];
-    document.getElementById('guest-pills').innerHTML = guests.map(function(g){
-      var on = state.guests === g[0];
-      return '<div class="pill ' + (on?'on':'') + '" onclick="app.setGuests(\'' + g[0] + '\')">' + g[1] + '</div>';
-    }).join('');
-    var extra = (state.milk === 'oat' || state.milk === 'almond' ? 500 : 0) + (state.size === 'L' ? 500 : 0);
-    document.getElementById('extra-total').textContent = extra ? extra + ' ₸' : '0 ₸';
-  }
-
-  function renderSubscription(){
-    var L = t();
-    var statusText = state.cancelScheduled ? L.subCancelledPending : L.subActive;
-    var dateText = state.cancelScheduled ? L.subCancelScheduled(L.renewDate) : L.renewDate;
-    var profText = document.getElementById('sub-active-text'); if (profText) profText.textContent = statusText;
-    var profDate = document.getElementById('profile-status-date'); if (profDate) profDate.textContent = dateText;
-    var setText = document.getElementById('sub-status-text'); if (setText) setText.textContent = statusText;
-    var setDate = document.getElementById('sub-status-date'); if (setDate) setDate.textContent = dateText;
-    var cancelLink = document.getElementById('cancel-link');
-    if (cancelLink) cancelLink.textContent = state.cancelScheduled ? L.resumeLinkText : L.cancelLinkText;
-
-    var remaining = limit - state.used;
-    var lowEl = document.getElementById('low-balance-note');
-    if (lowEl) {
-      if (state.subscribed && remaining <= 2 && remaining >= 0) {
-        lowEl.style.display = 'block';
-        lowEl.textContent = L.lowBalance(remaining);
-      } else {
-        lowEl.style.display = 'none';
+function vOrders(){
+  var L=t();
+  var want = S.orderTab==='active';
+  var list = S.history.slice().reverse().filter(function(h){ return (h.status==='pending')===want; });
+  var body;
+  if(!list.length){ body='<div class="empty">'+I.list+'<div>'+esc(want?L.emptyActive:L.emptyHistory)+'</div></div>'; }
+  else {
+    body='<div class="tl">'+list.map(function(h){
+      var done=h.status==='done';
+      var title = h.booking ? (h.time? L.time+' · '+h.time : L.time) : (h.size+' · '+milkLabel(h.milk));
+      var exp='';
+      if(S.expanded===h.id){
+        var act = h.booking
+          ? '<button class="btn btn-ghost btn-sm" data-act="modifybooking" data-val="'+h.id+'">'+esc(L.modifyBooking)+'</button>'
+          : '<button class="btn btn-ghost btn-sm" data-act="reorder" data-val="'+h.id+'">'+esc(L.reorder)+'</button>';
+        var rep = (!h.booking&&done) ? '<button class="btn btn-ghost btn-sm" data-act="report" data-val="'+h.id+'">'+esc(L.report)+'</button>' : '';
+        exp='<div class="tl-exp"><div class="tl-id">#'+h.id+(h.booking&&h.guests?' · '+guestLabel(h.guests):'')+'</div>'+
+            '<div style="display:flex;gap:8px;flex-wrap:wrap">'+act+rep+'</div></div>';
       }
-    }
+      return '<div class="tlitem'+(done?'':' pending')+'"><div class="tlcard" data-act="orderexp" data-val="'+h.id+'">'+
+        '<div class="tl-top"><div><div class="tl-t">'+esc(title)+'</div>'+
+        '<div class="tl-s">'+esc(h.cafe)+' · '+esc(h.when)+'</div></div>'+
+        '<div class="tl-st'+(done?'':' pending')+'">'+(done?L.stDone:L.stPending)+'</div></div>'+exp+'</div></div>';
+    }).join('')+'</div>';
   }
+  return topbar()+
+  '<div class="hero"><div class="eyebrow">'+S.history.length+' '+(S.lang==='kk'?'жазба':'записей')+'</div>'+
+    '<h1>'+esc(L.ordersTitle)+'</h1></div>'+
+  '<div class="tabs">'+
+    '<div class="tab'+(S.orderTab==='active'?' on':'')+'" data-act="ordertab" data-val="active">'+esc(L.tabActive)+'</div>'+
+    '<div class="tab'+(S.orderTab==='history'?' on':'')+'" data-act="ordertab" data-val="history">'+esc(L.tabHistory)+'</div>'+
+  '</div>'+body;
+}
 
-  function showScreen(name){
-    document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
-    document.getElementById('screen-' + name).classList.add('active');
-    state.screen = name; state_tab = state.tab;
-    updateMainButton();
-    if (tg && tg.BackButton) { (name === 'detail' || name === 'paywall' || name === 'settings') ? tg.BackButton.show() : tg.BackButton.hide(); }
+function vProfile(){
+  var L=t();
+  var favN = S.cafes.filter(function(c){return c.fav;}).length;
+  var saved = savedSoFar();
+  var status = S.cancelScheduled ? L.subEnding : L.subActive;
+  var sub = S.cancelScheduled ? L.endingOn(L.renewDate) : L.until(L.renewDate);
+  var confirmBox = S.confirming ? '<div class="confirm"><p>'+esc(L.cancelQ)+'</p><div class="confirm-row">'+
+      '<button class="btn btn-ghost btn-sm" style="flex:1" data-act="cancel:dismiss">'+esc(L.no)+'</button>'+
+      '<button class="btn btn-dark btn-sm" style="flex:1" data-act="cancel:confirm">'+esc(L.yes)+'</button></div></div>' : '';
+
+  return topbar()+
+  bannerHtml()+
+  '<div class="phead"><div class="avatar-lg">'+esc(userInitial())+'</div>'+
+    '<div><h1>'+esc(userName||L.guest)+'</h1>'+
+    '<div class="eyebrow" style="margin-top:5px">'+esc(L.member)+' · ZAVAR-'+userId+'</div></div></div>'+
+
+  '<div class="stats">'+
+    '<div class="stat"><b>'+S.used+'</b><span>'+esc(L.statDrinks)+'</span></div>'+
+    '<div class="stat"><b>'+num(saved)+'</b><span>'+esc(L.statSaved)+' ₸</span></div>'+
+    '<div class="stat"><b>'+favN+'</b><span>'+esc(L.statFav)+'</span></div>'+
+  '</div>'+
+
+  '<div class="card" style="margin-top:14px">'+
+    '<div style="display:flex;justify-content:space-between;align-items:center">'+
+      '<div><div class="row-t">'+esc(status)+'</div><div class="row-s">'+esc(sub)+'</div></div>'+
+      '<div class="row-ic">'+I.spark+'</div>'+
+    '</div>'+
+    '<button class="btn btn-ghost btn-sm" style="width:100%;margin-top:14px" data-act="'+(S.cancelScheduled?'cancel:resume':'cancel:open')+'">'+
+      esc(S.cancelScheduled?L.resumeSub:L.cancelSub)+'</button>'+
+    confirmBox+
+  '</div>'+
+
+  '<div style="margin-top:14px">'+
+    rowHtml(I.spark, L.planRow, L.planRowSub, 'go','plan')+
+    rowHtml(I.qr.replace(/#1B1E16/g,'currentColor'), L.howRow, L.howRowSub, 'go','how')+
+    rowHtml(I.gift, L.refRow, L.refRowSub, 'share','')+
+    rowHtml(I.bell, L.supportRow, L.supportRowSub, 'support','')+
+    rowHtml(I.sun, L.settingsRow, L.settingsRowSub, 'go','settings')+
+  '</div>';
+}
+function rowHtml(ic,title,sub,act,val){
+  return '<div class="row" data-act="'+act+'" data-val="'+val+'">'+
+    '<div style="display:flex;gap:13px;align-items:center;min-width:0">'+
+      '<div class="row-ic">'+ic+'</div>'+
+      '<div><div class="row-t">'+esc(title)+'</div><div class="row-s">'+esc(sub)+'</div></div></div>'+
+    '<span style="color:var(--ink-3)">'+I.chev+'</span></div>';
+}
+
+function vSettings(){
+  var L=t();
+  return '<div class="topbar"><button class="iconbtn" data-act="go" data-val="profile">'+I.back+'</button>'+
+    '<div class="wordmark" style="font-size:14px;letter-spacing:.1em">'+esc(L.settingsTitle)+'</div><div style="width:38px"></div></div>'+
+  '<div class="card" style="margin-top:8px">'+
+    '<div class="label" style="margin-top:0">'+esc(L.lang)+'</div>'+
+    '<div class="optrow">'+
+      '<button class="chipbtn'+(S.lang==='kk'?' on':'')+'" data-act="lang" data-val="kk">ҚАЗАҚША</button>'+
+      '<button class="chipbtn'+(S.lang==='ru'?' on':'')+'" data-act="lang" data-val="ru">РУССКИЙ</button>'+
+    '</div>'+
+    '<div class="label">'+esc(L.theme)+'</div>'+
+    '<div class="optrow">'+
+      '<button class="chipbtn'+(S.theme==='light'?' on':'')+'" data-act="theme" data-val="light">'+I.sun+esc(L.themeLight)+'</button>'+
+      '<button class="chipbtn'+(S.theme==='dark'?' on':'')+'" data-act="theme" data-val="dark">'+I.moon+esc(L.themeDark)+'</button>'+
+    '</div>'+
+  '</div>';
+}
+
+function vPlan(){
+  var L=t();
+  var saved = savedSoFar();
+  return '<div class="topbar"><button class="iconbtn" data-act="go" data-val="profile">'+I.back+'</button>'+
+    '<div class="wordmark" style="font-size:14px;letter-spacing:.1em">'+esc(L.planTitle)+'</div><div style="width:38px"></div></div>'+
+  '<div class="pw-hero"><div class="price"><b>'+num(cfg.price)+' ₸</b><span>'+esc(L.perMonth)+'</span></div>'+
+    '<div class="proof">'+esc(L.cancelAny)+'</div></div>'+
+  (S.subscribed && saved>0 ? '<div class="banner good" style="margin-top:20px">'+I.spark+'<div>'+esc(L.savings(num(saved)))+'</div></div>' : '')+
+  '<div class="benefits">'+
+    benHtml(I.cup,L.b1,L.b1s)+benHtml(I.cal,L.b2,L.b2s)+benHtml(I.spark,L.b3,L.b3s)+
+  '</div>'+
+  '<div class="row" style="margin-top:18px"><div><div class="row-t">'+esc(L.terms)+'</div>'+
+    '<div class="row-s">'+esc(L.termsNote)+'</div></div></div>';
+}
+function benHtml(ic,b,s){ return '<div class="ben"><div class="ben-ic">'+ic+'</div><div><b>'+esc(b)+'</b><span>'+esc(s)+'</span></div></div>'; }
+
+function vHow(){
+  var L=t();
+  return '<div class="topbar"><button class="iconbtn" data-act="go" data-val="profile">'+I.back+'</button>'+
+    '<div class="wordmark" style="font-size:14px;letter-spacing:.1em">'+esc(L.howTitle)+'</div><div style="width:38px"></div></div>'+
+  '<div class="hero"><h1 style="font-size:28px">'+(S.lang==='kk'?'Үш қадам.':'Три шага.')+'</h1></div>'+
+  '<div class="step"><div class="step-n">1</div><div><b>'+esc(L.step1)+'</b><p>'+esc(L.step1s)+'</p></div></div>'+
+  '<div class="step"><div class="step-n">2</div><div><b>'+esc(L.step2)+'</b><p>'+esc(L.step2s)+'</p></div></div>'+
+  '<div class="step" style="border:none"><div class="step-n">3</div><div><b>'+esc(L.step3)+'</b><p>'+esc(L.step3s)+'</p></div></div>'+
+  '<button class="btn btn-primary" style="margin-top:20px" data-act="pass:open">'+esc(L.openPass)+'</button>';
+}
+
+function vPaywall(){
+  var L=t();
+  return '<div class="topbar"><div class="brandlock"><div class="seal">'+I.logo(20)+'</div>'+
+    '<div class="wordmark">ЗАВАР</div></div>'+
+    '<button class="iconbtn" data-act="go" data-val="home">'+I.back+'</button></div>'+
+  '<div class="pw-hero">'+
+    '<div class="eyebrow">'+esc(L.member)+'</div>'+
+    '<h1>'+esc(L.pwTitle)+'</h1>'+
+    '<p>'+esc(L.pwSub)+'</p>'+
+    '<div class="price"><b>'+num(cfg.price)+' ₸</b><span>'+esc(L.perMonth)+'</span></div>'+
+    '<div class="proof">'+esc(L.cancelAny)+'</div>'+
+  '</div>'+
+  '<div class="benefits">'+benHtml(I.cup,L.b1,L.b1s)+benHtml(I.cal,L.b2,L.b2s)+benHtml(I.spark,L.b3,L.b3s)+'</div>'+
+  (nativeUI?'':'<button class="btn btn-primary" style="margin-top:22px" data-act="pay">'+esc(L.subscribe)+'</button>')+
+  '<div class="proof" style="margin-top:14px">'+esc(L.proof)+'</div>';
+}
+
+/* ---------- pass sheet ---------- */
+function renderSheet(){
+  var L=t(), left=LIMIT-S.used;
+  document.getElementById('sheet').innerHTML =
+    '<div class="handle"></div>'+
+    '<div class="pass">'+
+      '<div class="pass-head"><div class="seal" style="background:rgba(240,237,226,.12);box-shadow:none">'+I.logo(19)+'</div>'+
+        '<div class="pc-label">ЗАВАР · ALMATY</div></div>'+
+      '<div class="pass-name">'+esc(userName||L.guest)+'</div>'+
+      '<div class="pass-sub">ZAVAR-'+userId+'</div>'+
+      '<div class="perf"></div>'+
+      '<div class="qrwrap">'+qrSvg('zavar-'+userId)+
+        '<div class="qr-seal"><div>'+I.logo(18)+'</div></div></div>'+
+      '<div class="pass-foot">'+
+        '<div><div class="k">'+esc(L.passLeft)+'</div><div class="v">'+left+' / '+LIMIT+'</div></div>'+
+        '<div style="text-align:right"><div class="k">'+esc(L.passValid)+'</div><div class="v">'+esc(L.renewDate)+'</div></div>'+
+      '</div>'+
+    '</div>'+
+    '<div class="sheet-hint">'+esc(L.passHint)+'</div>'+
+    '<button class="btn btn-ghost" style="margin-top:16px" data-act="pass:close">'+(S.lang==='kk'?'Жабу':'Закрыть')+'</button>';
+}
+
+/* ---------- dock ---------- */
+function renderDock(){
+  var L=t();
+  var items=[['home',I.home,L.navHome],['cafes',I.cup,L.navCafes]];
+  var items2=[['orders',I.list,L.navOrders],['profile',I.user,L.navProfile]];
+  function nav(x){ return '<button class="nav'+(S.tab===x[0]?' on':'')+'" data-act="go" data-val="'+x[0]+'">'+
+    x[1]+'<span>'+esc(x[2])+'</span><div class="navdot"></div></button>'; }
+  document.getElementById('dock').innerHTML =
+    items.map(nav).join('')+
+    '<button class="passbtn" data-act="pass:open">'+I.logo(24,'#E9E4D4')+'</button>'+
+    items2.map(nav).join('');
+}
+
+/* ---------- render ---------- */
+var VIEWS = {home:vHome,cafes:vCafes,detail:vDetail,orders:vOrders,profile:vProfile,
+             settings:vSettings,plan:vPlan,how:vHow,paywall:vPaywall};
+function render(){
+  document.getElementById('app').innerHTML = '<div class="screen active">'+VIEWS[S.screen]()+'</div>';
+  renderDock(); renderSheet(); syncNative();
+  S.popIndex=-1;
+  window.scrollTo(0,0);
+}
+
+function canUse(v){ return !!(tg && tg.isVersionAtLeast && tg.isVersionAtLeast(v)); }
+function syncNative(){
+  if(!tg) return;
+  if(canUse('6.1')){
+    try{
+      tg.setHeaderColor(S.theme==='light' ? '#F2F0E8' : '#0F1109');
+      tg.setBackgroundColor(S.theme==='light' ? '#F2F0E8' : '#0F1109');
+    }catch(e){}
   }
-  function updateNavHighlight(){
-    ['home','catalog','orders','profile'].forEach(function(tb){
-      document.getElementById('nav-' + tb).classList.toggle('active', tb === state.tab && state.screen === tb);
+  if(tg.BackButton && canUse('6.1')){ (S.screen==='detail'||S.screen==='settings'||S.screen==='plan'||S.screen==='how'||S.screen==='paywall')
+    ? tg.BackButton.show() : tg.BackButton.hide(); }
+  if(!tg.MainButton) return;
+  var L=t();
+  tg.MainButton.offClick(mainAction);
+  if(S.screen==='detail'){ tg.MainButton.setText(S.booking?L.confirmBook:L.getDrink); tg.MainButton.show(); tg.MainButton.onClick(mainAction); }
+  else if(S.screen==='paywall'){ tg.MainButton.setText(L.subscribe); tg.MainButton.show(); tg.MainButton.onClick(mainAction); }
+  else tg.MainButton.hide();
+}
+function mainAction(){
+  if(S.screen==='detail'){ S.booking?bookConfirm():redeem(); }
+  else if(S.screen==='paywall'){ pay(); }
+}
+
+/* ---------- actions ---------- */
+function go(v){
+  if(v==='profile' && !S.subscribed){ S.screen='paywall'; S.tab='profile'; render(); return; }
+  if(['home','cafes','orders','profile'].indexOf(v)>=0) S.tab=v;
+  S.screen=v; S.banner=null; render();
+}
+function flash(text,kind){ S.banner={text:text,kind:kind||'good'};
+  setTimeout(function(){ S.banner=null; if(S.screen==='home'||S.screen==='profile') render(); },4200); }
+
+function redeem(){
+  if(!S.subscribed){ S.screen='paywall'; render(); return; }
+  var c=cafeById(S.cafe);
+  if(c && !isOpenNow(c)){ S.toast=t().closedToast; render(); return; }
+  S.popIndex=S.used;
+  S.used=Math.min(S.used+1,LIMIT);
+  S.history.push({id:20470+S.history.length,size:S.size,milk:S.milk,cafe:c?c.name:'',
+    when:(S.lang==='kk'?'жаңа ғана':'только что'),status:'done'});
+  hap('n'); S.toast=''; S.screen='home'; S.tab='home';
+  flash(t().successRedeem(LIMIT-S.used));
+  render();
+}
+function quick(id){
+  if(!S.subscribed){ S.screen='paywall'; render(); return; }
+  var c=cafeById(id); if(!c||!isOpenNow(c)) return;
+  var d=defFor(id);
+  S.popIndex=S.used;
+  S.used=Math.min(S.used+1,LIMIT);
+  S.history.push({id:20470+S.history.length,size:d.size,milk:d.milk,cafe:c.name,
+    when:(S.lang==='kk'?'жаңа ғана':'только что'),status:'done'});
+  hap('n'); S.screen='home'; S.tab='home';
+  flash(t().successRedeem(LIMIT-S.used));
+  render();
+}
+function bookConfirm(){
+  var c=cafeById(S.cafe); hap('medium');
+  S.history.push({id:20480+S.history.length,booking:true,time:S.slot,guests:S.guests,
+    cafe:c?c.name:'',when:(S.lang==='kk'?'бүгін':'сегодня'),status:'pending'});
+  S.toast=t().bookedToast(S.slot);
+  var msg=(S.lang==='kk'?'Сәлеметсіз бе! ':'Здравствуйте! ')+(c?c.name:'')+' — '+S.slot+' ('+guestLabel(S.guests)+')';
+  openLink('https://wa.me/'+cfg.whatsapp+'?text='+encodeURIComponent(msg));
+  render();
+}
+function pay(){
+  openLink(cfg.kaspi);
+  setTimeout(function(){
+    S.subscribed=true; S.cancelScheduled=false; S.screen='home'; S.tab='home';
+    flash(t().successSub); hap('n'); render();
+  },1200);
+}
+function openLink(u){ if(tg&&tg.openLink) tg.openLink(u); else window.open(u,'_blank'); }
+function openTg(u){ if(tg&&tg.openTelegramLink) tg.openTelegramLink(u); else window.open(u,'_blank'); }
+
+function openPass(){ hap(); document.getElementById('scrim').classList.add('on');
+  document.getElementById('sheet').classList.add('on'); }
+function closePass(){ document.getElementById('scrim').classList.remove('on');
+  document.getElementById('sheet').classList.remove('on'); }
+
+/* ---------- event delegation ---------- */
+document.addEventListener('click',function(e){
+  var el=e.target.closest ? e.target.closest('[data-act]') : null;
+  if(!el) return;
+  var a=el.getAttribute('data-act'), v=el.getAttribute('data-val');
+  switch(a){
+    case 'go': hap(); go(v); break;
+    case 'pass:open': openPass(); break;
+    case 'pass:close': closePass(); break;
+    case 'lang': if(S.lang!==v){ S.lang=v; hap(); document.documentElement.lang=v; render(); } break;
+    case 'theme': if(S.theme!==v){ S.theme=v; hap(); document.documentElement.setAttribute('data-theme',v); render(); } break;
+    case 'cafe': hap(); S.cafe=+v; S.booking=false; S.toast='';
+      var d=defFor(+v); S.size=d.size; S.milk=d.milk; S.screen='detail'; render(); break;
+    case 'fav': var c=cafeById(+v); if(c){ c.fav=!c.fav; hap(); render(); } break;
+    case 'quick': hap('medium'); quick(+v); break;
+    case 'sort': S.sort=v; hap(); render(); break;
+    case 'tag': var i=S.tags.indexOf(v); if(i<0) S.tags.push(v); else S.tags.splice(i,1); hap(); render(); break;
+    case 'favonly': S.favOnly=!S.favOnly; hap(); render(); break;
+    case 'size': S.size=v; hap(); render(); break;
+    case 'milk': S.milk=v; hap(); render(); break;
+    case 'slot': S.slot=v; hap(); render(); break;
+    case 'guests': S.guests=v; hap(); render(); break;
+    case 'booktoggle': S.booking=!S.booking; hap(); render(); break;
+    case 'bookconfirm': bookConfirm(); break;
+    case 'redeem': redeem(); break;
+    case 'saveusual': S.defaults[S.cafe]={size:S.size,milk:S.milk}; hap('medium'); S.toast=t().saved; render(); break;
+    case 'directions': hap(); var cc=cafeById(S.cafe);
+      if(cc) openLink('https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(cc.name+' Алматы')); break;
+    case 'ordertab': S.orderTab=v; S.expanded=null; hap(); render(); break;
+    case 'orderexp': S.expanded = (S.expanded===+v)?null:+v; hap(); render(); break;
+    case 'reorder': var h=S.history.filter(function(x){return x.id===+v;})[0];
+      if(h){ var f=S.cafes.filter(function(x){return x.name===h.cafe;})[0];
+        if(f){ S.cafe=f.id; S.size=h.size; S.milk=h.milk; S.booking=false; S.screen='detail'; hap(); render(); } } break;
+    case 'modifybooking': hap();
+      openLink('https://wa.me/'+cfg.whatsapp+'?text='+encodeURIComponent(
+        (S.lang==='kk'?'Сәлеметсіз бе! Брон #':'Здравствуйте! Бронь #')+v+(S.lang==='kk'?' өзгерту керек.':' — нужно изменить.'))); break;
+    case 'report': hap();
+      openLink('https://wa.me/'+cfg.whatsapp+'?text='+encodeURIComponent(
+        (S.lang==='kk'?'Сәлеметсіз бе! Тапсырыс #':'Здравствуйте! Заказ #')+v+(S.lang==='kk'?' бойынша мәселе бар.':' — возникла проблема.'))); break;
+    case 'cancel:open': S.confirming=true; hap(); render(); break;
+    case 'cancel:dismiss': S.confirming=false; hap(); render(); break;
+    case 'cancel:confirm': S.confirming=false; S.cancelScheduled=true; hap('medium'); render(); break;
+    case 'cancel:resume': S.cancelScheduled=false; hap(); render(); break;
+    case 'pay': pay(); break;
+    case 'share': hap();
+      var link='https://t.me/'+cfg.bot+'/'+cfg.app+'?startapp=ref_'+userId;
+      var txt=(S.lang==='kk'?'ЗАВАР-ға қосыл — Алматыдағы кофеханаларға жазылым: ':'Подключайся к ЗАВАР — подписка на кофейни в Алматы: ')+link;
+      openTg('https://t.me/share/url?url='+encodeURIComponent(link)+'&text='+encodeURIComponent(txt)); break;
+    case 'support': hap(); openTg('https://t.me/'+cfg.support); break;
+    case 'bot': hap(); openTg('https://t.me/'+cfg.bot); break;
+  }
+});
+
+/* ---------- init ---------- */
+function init(){
+  if(tg){
+    try{ tg.ready(); tg.expand(); }catch(e){}
+    if(tg.colorScheme==='dark'){ S.theme='dark'; document.documentElement.setAttribute('data-theme','dark'); }
+    if(tg.BackButton && canUse('6.1')) tg.BackButton.onClick(function(){
+      if(S.screen==='detail') go(S.tab==='cafes'?'cafes':'home');
+      else if(S.screen==='paywall') go('home');
+      else go('profile');
     });
   }
-  function updateMainButton(){
-    if (!tg || !tg.MainButton) return;
-    var L = t();
-    if (state.screen === 'detail') {
-      if (state.mode === 'drink') { tg.MainButton.setText(L.mainDrinkBtn); tg.MainButton.offClick(requestDrink); tg.MainButton.onClick(requestDrink); }
-      else { tg.MainButton.setText(L.mainBookBtn); tg.MainButton.offClick(confirmBooking); tg.MainButton.onClick(confirmBooking); }
-      tg.MainButton.show();
-    } else if (state.screen === 'paywall') {
-      tg.MainButton.setText('Kaspi Pay'); tg.MainButton.show();
-      tg.MainButton.offClick(pay); tg.MainButton.onClick(pay);
-    } else { tg.MainButton.hide(); }
-  }
-
-  function requestDrink(){
-    if (!state.subscribed) { showScreen('paywall'); return; }
-    state.used = Math.min(state.used + 1, limit);
-    var c = cafeById(state.activeCafe);
-    state.history.push({ id: 20470 + state.history.length, size: state.size, milk: state.milk, cafe: c?c.name:'', when: (state.lang==='kk'?'жаңа ғана':'только что'), status: 'done' });
-    renderDash(); renderSubscription(); renderOrders(); haptic('medium'); app.switchTab('profile');
-  }
-  function confirmBooking(){
-    var c = cafeById(state.activeCafe); var time = state.slot; haptic('medium');
-    state.history.push({ id: 20480 + state.history.length, booking:true, time: time, cafe: c?c.name:'', when: (state.lang==='kk'?'бүгін':'сегодня'), status: 'pending' });
-    document.getElementById('toast').textContent = state.lang==='kk'
-      ? (time + ' броны WhatsApp-та расталады')
-      : ('Бронь на ' + time + ' отправлена — подтвердим в WhatsApp.');
-    renderOrders();
-    var text = encodeURIComponent((state.lang==='kk' ? 'Сәлеметсіз бе! ' : 'Здравствуйте! ') + (c?c.name:'') + ' — ' + time + ' (' + guestLabel(state.guests) + ')');
-    var url = 'https://wa.me/' + cfg.whatsapp + '?text=' + text;
-    if (tg) { tg.openLink(url); } else { window.open(url, '_blank'); }
-  }
-  function pay(){
-    if (tg) { tg.openLink(cfg.kaspi); }
-    setTimeout(function(){ state.subscribed = true; state.cancelScheduled = false; renderSubscription(); app.switchTab('profile'); }, 1200);
-  }
-
-  return {
-    init: init,
-    pingBell: function(){ haptic(); },
-    setLang: function(l){ if (state.lang === l) return; state.lang = l; haptic(); applyLanguage(); },
-    toggleTheme: function(){ state.theme = state.theme === 'light' ? 'dark' : 'light'; haptic(); applyTheme(); },
-    closePaywall: function(){ haptic(); state.tab = 'home'; showScreen('home'); updateNavHighlight(); },
-    openSettings: function(){ haptic(); showScreen('settings'); },
-    switchTab: function(name){
-      state.tab = name;
-      if (name === 'profile' && !state.subscribed) { showScreen('paywall'); updateNavHighlight(); return; }
-      if (name === 'orders') { renderOrderTabs(); renderOrders(); }
-      if (name === 'catalog') { renderSortChips(); renderCategoryChips(); renderCatalog(); }
-      showScreen(name); updateNavHighlight();
-    },
-    setCategory: function(c){ state.category = c; haptic(); renderCategoryChips(); renderCatalog(); },
-    setSortMode: function(m){ state.sortMode = m; haptic(); renderSortChips(); renderCatalog(); },
-    setOrderTab: function(tb){ state.orderTab = tb; haptic(); renderOrderTabs(); renderOrders(); },
-    setMode: function(m){
-      state.mode = m; haptic();
-      document.getElementById('drink-mode').style.display = m === 'drink' ? 'block' : 'none';
-      document.getElementById('table-mode').style.display = m === 'table' ? 'block' : 'none';
-      updateMainButton();
-    },
-    setSize: function(s){ state.size = s; haptic(); renderPills(); },
-    setMilk: function(m){ state.milk = m; haptic(); renderPills(); },
-    setSlot: function(s){ state.slot = s; haptic(); renderPills(); },
-    setGuests: function(g){ state.guests = g; haptic(); renderPills(); },
-    openCafe: function(id){
-      state.activeCafe = id; state.mode = 'drink'; document.getElementById('toast').textContent = '';
-      var def = cafeDefaultFor(id);
-      state.size = def.size; state.milk = def.milk;
-      var c = cafeById(id);
-      document.getElementById('detail-name').textContent = c.name;
-      document.getElementById('detail-meta').textContent = c.meta;
-      document.getElementById('detail-fav').style.color = c.fav ? 'var(--accent-dark)' : 'var(--ink-2)';
-      document.getElementById('drink-mode').style.display = 'block';
-      document.getElementById('table-mode').style.display = 'none';
-      renderPills(); haptic(); showScreen('detail');
-    },
-    quickOrder: function(id){
-      if (!state.subscribed) { app.switchTab('profile'); return; }
-      state.activeCafe = id; state.used = Math.min(state.used + 1, limit);
-      var def = cafeDefaultFor(id);
-      var c = cafeById(id);
-      state.history.push({ id: 20470 + state.history.length, size: def.size, milk: def.milk, cafe: c?c.name:'', when: (state.lang==='kk'?'жаңа ғана':'только что'), status: 'done' });
-      renderDash(); renderSubscription(); renderOrders(); haptic('medium'); app.switchTab('profile');
-    },
-    toggleTagFilter: function(tg2){
-      var idx = state.tagFilters.indexOf(tg2);
-      if (idx === -1) { state.tagFilters.push(tg2); } else { state.tagFilters.splice(idx, 1); }
-      haptic(); renderTagChips(); renderCatalog();
-    },
-    saveCafeDefault: function(){
-      state.cafeDefaults[state.activeCafe] = { size: state.size, milk: state.milk };
-      haptic('medium');
-      var el = document.getElementById('toast');
-      el.textContent = t().saveUsualToastSaved;
-      setTimeout(function(){ if (el.textContent === t().saveUsualToastSaved) el.textContent = ''; }, 2500);
-    },
-    toggleCancelConfirm: function(){
-      haptic();
-      if (state.cancelScheduled) { state.cancelScheduled = false; renderSubscription(); return; }
-      var box = document.getElementById('cancel-confirm-box');
-      box.style.display = box.style.display === 'none' ? 'block' : 'none';
-    },
-    dismissCancelConfirm: function(){
-      haptic();
-      document.getElementById('cancel-confirm-box').style.display = 'none';
-    },
-    confirmCancel: function(){
-      haptic('medium');
-      state.cancelScheduled = true;
-      document.getElementById('cancel-confirm-box').style.display = 'none';
-      renderSubscription();
-    },
-    toggleFav: function(id){ var c = cafeById(id); c.fav = !c.fav; haptic(); renderFeatured(); renderCatalog(); },
-    toggleFavActive: function(){
-      var c = cafeById(state.activeCafe); c.fav = !c.fav; haptic();
-      document.getElementById('detail-fav').style.color = c.fav ? 'var(--accent-dark)' : 'var(--ink-2)';
-      renderFeatured(); renderCatalog();
-    },
-    openSupport: function(){
-      var url = 'https://t.me/' + cfg.support;
-      if (tg) { tg.openTelegramLink(url); } else { window.open(url, '_blank'); }
-    },
-    shareReferral: function(){
-      var link = 'https://t.me/' + cfg.bot + '/' + cfg.app + '?startapp=ref_' + userId;
-      var text = encodeURIComponent((state.lang==='kk' ? 'ЗАВАР-ға қосыл — Алматыдағы кофеханаларға жазылым: ' : 'Подключайся к ЗАВАР — подписка на кофейни в Алматы: ') + link);
-      var shareUrl = 'https://t.me/share/url?url=' + encodeURIComponent(link) + '&text=' + text;
-      if (tg) { tg.openTelegramLink(shareUrl); } else { window.open(shareUrl, '_blank'); }
-    }
-  };
+  render();
+}
+return { init:init };
 })();
-app.init();
+App.init();
 </script>
 </body>
 </html>
